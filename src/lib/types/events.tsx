@@ -43,7 +43,8 @@ export interface eventCategories {
 export interface TeamMember {
   name: string;
   email: string;
-  phone: string;}
+  phone: string;
+}
 
 export interface EventData {
   serial_no: number;

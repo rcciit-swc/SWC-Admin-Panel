@@ -51,7 +51,9 @@ export function AddLinkDialog({ addLink }: AddLinkDialogProps) {
               <Link2 className="w-5 h-5 text-blue-400" />
             </div>
             <div>
-              <DialogTitle className="text-lg font-semibold text-white">Add Link</DialogTitle>
+              <DialogTitle className="text-lg font-semibold text-white">
+                Add Link
+              </DialogTitle>
               <DialogDescription className="text-sm text-zinc-500">
                 Add a relevant link for this event
               </DialogDescription>
@@ -60,7 +62,10 @@ export function AddLinkDialog({ addLink }: AddLinkDialogProps) {
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="title" className="text-sm font-medium text-zinc-300">
+            <Label
+              htmlFor="title"
+              className="text-sm font-medium text-zinc-300"
+            >
               Title
             </Label>
             <Input

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabaseServer } from '@/utils/functions/supabase-server';
 import Link from 'next/link';
-import { Plus, ShieldCheck, Calendar, Sparkles, Shield } from 'lucide-react';
+import { Plus, ShieldCheck, Calendar, Sparkles, Shield, UserCheck } from 'lucide-react';
 
 const Page = async () => {
   const supabase = await supabaseServer();
@@ -18,7 +18,7 @@ const Page = async () => {
     <div className="min-h-screen w-full bg-[#050508]">
       {/* Subtle gradient overlay */}
       <div className="fixed inset-0 bg-gradient-to-br from-violet-950/20 via-transparent to-indigo-950/10 pointer-events-none" />
-      
+
       {/* Header Section */}
       <header className="relative border-b border-white/[0.06] bg-[#0a0a0f]/80 backdrop-blur-xl sticky top-0 z-50">
         <div className="container max-w-7xl mx-auto px-6 py-5">
@@ -28,11 +28,13 @@ const Page = async () => {
                 <ShieldCheck className="h-5 w-5 text-violet-400" />
               </div>
               <div>
-                <h1 className="text-xl font-semibold tracking-tight text-white">Admin Panel</h1>
+                <h1 className="text-xl font-semibold tracking-tight text-white">
+                  Admin Panel
+                </h1>
                 <p className="text-sm text-zinc-500">Welcome!</p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-3">
               {isAdmin && (
                 <Badge className="bg-violet-500/10 text-violet-400 border-violet-500/20 hover:bg-violet-500/20">
@@ -60,12 +62,20 @@ const Page = async () => {
             </p>
             <div className="flex items-center gap-3">
               {isAdmin && (
+                <>
                 <Link href="/add-event">
                   <Button className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:from-violet-500 hover:to-indigo-500 border-0">
                     <Plus className="mr-2 h-4 w-4" />
                     Create Event
                   </Button>
                 </Link>
+                <Link href="/approve">
+                  <Button className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:from-violet-500 hover:to-indigo-500 border-0">
+                   <UserCheck className="mr-2 h-4 w-4" />
+                    Registration
+                  </Button>
+                </Link>
+                </>
               )}
             </div>
           </div>

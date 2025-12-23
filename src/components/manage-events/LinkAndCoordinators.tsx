@@ -89,7 +89,9 @@ export function LinksAndCoordinators({
             <div className="flex flex-col items-center justify-center py-8 text-center bg-[#0d0d12] rounded-lg border border-dashed border-white/[0.06]">
               <Link2 className="w-8 h-8 text-zinc-600 mb-2" />
               <p className="text-sm text-zinc-500">No links added yet</p>
-              <p className="text-xs text-zinc-600 mt-1">Click "Add Link" to get started</p>
+              <p className="text-xs text-zinc-600 mt-1">
+                Click "Add Link" to get started
+              </p>
             </div>
           )}
         </div>
@@ -147,7 +149,9 @@ export function LinksAndCoordinators({
             <div className="flex flex-col items-center justify-center py-8 text-center bg-[#0d0d12] rounded-lg border border-dashed border-white/[0.06]">
               <Users className="w-8 h-8 text-zinc-600 mb-2" />
               <p className="text-sm text-zinc-500">No coordinators added yet</p>
-              <p className="text-xs text-zinc-600 mt-1">Click "Add Coordinator" to get started</p>
+              <p className="text-xs text-zinc-600 mt-1">
+                Click "Add Coordinator" to get started
+              </p>
             </div>
           )}
         </div>

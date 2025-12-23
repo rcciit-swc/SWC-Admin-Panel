@@ -26,7 +26,8 @@ export default function EditEventPage() {
   const eventId = params.eventId as string;
   const router = useRouter();
 
-  const { eventsData, eventsLoading, updateEventsData, setEventsData } = useEvents();
+  const { eventsData, eventsLoading, updateEventsData, setEventsData } =
+    useEvents();
   const [links, setLinks] = useState<LinkType[]>([]);
   const [coordinators, setCoordinators] = useState<Coordinator[]>([]);
   console.log('Events Data:', eventsData);
@@ -91,9 +92,17 @@ export default function EditEventPage() {
           <div className="w-16 h-16 rounded-2xl bg-rose-500/10 flex items-center justify-center mb-4 mx-auto">
             <Calendar className="w-8 h-8 text-rose-400" />
           </div>
-          <h3 className="text-lg font-medium text-white mb-2">Event not found</h3>
-          <p className="text-zinc-500 mb-6">The event you're looking for doesn't exist.</p>
-          <Button asChild variant="outline" className="border-white/10 text-white hover:bg-white/5">
+          <h3 className="text-lg font-medium text-white mb-2">
+            Event not found
+          </h3>
+          <p className="text-zinc-500 mb-6">
+            The event you're looking for doesn't exist.
+          </p>
+          <Button
+            asChild
+            variant="outline"
+            className="border-white/10 text-white hover:bg-white/5"
+          >
             <Link href="/">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Events
@@ -127,7 +136,7 @@ export default function EditEventPage() {
     <div className="min-h-screen bg-[#050508]">
       {/* Subtle gradient overlay */}
       <div className="fixed inset-0 bg-gradient-to-br from-violet-950/20 via-transparent to-indigo-950/10 pointer-events-none" />
-      
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           {/* Header */}
@@ -135,7 +144,7 @@ export default function EditEventPage() {
             <div className="container max-w-6xl mx-auto px-6 py-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <Link 
+                  <Link
                     href="/"
                     className="flex items-center justify-center w-9 h-9 rounded-lg bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
                   >
@@ -146,12 +155,16 @@ export default function EditEventPage() {
                       <Settings className="h-5 w-5 text-violet-400" />
                     </div>
                     <div>
-                      <h1 className="text-lg font-semibold tracking-tight text-white">Edit Event</h1>
-                      <p className="text-sm text-zinc-500">{eventToEdit?.name}</p>
+                      <h1 className="text-lg font-semibold tracking-tight text-white">
+                        Edit Event
+                      </h1>
+                      <p className="text-sm text-zinc-500">
+                        {eventToEdit?.name}
+                      </p>
                     </div>
                   </div>
                 </div>
-                
+
                 <Button
                   type="submit"
                   className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:from-violet-500 hover:to-indigo-500 border-0"

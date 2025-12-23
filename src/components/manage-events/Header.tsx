@@ -9,7 +9,7 @@ const Header = ({ form }: { form: any }) => {
       <div className="container max-w-6xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link 
+            <Link
               href="/"
               className="flex items-center justify-center w-9 h-9 rounded-lg bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
             >
@@ -29,7 +29,7 @@ const Header = ({ form }: { form: any }) => {
               </div>
             </div>
           </div>
-          
+
           <Button
             type="submit"
             className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:from-violet-500 hover:to-indigo-500 border-0"

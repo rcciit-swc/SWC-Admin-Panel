@@ -16,8 +16,12 @@ export function RulesAndGuidelines({ form }: { form: any }) {
           <ScrollText className="w-4 h-4 text-amber-400" />
         </div>
         <div>
-          <h3 className="text-base font-medium text-white">Rules & Guidelines</h3>
-          <p className="text-sm text-zinc-500">Set clear rules for participants</p>
+          <h3 className="text-base font-medium text-white">
+            Rules & Guidelines
+          </h3>
+          <p className="text-sm text-zinc-500">
+            Set clear rules for participants
+          </p>
         </div>
       </div>
 

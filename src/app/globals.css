@@ -1,9 +1,9 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  
+
   /* Admin Panel Color System */
   --admin-bg-primary: #050508;
   --admin-bg-secondary: #0a0a0f;
@@ -12,25 +12,25 @@
   --admin-bg-card-hover: #16161f;
   --admin-bg-elevated: #1a1a24;
   --admin-bg-input: #0d0d12;
-  
+
   /* Border Colors */
   --admin-border: rgba(255, 255, 255, 0.06);
   --admin-border-subtle: rgba(255, 255, 255, 0.03);
   --admin-border-accent: rgba(139, 92, 246, 0.3);
-  
+
   /* Text Colors */
   --admin-text-primary: #f8f8fa;
   --admin-text-secondary: #a1a1aa;
   --admin-text-muted: #71717a;
   --admin-text-accent: #a78bfa;
-  
+
   /* Accent Colors */
   --admin-accent-violet: #8b5cf6;
   --admin-accent-violet-muted: rgba(139, 92, 246, 0.15);
   --admin-accent-emerald: #10b981;
   --admin-accent-amber: #f59e0b;
   --admin-accent-rose: #f43f5e;
-  
+
   /* Shadows */
   --admin-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
   --admin-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
@@ -55,7 +55,13 @@
 body {
   background: var(--admin-bg-primary);
   color: var(--foreground);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -93,7 +99,14 @@ body {
 
 /* Smooth transitions */
 * {
-  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-property:
+    background-color, border-color, color, fill, stroke, opacity, box-shadow,
+    transform;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
+}
+
+/* Radix Popper repositions via transform; global transform transitions make menus "fly" */
+[data-radix-popper-content-wrapper] {
+  transition: none !important;
 }

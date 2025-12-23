@@ -16,8 +16,12 @@ export function ScheduleAndDescription({ form }: { form: any }) {
           <Calendar className="w-4 h-4 text-blue-400" />
         </div>
         <div>
-          <h3 className="text-base font-medium text-white">Schedule & Description</h3>
-          <p className="text-sm text-zinc-500">Set timing and describe your event</p>
+          <h3 className="text-base font-medium text-white">
+            Schedule & Description
+          </h3>
+          <p className="text-sm text-zinc-500">
+            Set timing and describe your event
+          </p>
         </div>
       </div>
 

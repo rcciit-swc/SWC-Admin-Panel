@@ -32,7 +32,8 @@ export const useEvents = create<EventsStoreType>((set) => ({
   postEvent: (eventData: events) => addEvent(set, eventData),
   updateRegisterStatus: (id: string, status: boolean) =>
     updateRegisterStatus(set, id, status),
-  updateEventsData: (id: string, data: any) => updatePopulateEvents(set, id, data),
+  updateEventsData: (id: string, data: any) =>
+    updatePopulateEvents(set, id, data),
   getApprovalDashboardData: (rangeStart: number, rangeEnd: number) =>
     populateApprovalDashboard(set, rangeStart, rangeEnd),
   markEventAsRegistered: (eventId: string) =>
@@ -41,5 +42,5 @@ export const useEvents = create<EventsStoreType>((set) => ({
         event.id === eventId ? { ...event, registered: true } : event
       ),
     })),
-    getSecuritiesData: (userId: string) => getSecuritiesData(set, userId),
+  getSecuritiesData: (userId: string) => getSecuritiesData(set, userId),
 }));

@@ -1,9 +1,7 @@
 'use client';
 import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Card,
-} from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
@@ -101,7 +99,8 @@ export function EventCards({
         </div>
         <h3 className="text-lg font-medium text-white mb-2">No events yet</h3>
         <p className="text-zinc-500 max-w-sm">
-          Get started by creating your first event to manage registrations and participants.
+          Get started by creating your first event to manage registrations and
+          participants.
         </p>
       </div>
     );
@@ -178,14 +177,18 @@ export function EventCards({
                         <Wallet className="w-3.5 h-3.5 text-violet-400" />
                         <span className="text-xs text-zinc-500">Fee</span>
                       </div>
-                      <p className="text-white font-semibold">₹{event.registration_fees}</p>
+                      <p className="text-white font-semibold">
+                        ₹{event.registration_fees}
+                      </p>
                     </div>
                     <div className="bg-[#12121a] rounded-lg p-3 border border-white/4">
                       <div className="flex items-center gap-2 mb-1">
                         <Trophy className="w-3.5 h-3.5 text-amber-400" />
                         <span className="text-xs text-zinc-500">Prize</span>
                       </div>
-                      <p className="text-white font-semibold">₹{event.prize_pool}</p>
+                      <p className="text-white font-semibold">
+                        ₹{event.prize_pool}
+                      </p>
                     </div>
                     <div className="bg-[#12121a] rounded-lg p-3 border border-white/4">
                       <div className="flex items-center gap-2 mb-1">
@@ -212,7 +215,9 @@ export function EventCards({
                         }}
                         className="data-[state=checked]:bg-emerald-500"
                       />
-                      <span className="text-xs text-zinc-500">Registration</span>
+                      <span className="text-xs text-zinc-500">
+                        Registration
+                      </span>
                     </div>
 
                     <RulesDialog rules={event.rules} />

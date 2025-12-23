@@ -65,7 +65,7 @@ const Page = () => {
     <div className="min-h-screen bg-[#050508]">
       {/* Subtle gradient overlay */}
       <div className="fixed inset-0 bg-linear-to-br from-violet-950/20 via-transparent to-indigo-950/10 pointer-events-none" />
-      
+
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           {/* Header */}

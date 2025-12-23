@@ -53,7 +53,9 @@ export function AddCoordinatorDialog({
               <Users className="w-5 h-5 text-emerald-400" />
             </div>
             <div>
-              <DialogTitle className="text-lg font-semibold text-white">Add Coordinator</DialogTitle>
+              <DialogTitle className="text-lg font-semibold text-white">
+                Add Coordinator
+              </DialogTitle>
               <DialogDescription className="text-sm text-zinc-500">
                 Add a coordinator for this event
               </DialogDescription>
@@ -74,7 +76,10 @@ export function AddCoordinatorDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="phone" className="text-sm font-medium text-zinc-300">
+            <Label
+              htmlFor="phone"
+              className="text-sm font-medium text-zinc-300"
+            >
               Phone
             </Label>
             <Input

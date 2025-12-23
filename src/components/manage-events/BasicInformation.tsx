@@ -34,8 +34,12 @@ export function BasicInformation({ form }: { form: any }) {
           <Type className="w-4 h-4 text-violet-400" />
         </div>
         <div>
-          <h3 className="text-base font-medium text-white">Basic Information</h3>
-          <p className="text-sm text-zinc-500">Enter the core details about your event</p>
+          <h3 className="text-base font-medium text-white">
+            Basic Information
+          </h3>
+          <p className="text-sm text-zinc-500">
+            Enter the core details about your event
+          </p>
         </div>
       </div>
 
@@ -46,7 +50,9 @@ export function BasicInformation({ form }: { form: any }) {
           name="name"
           render={({ field }) => (
             <FormItem className="md:col-span-2">
-              <FormLabel className="text-zinc-300 text-sm font-medium">Event Name</FormLabel>
+              <FormLabel className="text-zinc-300 text-sm font-medium">
+                Event Name
+              </FormLabel>
               <FormControl>
                 <Input
                   placeholder="Enter event name"
@@ -64,10 +70,14 @@ export function BasicInformation({ form }: { form: any }) {
           name="registration_fees"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-zinc-300 text-sm font-medium">Registration Fee</FormLabel>
+              <FormLabel className="text-zinc-300 text-sm font-medium">
+                Registration Fee
+              </FormLabel>
               <FormControl>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-sm">₹</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-sm">
+                    ₹
+                  </span>
                   <Input
                     className="pl-7 bg-[#0d0d12] text-white border-white/10 focus-visible:ring-violet-500/50 focus-visible:border-violet-500/50 h-11 placeholder:text-zinc-600"
                     placeholder="0"
@@ -86,10 +96,14 @@ export function BasicInformation({ form }: { form: any }) {
           name="prize_pool"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-zinc-300 text-sm font-medium">Prize Pool</FormLabel>
+              <FormLabel className="text-zinc-300 text-sm font-medium">
+                Prize Pool
+              </FormLabel>
               <FormControl>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-sm">₹</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-sm">
+                    ₹
+                  </span>
                   <Input
                     className="pl-7 bg-[#0d0d12] text-white border-white/10 focus-visible:ring-violet-500/50 focus-visible:border-violet-500/50 h-11 placeholder:text-zinc-600"
                     placeholder="0"
@@ -108,7 +122,9 @@ export function BasicInformation({ form }: { form: any }) {
           name="image_url"
           render={({ field }) => (
             <FormItem className="md:col-span-2">
-              <FormLabel className="text-zinc-300 text-sm font-medium">Cover Image URL</FormLabel>
+              <FormLabel className="text-zinc-300 text-sm font-medium">
+                Cover Image URL
+              </FormLabel>
               <FormControl>
                 <div className="relative">
                   <ImageIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
@@ -129,7 +145,9 @@ export function BasicInformation({ form }: { form: any }) {
           name="min_team_size"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-zinc-300 text-sm font-medium">Minimum Team Size</FormLabel>
+              <FormLabel className="text-zinc-300 text-sm font-medium">
+                Minimum Team Size
+              </FormLabel>
               <FormControl>
                 <div className="relative">
                   <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
@@ -152,7 +170,9 @@ export function BasicInformation({ form }: { form: any }) {
           name="max_team_size"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-zinc-300 text-sm font-medium">Maximum Team Size</FormLabel>
+              <FormLabel className="text-zinc-300 text-sm font-medium">
+                Maximum Team Size
+              </FormLabel>
               <FormControl>
                 <div className="relative">
                   <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
