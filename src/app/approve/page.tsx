@@ -3,6 +3,12 @@ import TableSkeleton from '@/components/approve/TableSkeleton';
 import { Suspense } from 'react';
 import { ArrowLeft, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Approve Registrations | RCCIIT SWC',
+  description: 'Review payment status and manage event registrations for RCCIIT Sports and Welfare Committee',
+};
 
 export default function Page() {
   return (

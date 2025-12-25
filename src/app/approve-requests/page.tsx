@@ -2,6 +2,12 @@ import { supabaseServer } from '@/utils/functions/supabase-server';
 import { redirect } from 'next/navigation';
 import ApproveRequestsPage from '@/components/ApproveRequestsPage';
 import { login } from '@/utils/functions/login';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Approve Access Requests | RCCIIT SWC',
+  description: 'Review and approve role access requests for RCCIIT Sports and Welfare Committee',
+};
 
 export default async function ApproveRequestsRoute() {
   const supabase = await supabaseServer();

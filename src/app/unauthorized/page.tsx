@@ -1,6 +1,12 @@
 import Link from 'next/link';
 import { ShieldAlert, Home, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Access Denied | RCCIIT SWC',
+  description: 'You do not have permission to access this page',
+};
 
 export default function UnauthorizedPage() {
   return (

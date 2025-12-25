@@ -2,6 +2,12 @@ import { supabaseServer } from '@/utils/functions/supabase-server';
 import { redirect } from 'next/navigation';
 import ManageAccessPage from '@/components/ManageAccessPage';
 import { login } from '@/utils/functions/login';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Manage Access | RCCIIT SWC',
+  description: 'Manage user roles and permissions for RCCIIT Sports and Welfare Committee',
+};
 
 export default async function ManageAccessRoute() {
   const supabase = await supabaseServer();

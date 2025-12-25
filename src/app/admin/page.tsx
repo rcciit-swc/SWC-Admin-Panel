@@ -11,6 +11,12 @@ import {
   UserCheck,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Admin Dashboard | RCCIIT SWC',
+  description: 'Manage events, approve requests, and control access for RCCIIT Sports and Welfare Committee',
+};
 
 const Page = async () => {
   const supabase = await supabaseServer();
@@ -52,16 +58,16 @@ const Page = async () => {
 
         {/* Action Bar */}
         <div className="relative border-b border-white/[0.06] bg-[#0a0a0f]/50 backdrop-blur-sm">
-          <div className="container max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-center justify-between">
+          <div className="container max-w-7xl mx-auto px-4 sm:px-6 py-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <p className="text-sm text-zinc-400">
                 Create, edit, and manage events of RCCIIT
               </p>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
                 {/* Registration - Available to all roles */}
                 {hasAnyRole && (
-                  <Link href="/approve">
-                    <Button className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:from-violet-500 hover:to-indigo-500 border-0">
+                  <Link href="/approve" className="w-full sm:w-auto">
+                    <Button className="w-full sm:w-auto bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:from-violet-500 hover:to-indigo-500 border-0 text-sm">
                       <UserCheck className="mr-2 h-4 w-4" />
                       Registration
                     </Button>
@@ -71,20 +77,20 @@ const Page = async () => {
                 {/* Admin-only buttons */}
                 {isAdmin && (
                   <>
-                    {/* <Link href="/add-event">
-                      <Button className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:from-violet-500 hover:to-indigo-500 border-0">
+                    {/* <Link href="/add-event" className="w-full sm:w-auto">
+                      <Button className="w-full sm:w-auto bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:from-violet-500 hover:to-indigo-500 border-0 text-sm">
                         <Plus className="mr-2 h-4 w-4" />
                         Create Event
                       </Button>
                     </Link> */}
-                    <Link href="/approve-requests">
-                      <Button className="bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:from-emerald-500 hover:to-green-500 border-0">
+                    <Link href="/approve-requests" className="w-full sm:w-auto">
+                      <Button className="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:from-emerald-500 hover:to-green-500 border-0 text-sm">
                         <ShieldCheck className="mr-2 h-4 w-4" />
                         Approve Requests
                       </Button>
                     </Link>
-                    <Link href="/manage-access">
-                      <Button className="bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:from-amber-500 hover:to-orange-500 border-0">
+                    <Link href="/manage-access" className="w-full sm:w-auto">
+                      <Button className="w-full sm:w-auto bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:from-amber-500 hover:to-orange-500 border-0 text-sm">
                         <Shield className="mr-2 h-4 w-4" />
                         Manage Access
                       </Button>
@@ -96,7 +102,7 @@ const Page = async () => {
           </div>
         </div>
 
-        <main className="relative container max-w-7xl mx-auto px-6 py-8">
+        <main className="relative container max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
           <EventCards isSuperAdmin={isAdmin} eventIDs={eventIds} />
         </main>
       </div>
@@ -111,7 +117,7 @@ const Page = async () => {
 
       {/* Action Bar */}
       <div className="relative border-b border-white/[0.06] bg-[#0a0a0f]/50 backdrop-blur-sm">
-        <div className="container max-w-7xl mx-auto px-6 py-4">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <p className="text-sm text-zinc-400">
               Create, edit, and manage events of RCCIIT
@@ -120,7 +126,7 @@ const Page = async () => {
         </div>
       </div>
 
-      <main className="relative container max-w-7xl mx-auto px-6 py-8">
+      <main className="relative container max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <EventCards isSuperAdmin={false} eventIDs={[]} />
       </main>
     </div>
