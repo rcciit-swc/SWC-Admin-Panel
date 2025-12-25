@@ -4,8 +4,12 @@ import { createServerClient } from '@supabase/ssr';
 export async function middleware(req: NextRequest) {
   const url = new URL(req.nextUrl);
 
-  // Allow home page and auth routes to handle their own logic
-  if (url.pathname === '/' || url.pathname.startsWith('/auth')) {
+  // Allow home page, auth routes, and request-access to handle their own logic
+  if (
+    url.pathname === '/' ||
+    url.pathname.startsWith('/auth') ||
+    url.pathname.startsWith('/request-access')
+  ) {
     return NextResponse.next();
   }
 
@@ -60,26 +64,9 @@ export async function middleware(req: NextRequest) {
     return response;
   }
 
-  // Handle /admin route - requires any role (coordinator, convenor, or super_admin)
+  // Allow authenticated users to access /admin - the page will handle showing RequestAccessScreen
   if (url.pathname.startsWith('/admin')) {
-    const { data: userRoles } = await supabase
-      .from('roles')
-      .select('role')
-      .eq('user_id', session.user?.id);
-
-    const roles = userRoles?.map((role) => role.role) || [];
-
-    if (
-      userRoles &&
-      userRoles.length > 0 &&
-      (roles.includes('super_admin') ||
-        roles.includes('coordinator') ||
-        roles.includes('convenor'))
-    ) {
-      return NextResponse.next();
-    } else {
-      return NextResponse.redirect(new URL('/unauthorized', req.url));
-    }
+    return NextResponse.next();
   }
 
   // Handle /manage-access route - super_admin only

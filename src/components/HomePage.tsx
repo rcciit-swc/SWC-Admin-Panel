@@ -58,7 +58,7 @@ export default function HomePage() {
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 backdrop-blur-sm">
               <Sparkles className="w-4 h-4 text-violet-400" />
               <span className="text-sm text-violet-300 font-medium">
-                RCCIIT Sports & Wellness Council
+                RCCIIT Student Welfare Committee
               </span>
             </div>
 
@@ -279,7 +279,7 @@ export default function HomePage() {
         <div className="container max-w-7xl mx-auto">
           <div className="text-center text-zinc-500 text-sm">
             <p>
-              © {new Date().getFullYear()} RCCIIT Sports & Wellness Council. All
+              © {new Date().getFullYear()} RCCIIT Student Welfare Committee. All
               rights reserved.
             </p>
           </div>

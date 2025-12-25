@@ -4,7 +4,7 @@ import { createBrowserClient } from '@supabase/ssr';
 
 let supabaseClient: ReturnType<typeof createBrowserClient> | null = null;
 
-function createClient() {
+export function createClient() {
   if (!supabaseClient) {
     supabaseClient = createBrowserClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,

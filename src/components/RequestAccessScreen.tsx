@@ -234,7 +234,7 @@ export default function RequestAccessScreen({
           </div>
 
           {/* Progress Steps */}
-          <div className="flex items-center justify-center mb-8">
+          <div className="flex items-center justify-center mb-8 overflow-x-auto px-2">
             {[1, 2, 3, 4, 5].map((step) => {
               const selectedRoleData = availableRoles.find(
                 (r) => r.id === selectedRole
@@ -247,7 +247,7 @@ export default function RequestAccessScreen({
               return (
                 <div key={step} className="flex items-center">
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${
+                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium transition-all ${
                       currentStep === step
                         ? 'bg-violet-500 text-white'
                         : currentStep > step
@@ -256,14 +256,14 @@ export default function RequestAccessScreen({
                     }`}
                   >
                     {currentStep > step ? (
-                      <CheckCircle2 className="w-5 h-5" />
+                      <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" />
                     ) : (
                       step
                     )}
                   </div>
                   {step < 5 && shouldShow && (
                     <div
-                      className={`w-12 h-0.5 mx-2 transition-all ${
+                      className={`w-6 sm:w-12 h-0.5 mx-1 sm:mx-2 transition-all ${
                         currentStep > step ? 'bg-violet-500/50' : 'bg-white/10'
                       }`}
                     />

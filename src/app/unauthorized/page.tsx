@@ -42,14 +42,13 @@ export default function UnauthorizedPage() {
                 Go to Home
               </Button>
             </Link>
-            <Button
-              variant="outline"
-              onClick={() => window.history.back()}
-              className="border-white/[0.08] bg-white/[0.02] text-zinc-300 hover:bg-white/[0.05] hover:text-white w-full sm:w-auto"
+            <Link
+              href="/"
+              className="border-white/[0.08] flex items-center gap-2 px-2 py-2 rounded-lg bg-white/[0.02] text-zinc-300 hover:bg-white/[0.05] hover:text-white w-full sm:w-auto"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Go Back
-            </Button>
+            </Link>
           </div>
         </div>
       </div>
