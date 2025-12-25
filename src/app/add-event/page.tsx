@@ -43,31 +43,73 @@ const Page = () => {
   const [coordinators, setCoordinators] = useState<Coordinator[]>([]);
   const { postEvent, setEventsData } = useEvents();
   async function onSubmit(values: EventFormInput) {
+    console.log('Form submitted with values:', values);
+    console.log('Links:', links);
+    console.log('Coordinators:', coordinators);
+
     try {
+      console.log('Parsing event schema...');
       const parsed: EventFormOutput = eventSchema.parse(values);
+      console.log('Parsed successfully:', parsed);
+
       const eventData = {
         ...parsed,
         min_team_size: parsed.min_team_size,
         max_team_size: parsed.max_team_size,
         links: links,
         coordinators: coordinators,
-        event_category_id: '46ea4f76-36ba-469d-aed6-3bf72d1beb87',
+        event_category_id: 'c90f8d69-3520-43ac-85f6-043c6f60bf49',
       };
+
+      console.log('Event data to be posted:', eventData);
+      console.log('Calling postEvent...');
+
       await postEvent(eventData);
+
+      console.log('Event posted successfully, refreshing events data...');
       await setEventsData(true);
+
       toast.success('Event created!');
+      console.log('Redirecting to home page...');
       router.push('/');
     } catch (error: any) {
+      console.error('Error creating event:', error);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
       toast.error('Failed to create event. ' + error.message);
     }
   }
+
+  // Log form errors whenever they change
+  console.log('Form errors:', form.formState.errors);
+  console.log('Form values:', form.getValues());
+  console.log('Form is valid:', form.formState.isValid);
+  console.log('Form is submitting:', form.formState.isSubmitting);
+
   return (
     <div className="min-h-screen bg-[#050508]">
       {/* Subtle gradient overlay */}
       <div className="fixed inset-0 bg-linear-to-br from-violet-950/20 via-transparent to-indigo-950/10 pointer-events-none" />
 
+      {/* Debug Panel - Show form errors */}
+      {Object.keys(form.formState.errors).length > 0 && (
+        <div className="fixed bottom-4 right-4 bg-red-500/20 border border-red-500/50 rounded-lg p-4 max-w-md z-50">
+          <h4 className="text-red-400 font-semibold mb-2">
+            Form Validation Errors:
+          </h4>
+          <ul className="text-red-300 text-sm space-y-1">
+            {Object.entries(form.formState.errors).map(([key, error]) => (
+              <li key={key}>
+                <strong>{key}:</strong>{' '}
+                {error?.message?.toString() || 'Invalid'}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <FormProvider {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form id="create-event-form" onSubmit={form.handleSubmit(onSubmit)}>
           {/* Header */}
           <Header form={form} />
 

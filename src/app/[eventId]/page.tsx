@@ -30,8 +30,6 @@ export default function EditEventPage() {
     useEvents();
   const [links, setLinks] = useState<LinkType[]>([]);
   const [coordinators, setCoordinators] = useState<Coordinator[]>([]);
-  console.log('Events Data:', eventsData);
-  console.log('Event ID:', eventId);
   useEffect(() => {
     setEventsData(true);
   }, [setEventsData]);
@@ -77,11 +75,6 @@ export default function EditEventPage() {
     }
   }, [eventToEdit, form]);
 
-  console.log('Event to edit:', eventToEdit);
-
-  // Optionally, show a loading or error state if needed.
-  // Don't swap to the global loading skeleton while submitting updates,
-  // otherwise the page briefly "flashes" before redirecting.
   if (eventsLoading && !form.formState.isSubmitting) {
     return <EditEventSkeleton />;
   }

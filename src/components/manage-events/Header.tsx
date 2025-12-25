@@ -32,6 +32,7 @@ const Header = ({ form }: { form: any }) => {
 
           <Button
             type="submit"
+            form="create-event-form"
             className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:from-violet-500 hover:to-indigo-500 border-0"
             disabled={form.formState.isSubmitting}
           >

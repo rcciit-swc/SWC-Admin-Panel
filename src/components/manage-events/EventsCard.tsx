@@ -69,10 +69,10 @@ function EventCardSkeleton() {
 
 export function EventCards({
   isSuperAdmin = false,
-  eventID,
+  eventIDs = [],
 }: {
   isSuperAdmin: boolean;
-  eventID?: string | undefined;
+  eventIDs?: string[];
 }) {
   const { eventsData, eventsLoading, setEventsData, updateRegisterStatus } =
     useEvents();
@@ -111,7 +111,9 @@ export function EventCards({
       <AnimatePresence mode="popLayout">
         {(isSuperAdmin
           ? eventsData
-          : eventsData?.filter((event) => event.id === eventID)
+          : eventsData?.filter(
+              (event) => event.id && eventIDs.includes(event.id)
+            )
         )?.map((event, index) => (
           <motion.div
             key={event.id}

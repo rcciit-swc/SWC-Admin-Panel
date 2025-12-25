@@ -13,9 +13,9 @@ export const eventSchema = z.object({
   max_team_size: z.coerce
     .number()
     .min(1, 'Maximum team size must be at least 1'),
-  schedule: z.string(),
-  description: z.string(),
-  rules: z.string(),
+  schedule: z.string().optional().default(''),
+  description: z.string().optional().default(''),
+  rules: z.string().optional().default(''),
   coordinators: z
     .array(
       z.object({

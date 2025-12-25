@@ -49,12 +49,35 @@ export const getEventsData = async (all: boolean = true) => {
     const { data: userData, error: userError } = await supabase.auth.getUser();
 
     if (userError) {
+      // AuthSessionMissingError is expected when user is not logged in
+      if (
+        userError.message?.includes('Auth session missing') ||
+        userError.name === 'AuthSessionMissingError'
+      ) {
+        // Silently continue without user context
+        const p_user_id = null;
+        const p_fest_id = '5bff3a43-43b6-420a-8d42-9a96257cc351';
+
+        // Fetch all events without user context
+        const { data, error } = await supabase.rpc('get_events_by_fest', {
+          p_fest_id,
+          p_user_id,
+        });
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        return data;
+      }
+
+      // Log other unexpected errors
       console.error('Error getting user:', userError);
       return null;
     }
 
     const p_user_id = userData.user?.id || null;
-    const p_fest_id = 'a4bc08e4-9af9-4212-8d32-cd88d2437f18';
+    const p_fest_id = '5bff3a43-43b6-420a-8d42-9a96257cc351';
     const rolesData: {
       role: string;
       event_category_id?: string;
@@ -217,27 +240,26 @@ export const getApprovalDashboardData = async (
     const rolesData = await getRoles();
     const isAdmin = rolesData?.find((role: any) => role.role === 'super_admin');
     const isCoordinator = rolesData?.find(
-      (role: any) => role.role === 'coordinator'
+      (role: any) => role.role === 'coordinator' || role.role === 'convenor'
     );
-    // const roleCategory = rolesData?.map((roles: { event_category_id: string | null }) =>
-    //   roles.event_category_id !== null ? roles.event_category_id : null
-    // )[0];
-    // const eventIds = rolesData
-    //   ?.map((role: { event_id: string | null }) => (role.event_id !== null ? role.event_id : null))
-    //   .filter((id: string | null) => id !== null);
-    // const finalEventIds = eventIds!.length > 0 ? eventIds : null;
+
+    // Collect all event_ids from all coordinator/convenor roles
+    const eventIds =
+      rolesData
+        ?.filter(
+          (role: any) => role.role === 'coordinator' || role.role === 'convenor'
+        )
+        .map((role: any) => role.event_id)
+        .filter((id: any) => id !== null && id !== undefined) || [];
 
     const { data, error } = await supabase
       .rpc('get_registrations_by_event_ids', {
-        p_fest_id: 'a4bc08e4-9af9-4212-8d32-cd88d2437f18',
+        p_fest_id: '5bff3a43-43b6-420a-8d42-9a96257cc351',
         p_event_category_id:
           isAdmin?.role === 'super_admin'
-            ? '46ea4f76-36ba-469d-aed6-3bf72d1beb87'
-            : null,
-        p_event_id:
-          isCoordinator?.role === 'coordinator'
-            ? [isCoordinator?.event_id]
-            : null,
+            ? null
+            : 'c90f8d69-3520-43ac-85f6-043c6f60bf49',
+        p_event_id: isCoordinator ? eventIds : null,
       })
       .range(rangeStart, rangeEnd);
 
