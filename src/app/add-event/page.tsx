@@ -6,7 +6,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Coordinator, LinkType } from '@/lib/types/events';
 import { toast } from 'sonner';
-import 'react-quill/dist/quill.snow.css';
 import { useEvents } from '@/lib/stores/events';
 import Header from '@/components/manage-events/Header';
 import { BasicInformation } from '@/components/manage-events/BasicInformation';

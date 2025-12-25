@@ -1,2 +1,2 @@
-export { useUserStore, useUser } from './user';
+export { useUser } from './user';
 export { useEvents } from './events';

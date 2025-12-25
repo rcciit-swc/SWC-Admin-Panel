@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Loader2, Save, ArrowLeft, Calendar, Settings } from 'lucide-react';
-import 'react-quill/dist/quill.snow.css';
 import { eventSchema } from '@/lib/schemas/events';
 type EventFormInput = z.input<typeof eventSchema>;
 type EventFormOutput = z.output<typeof eventSchema>;
