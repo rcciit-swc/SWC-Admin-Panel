@@ -1,11 +1,12 @@
+'use client';
 import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import { Calendar, FileText } from 'lucide-react';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
 
 export function ScheduleAndDescription({ form }: { form: any }) {
   return (
@@ -32,17 +33,18 @@ export function ScheduleAndDescription({ form }: { form: any }) {
           name="schedule"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-zinc-300 text-sm font-medium flex items-center gap-2">
+              <div className="flex items-center gap-2 mb-2">
                 <Calendar className="w-3.5 h-3.5 text-zinc-500" />
-                Schedule
-              </FormLabel>
+                <label className="text-zinc-300 text-sm font-medium">
+                  Schedule
+                </label>
+              </div>
               <FormControl>
-                <textarea
-                  value={field.value ?? ''}
-                  onChange={(e) => field.onChange(e.target.value)}
-                  rows={5}
+                <RichTextEditor
+                  value={field.value || ''}
+                  onChange={field.onChange}
                   placeholder="Enter event schedule details..."
-                  className="w-full resize-y bg-[#0d0d12] text-white border border-white/10 rounded-lg p-3 text-sm focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 outline-none placeholder:text-zinc-600 transition-colors"
+                  minHeight="150px"
                 />
               </FormControl>
               <FormMessage />
@@ -55,17 +57,18 @@ export function ScheduleAndDescription({ form }: { form: any }) {
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-zinc-300 text-sm font-medium flex items-center gap-2">
+              <div className="flex items-center gap-2 mb-2">
                 <FileText className="w-3.5 h-3.5 text-zinc-500" />
-                Description
-              </FormLabel>
+                <label className="text-zinc-300 text-sm font-medium">
+                  Description
+                </label>
+              </div>
               <FormControl>
-                <textarea
-                  value={field.value ?? ''}
-                  onChange={(e) => field.onChange(e.target.value)}
-                  rows={5}
+                <RichTextEditor
+                  value={field.value || ''}
+                  onChange={field.onChange}
                   placeholder="Describe what this event is about..."
-                  className="w-full resize-y bg-[#0d0d12] text-white border border-white/10 rounded-lg p-3 text-sm focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 outline-none placeholder:text-zinc-600 transition-colors"
+                  minHeight="150px"
                 />
               </FormControl>
               <FormMessage />

@@ -1,11 +1,12 @@
+'use client';
 import {
   FormField,
   FormItem,
   FormControl,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import { ScrollText } from 'lucide-react';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
 
 export function RulesAndGuidelines({ form }: { form: any }) {
   return (
@@ -20,7 +21,7 @@ export function RulesAndGuidelines({ form }: { form: any }) {
             Rules & Guidelines
           </h3>
           <p className="text-sm text-zinc-500">
-            Set clear rules for participants
+            Set clear rules and guidelines for participants to follow.
           </p>
         </div>
       </div>
@@ -31,17 +32,12 @@ export function RulesAndGuidelines({ form }: { form: any }) {
         name="rules"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-zinc-300 text-sm font-medium flex items-center gap-2">
-              <ScrollText className="w-3.5 h-3.5 text-zinc-500" />
-              Rules
-            </FormLabel>
             <FormControl>
-              <textarea
-                value={field.value ?? ''}
-                onChange={(e) => field.onChange(e.target.value)}
-                rows={12}
+              <RichTextEditor
+                value={field.value || ''}
+                onChange={field.onChange}
                 placeholder="Enter event rules and guidelines..."
-                className="w-full resize-y bg-[#0d0d12] text-white border border-white/10 rounded-lg p-3 text-sm focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 outline-none placeholder:text-zinc-600 transition-colors"
+                minHeight="200px"
               />
             </FormControl>
             <FormMessage />

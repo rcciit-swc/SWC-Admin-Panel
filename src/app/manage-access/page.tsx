@@ -1,6 +1,7 @@
 import { supabaseServer } from '@/utils/functions/supabase-server';
 import { redirect } from 'next/navigation';
 import ManageAccessPage from '@/components/ManageAccessPage';
+import { login } from '@/utils/functions/login';
 
 export default async function ManageAccessRoute() {
   const supabase = await supabaseServer();
@@ -11,14 +12,14 @@ export default async function ManageAccessRoute() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect('/auth/login');
+    login();
   }
 
   // Check if user is super admin
   const { data: roles } = await supabase
     .from('roles')
     .select('role')
-    .eq('user_id', user.id);
+    .eq('user_id', user?.id);
 
   const isSuperAdmin = roles?.some((r) => r.role === 'super_admin');
 
