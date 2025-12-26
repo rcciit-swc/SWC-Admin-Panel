@@ -21,6 +21,16 @@ export const approveEventAction = async (
   festId: string | null,
   currentEventIds: string[]
 ) => {
+  console.log('approveEventAction params:', {
+    requestId,
+    userId,
+    role,
+    eventId,
+    eventCategoryId,
+    festId,
+    currentEventIds
+  });
+
   const success = await approveEventForUser(
     requestId,
     userId,
@@ -43,9 +53,16 @@ export const approveSuperAdminAction = async (
   set: any,
   requestId: number,
   userId: string,
-  role: string
+  role: string,
+  festId?: string | null,
+  eventCategoryId?: string | null
 ) => {
-  const success = await approveSuperAdminRequest(requestId, userId, role);
+  const success = await approveSuperAdminRequest(
+    requestId,
+    userId,
+    role,
+    eventCategoryId
+  );
 
   if (success) {
     // Refresh requests list

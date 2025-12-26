@@ -37,7 +37,9 @@ export interface RequestsActionsType {
   approveSuperAdmin: (
     requestId: number,
     userId: string,
-    role: string
+    role: string,
+    festId?: string | null,
+    eventCategoryId?: string | null
   ) => Promise<boolean>;
   rejectRequest: (requestId: number) => Promise<boolean>;
 }

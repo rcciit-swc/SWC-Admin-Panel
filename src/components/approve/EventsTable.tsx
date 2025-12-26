@@ -29,6 +29,7 @@ import { approveRegistration } from '@/utils/functions/register-services';
 import { Filter } from './EventFilters';
 import { getRoles } from '@/utils/functions';
 import { dateTime } from '@/utils/functions/dateUtils';
+import { whatsAppLinks } from '@/utils/constraints/constants/whatsApp';
 
 const COLUMN_WIDTHS = [
   100, 180, 400, 240, 220, 440, 240, 240, 360, 280, 180, 280,
@@ -62,6 +63,7 @@ export default function EventsTable() {
     getApprovalDashboardData(0, 1000);
   };
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isFaculty, setIsFaculty] = useState(false);
   const canModerate = useMemo(() => {
     return (rolesData || []).some(
       (role: any) =>
@@ -76,8 +78,12 @@ export default function EventsTable() {
       const superAdminRole = roles.find(
         (role: any) => role?.role === 'super_admin'
       );
+      const facultyRole = roles.find(
+        (role: any) => role?.role === 'faculty'
+      );
       setRolesData(roles as any);
       setIsAdmin(Boolean(superAdminRole));
+      setIsFaculty(Boolean(facultyRole));
     };
     getRolesData();
   }, []);
@@ -244,11 +250,10 @@ export default function EventsTable() {
                   <TooltipTrigger asChild>
                     <button
                       type="button"
-                      className={`min-w-[110px] inline-flex items-center justify-center px-2 py-1 rounded-md font-medium cursor-pointer whitespace-nowrap ${
-                        item.paymentstatus === 'Verified'
-                          ? 'bg-[#132F21] text-[#4ADE80] border border-[#4ADE80]/20'
-                          : 'bg-[#2A1215] text-[#F87171] border border-[#F87171]/20'
-                      }`}
+                      className={`min-w-[110px] inline-flex items-center justify-center px-2 py-1 rounded-md font-medium cursor-pointer whitespace-nowrap ${item.paymentstatus === 'Verified'
+                        ? 'bg-[#132F21] text-[#4ADE80] border border-[#4ADE80]/20'
+                        : 'bg-[#2A1215] text-[#F87171] border border-[#F87171]/20'
+                        }`}
                       onClick={() => setIsDialogOpen(true)}
                     >
                       {item.paymentstatus}
@@ -323,13 +328,47 @@ export default function EventsTable() {
                 </div>
               )}
 
-              {canModerate && (
+              {isAdmin && !isFaculty && (
                 <div className="flex flex-row items-center justify-end gap-3 mt-6">
                   <Button
                     className="bg-violet-600 hover:bg-violet-700 text-white"
                     onClick={async () => {
                       try {
+                        const eventCoordinators = eventsData?.find(
+                          (event: events) => event.name === item.eventname
+                        )?.coordinators;
                         await approveRegistration(item.team_id);
+                        const emailData = {
+                          eventName: item.eventname,
+                          year: '2026',
+                          festName: 'Game of Thrones',
+                          teamName: item.teamname,
+                          leaderName: item.teamlead,
+                          leaderPhone: item.teamleadphone,
+                          email: item.teamleademail,
+                          whatsappLink: whatsAppLinks?.find((link) => link.event_id === eventId)?.link,
+                          teamMembers: item.teammembers,
+                          coordinators: eventCoordinators,
+                          contactEmail: 'rcciit.got.official@gmail.com',
+                          logoUrl: 'https://i.postimg.cc/Gtpt62ST/got.jpg',
+                        };
+                        const emailResponse = await fetch('/api/sendMail', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                            to: [
+                              item.teamleademail,
+                              ...item.teammembers.map(
+                                (member: any) => member.email
+                              ),
+                            ],
+                            subject: `🎉 Registration Confirmed: ${item.eventname} - GAME OF THRONES 2026`,
+                            fileName: 'verify-email.ejs',
+                            data: emailData,
+                          }),
+                        });
                         refreshData();
                         toast.success('Payment Accepted Successfully');
                         setIsDialogOpen(false);

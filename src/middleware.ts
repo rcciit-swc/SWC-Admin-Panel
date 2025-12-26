@@ -117,7 +117,7 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // Handle /approve route - coordinator, convenor, or super_admin
+  // Handle /approve route - coordinator, convenor, faculty, or super_admin
   if (url.pathname.startsWith('/approve')) {
     const { data: userRoles } = await supabase
       .from('roles')
@@ -131,7 +131,8 @@ export async function middleware(req: NextRequest) {
       userRoles.length > 0 &&
       (roles.includes('super_admin') ||
         roles.includes('coordinator') ||
-        roles.includes('convenor'))
+        roles.includes('convenor') ||
+        roles.includes('faculty'))
     ) {
       return NextResponse.next();
     } else {

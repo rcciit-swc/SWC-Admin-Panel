@@ -98,11 +98,12 @@ export default function ApproveRequestsPage() {
     setProcessingEventId(null);
   };
 
-  const handleApproveSuperAdmin = async (request: RoleRequest) => {
+  const handleApproveFacultyOrSuperAdmin = async (request: RoleRequest) => {
     const success = await approveSuperAdmin(
       request.id,
       request.user_id,
-      request.role
+      request.role,
+      request.event_category_id || null
     );
 
     if (success) {
@@ -138,6 +139,8 @@ export default function ApproveRequestsPage() {
         return 'from-violet-500/20 to-purple-500/20 border-violet-500/30 text-violet-400';
       case 'coordinator':
         return 'from-blue-500/20 to-cyan-500/20 border-blue-500/30 text-blue-400';
+      case 'faculty':
+        return 'from-emerald-500/20 to-green-500/20 border-emerald-500/30 text-emerald-400';
       default:
         return 'from-zinc-500/20 to-gray-500/20 border-zinc-500/30 text-zinc-400';
     }
@@ -266,9 +269,9 @@ export default function ApproveRequestsPage() {
                       </td>
                       <td className="p-4">
                         <div className="flex items-center justify-end gap-2">
-                          {request.role === 'super_admin' ? (
+                          {request.role === 'super_admin' || request.role === 'faculty' ? (
                             <Button
-                              onClick={() => handleApproveSuperAdmin(request)}
+                              onClick={() => handleApproveFacultyOrSuperAdmin(request)}
                               size="sm"
                               className="bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-500 hover:to-emerald-500 border-0"
                             >

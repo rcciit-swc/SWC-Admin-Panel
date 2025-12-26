@@ -43,7 +43,14 @@ const Page = async () => {
 
     const isAdmin = roles?.find((role) => role.role === 'super_admin');
     const securityAdmin = roles?.find((role) => role.role === 'security_admin');
-    const hasAnyRole = roles && roles.length > 0; // Any role (coordinator, convenor, super_admin)
+    const isFaculty = roles?.find((role) => role.role === 'faculty');
+    const hasAnyRole = roles && roles.length > 0; // Any role (coordinator, convenor, super_admin, faculty)
+
+    // Redirect faculty users to /approve page only
+    if (isFaculty && !isAdmin) {
+      const { redirect } = await import('next/navigation');
+      redirect('/approve');
+    }
 
     // Collect all event_ids from all roles
     const eventIds =

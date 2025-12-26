@@ -126,13 +126,26 @@ export const approveEventForUser = async (
   currentEventIds: string[]
 ): Promise<boolean> => {
   try {
+    // Get the current user (approver)
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+
+    if (!currentUser) {
+      toast.error('You must be logged in to approve requests');
+      return false;
+    }
+
+    // Ensure currentEventIds is a valid array, use empty array as fallback
+    const safeEventIds = currentEventIds && Array.isArray(currentEventIds) ? currentEventIds : [];
+    console.log('Original currentEventIds:', currentEventIds);
+    console.log('Safe eventIds:', safeEventIds);
+
     // Create role entry for the user
     const { error: roleError } = await supabase.from('roles').insert({
       user_id: userId,
       role: role,
       event_id: eventId,
       event_category_id: eventCategoryId,
-      granted_by: userId,
+      granted_by: currentUser.id,
     });
 
     if (roleError) {
@@ -142,7 +155,8 @@ export const approveEventForUser = async (
     }
 
     // Remove event from request's event_ids array
-    const updatedEventIds = currentEventIds.filter((id) => id !== eventId);
+    console.log('Filtering event:', eventId);
+    const updatedEventIds = safeEventIds.filter((id) => id !== eventId);
 
     if (updatedEventIds.length === 0) {
       // Delete the entire request if no events left
@@ -180,21 +194,30 @@ export const approveEventForUser = async (
 };
 
 /**
- * Approve request for super_admin role (no events)
+ * Approve request for super_admin or faculty role
  */
 export const approveSuperAdminRequest = async (
   requestId: number,
   userId: string,
-  role: string
+  role: string,
+  eventCategoryId?: string | null
 ): Promise<boolean> => {
   try {
-    // Create role entry for super admin
+    // Get the current user (approver)
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+
+    if (!currentUser) {
+      toast.error('You must be logged in to approve requests');
+      return false;
+    }
+
+    // Create role entry for super admin or faculty
     const { error: roleError } = await supabase.from('roles').insert({
       user_id: userId,
       role: role,
       event_id: null,
-      event_category_id: null,
-      granted_by: userId,
+      event_category_id: eventCategoryId || null,
+      granted_by: currentUser.id, // Use approver's ID
     });
 
     if (roleError) {
@@ -215,10 +238,10 @@ export const approveSuperAdminRequest = async (
       return false;
     }
 
-    toast.success('Super admin role approved successfully!');
+    toast.success(`${role.replace('_', ' ').toUpperCase()} role approved successfully!`);
     return true;
   } catch (err) {
-    console.error('Unexpected error approving super admin:', err);
+    console.error('Unexpected error approving role:', err);
     toast.error('Unexpected error occurred');
     return false;
   }
