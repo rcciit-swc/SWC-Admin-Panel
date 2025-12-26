@@ -31,8 +31,9 @@ import { getRoles } from '@/utils/functions';
 import { dateTime } from '@/utils/functions/dateUtils';
 import { whatsAppLinks } from '@/utils/constraints/constants/whatsApp';
 
+// Optimized column widths: SL, Payment, Event, Type, Team, College, Lead, Phone, Email, TxnID, Members, Date
 const COLUMN_WIDTHS = [
-  100, 180, 400, 240, 220, 440, 240, 240, 360, 280, 180, 280,
+  70, 140, 200, 120, 180, 200, 150, 130, 220, 180, 100, 180,
 ];
 const TABLE_WIDTH = COLUMN_WIDTHS.reduce((a, b) => a + b, 0);
 
@@ -234,23 +235,23 @@ export default function EventsTable() {
     return (
       <div
         style={{ ...style, width: TABLE_WIDTH }}
-        className="flex items-center  border-b border-gray-800 hover:bg-[#131926] transition-colors"
+        className="flex items-center border-b border-gray-800 hover:bg-[#131926] transition-colors text-sm md:text-base"
       >
         {COLUMN_WIDTHS.map((width, colIndex) => (
           <div
             key={colIndex}
-            className="p-4 flex-none text-gray-100"
+            className="p-2 md:p-4 flex-none text-gray-100 overflow-hidden"
             style={{ width: width }}
           >
             {colIndex === 0 ? (
-              item.serial_no
+              <span className="truncate block">{item.serial_no}</span>
             ) : colIndex === 1 ? (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
                       type="button"
-                      className={`min-w-[110px] inline-flex items-center justify-center px-2 py-1 rounded-md font-medium cursor-pointer whitespace-nowrap ${item.paymentstatus === 'Verified'
+                      className={`min-w-[110px] inline-flex items-center justify-center px-2 py-1 rounded-md font-medium cursor-pointer whitespace-nowrap text-xs md:text-sm ${item.paymentstatus === 'Verified'
                         ? 'bg-[#132F21] text-[#4ADE80] border border-[#4ADE80]/20'
                         : 'bg-[#2A1215] text-[#F87171] border border-[#F87171]/20'
                         }`}
@@ -267,23 +268,23 @@ export default function EventsTable() {
                 </Tooltip>
               </TooltipProvider>
             ) : colIndex === 2 ? (
-              item.eventname
+              <span className="truncate block" title={item.eventname}>{item.eventname}</span>
             ) : colIndex === 3 ? (
-              <span className="min-w-[100px] inline-flex items-center justify-center px-2 py-1 rounded-md bg-[#1F2937] text-gray-300 whitespace-nowrap">
+              <span className="min-w-[100px] inline-flex items-center justify-center px-2 py-1 rounded-md bg-[#1F2937] text-gray-300 whitespace-nowrap text-xs md:text-sm">
                 {item.type}
               </span>
             ) : colIndex === 4 ? (
-              item.teamname
+              <span className="truncate block" title={item.teamname}>{item.teamname}</span>
             ) : colIndex === 5 ? (
-              item.college
+              <span className="truncate block" title={item.college}>{item.college}</span>
             ) : colIndex === 6 ? (
-              item.teamlead
+              <span className="truncate block" title={item.teamlead}>{item.teamlead}</span>
             ) : colIndex === 7 ? (
-              item.teamleadphone
+              <span className="truncate block" title={item.teamleadphone}>{item.teamleadphone}</span>
             ) : colIndex === 8 ? (
-              item.teamleademail
+              <span className="truncate block" title={item.teamleademail}>{item.teamleademail}</span>
             ) : colIndex === 9 ? (
-              <span className="font-mono text-gray-300">
+              <span className="font-mono text-gray-300 truncate block" title={item.transactionid}>
                 {item.transactionid}
               </span>
             ) : colIndex === 10 ? (
@@ -294,7 +295,7 @@ export default function EventsTable() {
                 />
               </div>
             ) : (
-              <span className="text-gray-400">
+              <span className="text-gray-400 truncate block">
                 {item.registeredat?.split('T')[0]}
               </span>
             )}
@@ -511,9 +512,9 @@ export default function EventsTable() {
         </Button>
       </div>
 
-      <div className="overflow-x-auto border border-gray-800 rounded-lg bg-[#0B0F17]">
-        <div style={{ width: TABLE_WIDTH }}>
-          <div className="sticky top-0 z-10 flex items-center font-bold border-b border-gray-800 bg-[#0B0F17]">
+      <div className="overflow-x-auto border border-gray-800 rounded-lg bg-[#0B0F17] -mx-6 md:mx-0" style={{ WebkitOverflowScrolling: 'touch' }}>
+        <div style={{ width: TABLE_WIDTH }} className="min-w-full">
+          <div className="sticky top-0 z-10 flex items-center font-bold border-b border-gray-800 bg-[#0B0F17] text-xs md:text-sm">
             {[
               'SL No.',
               'Payment Status',
@@ -530,7 +531,7 @@ export default function EventsTable() {
             ].map((header, index) => (
               <div
                 key={index}
-                className="p-4 flex-none text-gray-100"
+                className="p-2 md:p-4 flex-none text-gray-100"
                 style={{ width: COLUMN_WIDTHS[index] }}
               >
                 {header}

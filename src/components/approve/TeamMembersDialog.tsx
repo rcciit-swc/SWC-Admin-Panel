@@ -93,7 +93,7 @@ export function TeamMembersDialog({
             className="bg-violet-500/10 border-violet-500/20 hover:bg-violet-500/15 hover:border-violet-400/30 text-violet-200 transition-colors"
           >
             <Users className="w-4 h-4 mr-2 text-violet-300" />
-            View Team
+            View
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[750px] max-h-[85vh] bg-[#0a0a0f] border border-white/6 rounded-xl p-4 sm:p-6 shadow-xl overflow-hidden">

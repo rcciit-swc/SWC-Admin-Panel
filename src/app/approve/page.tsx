@@ -58,9 +58,9 @@ export default async function Page() {
         </div>
       </header>
 
-      <main className="relative container max-w-7xl mx-auto px-6 py-2">
+      <main className="relative container max-w-7xl mx-auto px-0 md:px-6 py-2">
         <section className="">
-          <div className="p-6">
+          <div className="p-6 md:p-6 px-6">
             <Suspense fallback={<TableSkeleton />}>
               <EventsTable />
             </Suspense>
