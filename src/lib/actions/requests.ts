@@ -28,7 +28,7 @@ export const approveEventAction = async (
     eventId,
     eventCategoryId,
     festId,
-    currentEventIds
+    currentEventIds,
   });
 
   const success = await approveEventForUser(

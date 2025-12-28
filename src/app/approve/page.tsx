@@ -8,7 +8,8 @@ import { supabaseServer } from '@/utils/functions/supabase-server';
 
 export const metadata: Metadata = {
   title: 'Approve Registrations | RCCIIT SWC',
-  description: 'Review payment status and manage event registrations for RCCIIT Sports and Welfare Committee',
+  description:
+    'Review payment status and manage event registrations for RCCIIT Sports and Welfare Committee',
 };
 
 export default async function Page() {

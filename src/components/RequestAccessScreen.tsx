@@ -156,7 +156,10 @@ export default function RequestAccessScreen({
 
     if (currentStep === 1 && selectedRole) {
       // If super_admin is selected, skip to final step
-      if (!selectedRoleData?.requiresEvent && !selectedRoleData?.requiresFestAndCategory) {
+      if (
+        !selectedRoleData?.requiresEvent &&
+        !selectedRoleData?.requiresFestAndCategory
+      ) {
         setCurrentStep(5);
       } else {
         setCurrentStep(2);
@@ -178,7 +181,11 @@ export default function RequestAccessScreen({
   const handleBack = () => {
     const selectedRoleData = availableRoles.find((r) => r.id === selectedRole);
 
-    if (currentStep === 5 && !selectedRoleData?.requiresEvent && !selectedRoleData?.requiresFestAndCategory) {
+    if (
+      currentStep === 5 &&
+      !selectedRoleData?.requiresEvent &&
+      !selectedRoleData?.requiresFestAndCategory
+    ) {
       // If super_admin, go back to step 1
       setCurrentStep(1);
     } else if (currentStep === 5 && selectedRoleData?.requiresFestAndCategory) {
@@ -276,19 +283,21 @@ export default function RequestAccessScreen({
                 step === 5;
 
               // For faculty role, hide step 4 (event selection)
-              if (selectedRoleData?.requiresFestAndCategory && step === 4) return null;
+              if (selectedRoleData?.requiresFestAndCategory && step === 4)
+                return null;
 
               if (!shouldShow) return null;
 
               return (
                 <div key={step} className="flex items-center">
                   <div
-                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium transition-all ${currentStep === step
+                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium transition-all ${
+                      currentStep === step
                         ? 'bg-violet-500 text-white'
                         : currentStep > step
                           ? 'bg-violet-500/20 text-violet-400'
                           : 'bg-white/5 text-zinc-500'
-                      }`}
+                    }`}
                   >
                     {currentStep > step ? (
                       <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -298,8 +307,9 @@ export default function RequestAccessScreen({
                   </div>
                   {step < 5 && shouldShow && (
                     <div
-                      className={`w-6 sm:w-12 h-0.5 mx-1 sm:mx-2 transition-all ${currentStep > step ? 'bg-violet-500/50' : 'bg-white/10'
-                        }`}
+                      className={`w-6 sm:w-12 h-0.5 mx-1 sm:mx-2 transition-all ${
+                        currentStep > step ? 'bg-violet-500/50' : 'bg-white/10'
+                      }`}
                     />
                   )}
                 </div>
@@ -329,19 +339,21 @@ export default function RequestAccessScreen({
                     <motion.button
                       key={role.id}
                       onClick={() => setSelectedRole(role.id)}
-                      className={`w-full p-6 rounded-xl border transition-all text-left ${isSelected
+                      className={`w-full p-6 rounded-xl border transition-all text-left ${
+                        isSelected
                           ? 'border-violet-500/50 bg-violet-500/10'
                           : 'border-white/[0.06] bg-white/[0.02] hover:border-white/[0.12] hover:bg-white/[0.04]'
-                        }`}
+                      }`}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
                       <div className="flex items-start gap-4">
                         <div
-                          className={`w-12 h-12 rounded-lg flex items-center justify-center ${isSelected
+                          className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                            isSelected
                               ? 'bg-violet-500/20 border border-violet-500/30'
                               : 'bg-white/5 border border-white/10'
-                            }`}
+                          }`}
                         >
                           <Icon
                             className={`w-6 h-6 ${isSelected ? 'text-violet-400' : 'text-zinc-400'}`}
@@ -395,10 +407,11 @@ export default function RequestAccessScreen({
                         <motion.button
                           key={fest.id}
                           onClick={() => setSelectedFest(fest.id)}
-                          className={`w-full p-4 rounded-xl border transition-all text-left ${isSelected
+                          className={`w-full p-4 rounded-xl border transition-all text-left ${
+                            isSelected
                               ? 'border-violet-500/50 bg-violet-500/10'
                               : 'border-white/[0.06] bg-white/[0.02] hover:border-white/[0.12] hover:bg-white/[0.04]'
-                            }`}
+                          }`}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >
@@ -453,10 +466,11 @@ export default function RequestAccessScreen({
                         <motion.button
                           key={category.id}
                           onClick={() => setSelectedCategory(category.id)}
-                          className={`w-full p-4 rounded-xl border transition-all text-left ${isSelected
+                          className={`w-full p-4 rounded-xl border transition-all text-left ${
+                            isSelected
                               ? 'border-violet-500/50 bg-violet-500/10'
                               : 'border-white/[0.06] bg-white/[0.02] hover:border-white/[0.12] hover:bg-white/[0.04]'
-                            }`}
+                          }`}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >
@@ -522,10 +536,11 @@ export default function RequestAccessScreen({
                         <motion.button
                           key={event.id}
                           onClick={handleToggleEvent}
-                          className={`w-full p-4 rounded-xl border transition-all text-left ${isSelected
+                          className={`w-full p-4 rounded-xl border transition-all text-left ${
+                            isSelected
                               ? 'border-violet-500/50 bg-violet-500/10'
                               : 'border-white/[0.06] bg-white/[0.02] hover:border-white/[0.12] hover:bg-white/[0.04]'
-                            }`}
+                          }`}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >
@@ -570,44 +585,46 @@ export default function RequestAccessScreen({
                     ?.requiresEvent ||
                     availableRoles.find((r) => r.id === selectedRole)
                       ?.requiresFestAndCategory) && (
-                      <>
+                    <>
+                      <div>
+                        <p className="text-sm text-zinc-400 mb-1">Fest</p>
+                        <p className="text-white font-medium">
+                          {fests.find((f) => f.id === selectedFest)?.name ||
+                            'N/A'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-zinc-400 mb-1">Category</p>
+                        <p className="text-white font-medium">
+                          {categories.find((c) => c.id === selectedCategory)
+                            ?.name || 'N/A'}
+                        </p>
+                      </div>
+                      {availableRoles.find((r) => r.id === selectedRole)
+                        ?.requiresEvent && (
                         <div>
-                          <p className="text-sm text-zinc-400 mb-1">Fest</p>
-                          <p className="text-white font-medium">
-                            {fests.find((f) => f.id === selectedFest)?.name ||
-                              'N/A'}
+                          <p className="text-sm text-zinc-400 mb-1">
+                            Events ({selectedEvents.length} selected)
                           </p>
+                          <div className="space-y-1">
+                            {selectedEvents.map((eventId) => {
+                              const event = events.find(
+                                (e) => e.id === eventId
+                              );
+                              return (
+                                <p
+                                  key={eventId}
+                                  className="text-white font-medium"
+                                >
+                                  • {event?.name || 'Unknown Event'}
+                                </p>
+                              );
+                            })}
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-sm text-zinc-400 mb-1">Category</p>
-                          <p className="text-white font-medium">
-                            {categories.find((c) => c.id === selectedCategory)
-                              ?.name || 'N/A'}
-                          </p>
-                        </div>
-                        {availableRoles.find((r) => r.id === selectedRole)
-                          ?.requiresEvent && (
-                            <div>
-                              <p className="text-sm text-zinc-400 mb-1">
-                                Events ({selectedEvents.length} selected)
-                              </p>
-                              <div className="space-y-1">
-                                {selectedEvents.map((eventId) => {
-                                  const event = events.find((e) => e.id === eventId);
-                                  return (
-                                    <p
-                                      key={eventId}
-                                      className="text-white font-medium"
-                                    >
-                                      • {event?.name || 'Unknown Event'}
-                                    </p>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          )}
-                      </>
-                    )}
+                      )}
+                    </>
+                  )}
                 </div>
               </motion.div>
             )}

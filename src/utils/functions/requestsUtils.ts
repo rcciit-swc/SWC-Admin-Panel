@@ -127,7 +127,9 @@ export const approveEventForUser = async (
 ): Promise<boolean> => {
   try {
     // Get the current user (approver)
-    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    const {
+      data: { user: currentUser },
+    } = await supabase.auth.getUser();
 
     if (!currentUser) {
       toast.error('You must be logged in to approve requests');
@@ -135,7 +137,8 @@ export const approveEventForUser = async (
     }
 
     // Ensure currentEventIds is a valid array, use empty array as fallback
-    const safeEventIds = currentEventIds && Array.isArray(currentEventIds) ? currentEventIds : [];
+    const safeEventIds =
+      currentEventIds && Array.isArray(currentEventIds) ? currentEventIds : [];
     console.log('Original currentEventIds:', currentEventIds);
     console.log('Safe eventIds:', safeEventIds);
 
@@ -204,7 +207,9 @@ export const approveSuperAdminRequest = async (
 ): Promise<boolean> => {
   try {
     // Get the current user (approver)
-    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    const {
+      data: { user: currentUser },
+    } = await supabase.auth.getUser();
 
     if (!currentUser) {
       toast.error('You must be logged in to approve requests');
@@ -238,7 +243,9 @@ export const approveSuperAdminRequest = async (
       return false;
     }
 
-    toast.success(`${role.replace('_', ' ').toUpperCase()} role approved successfully!`);
+    toast.success(
+      `${role.replace('_', ' ').toUpperCase()} role approved successfully!`
+    );
     return true;
   } catch (err) {
     console.error('Unexpected error approving role:', err);

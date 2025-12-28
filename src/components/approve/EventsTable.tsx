@@ -79,9 +79,7 @@ export default function EventsTable() {
       const superAdminRole = roles.find(
         (role: any) => role?.role === 'super_admin'
       );
-      const facultyRole = roles.find(
-        (role: any) => role?.role === 'faculty'
-      );
+      const facultyRole = roles.find((role: any) => role?.role === 'faculty');
       setRolesData(roles as any);
       setIsAdmin(Boolean(superAdminRole));
       setIsFaculty(Boolean(facultyRole));
@@ -251,10 +249,11 @@ export default function EventsTable() {
                   <TooltipTrigger asChild>
                     <button
                       type="button"
-                      className={`min-w-[110px] inline-flex items-center justify-center px-2 py-1 rounded-md font-medium cursor-pointer whitespace-nowrap text-xs md:text-sm ${item.paymentstatus === 'Verified'
-                        ? 'bg-[#132F21] text-[#4ADE80] border border-[#4ADE80]/20'
-                        : 'bg-[#2A1215] text-[#F87171] border border-[#F87171]/20'
-                        }`}
+                      className={`min-w-[110px] inline-flex items-center justify-center px-2 py-1 rounded-md font-medium cursor-pointer whitespace-nowrap text-xs md:text-sm ${
+                        item.paymentstatus === 'Verified'
+                          ? 'bg-[#132F21] text-[#4ADE80] border border-[#4ADE80]/20'
+                          : 'bg-[#2A1215] text-[#F87171] border border-[#F87171]/20'
+                      }`}
                       onClick={() => setIsDialogOpen(true)}
                     >
                       {item.paymentstatus}
@@ -268,23 +267,38 @@ export default function EventsTable() {
                 </Tooltip>
               </TooltipProvider>
             ) : colIndex === 2 ? (
-              <span className="truncate block" title={item.eventname}>{item.eventname}</span>
+              <span className="truncate block" title={item.eventname}>
+                {item.eventname}
+              </span>
             ) : colIndex === 3 ? (
               <span className="min-w-[100px] inline-flex items-center justify-center px-2 py-1 rounded-md bg-[#1F2937] text-gray-300 whitespace-nowrap text-xs md:text-sm">
                 {item.type}
               </span>
             ) : colIndex === 4 ? (
-              <span className="truncate block" title={item.teamname}>{item.teamname}</span>
+              <span className="truncate block" title={item.teamname}>
+                {item.teamname}
+              </span>
             ) : colIndex === 5 ? (
-              <span className="truncate block" title={item.college}>{item.college}</span>
+              <span className="truncate block" title={item.college}>
+                {item.college}
+              </span>
             ) : colIndex === 6 ? (
-              <span className="truncate block" title={item.teamlead}>{item.teamlead}</span>
+              <span className="truncate block" title={item.teamlead}>
+                {item.teamlead}
+              </span>
             ) : colIndex === 7 ? (
-              <span className="truncate block" title={item.teamleadphone}>{item.teamleadphone}</span>
+              <span className="truncate block" title={item.teamleadphone}>
+                {item.teamleadphone}
+              </span>
             ) : colIndex === 8 ? (
-              <span className="truncate block" title={item.teamleademail}>{item.teamleademail}</span>
+              <span className="truncate block" title={item.teamleademail}>
+                {item.teamleademail}
+              </span>
             ) : colIndex === 9 ? (
-              <span className="font-mono text-gray-300 truncate block" title={item.transactionid}>
+              <span
+                className="font-mono text-gray-300 truncate block"
+                title={item.transactionid}
+              >
                 {item.transactionid}
               </span>
             ) : colIndex === 10 ? (
@@ -347,7 +361,9 @@ export default function EventsTable() {
                           leaderName: item.teamlead,
                           leaderPhone: item.teamleadphone,
                           email: item.teamleademail,
-                          whatsappLink: whatsAppLinks?.find((link) => link.event_id === eventId)?.link,
+                          whatsappLink: whatsAppLinks?.find(
+                            (link) => link.event_id === eventId
+                          )?.link,
                           teamMembers: item.teammembers,
                           coordinators: eventCoordinators,
                           contactEmail: 'rcciit.got.official@gmail.com',
@@ -512,7 +528,10 @@ export default function EventsTable() {
         </Button>
       </div>
 
-      <div className="overflow-x-auto border border-gray-800 rounded-lg bg-[#0B0F17] -mx-6 md:mx-0" style={{ WebkitOverflowScrolling: 'touch' }}>
+      <div
+        className="overflow-x-auto border border-gray-800 rounded-lg bg-[#0B0F17] -mx-6 md:mx-0"
+        style={{ WebkitOverflowScrolling: 'touch' }}
+      >
         <div style={{ width: TABLE_WIDTH }} className="min-w-full">
           <div className="sticky top-0 z-10 flex items-center font-bold border-b border-gray-800 bg-[#0B0F17] text-xs md:text-sm">
             {[

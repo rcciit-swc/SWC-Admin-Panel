@@ -6,7 +6,8 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Approve Access Requests | RCCIIT SWC',
-  description: 'Review and approve role access requests for RCCIIT Sports and Welfare Committee',
+  description:
+    'Review and approve role access requests for RCCIIT Sports and Welfare Committee',
 };
 
 export default async function ApproveRequestsRoute() {

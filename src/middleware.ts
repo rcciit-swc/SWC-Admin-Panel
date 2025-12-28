@@ -4,11 +4,12 @@ import { createServerClient } from '@supabase/ssr';
 export async function middleware(req: NextRequest) {
   const url = new URL(req.nextUrl);
 
-  // Allow home page, auth routes, and request-access to handle their own logic
+  // Allow home page, auth routes, landing, team-entry, and request-access to handle their own logic
   if (
     url.pathname === '/' ||
     url.pathname.startsWith('/auth') ||
-    url.pathname.startsWith('/request-access')
+    url.pathname.startsWith('/landing') ||
+    url.pathname.startsWith('/team-entry')
   ) {
     return NextResponse.next();
   }
@@ -56,8 +57,11 @@ export async function middleware(req: NextRequest) {
       url.pathname.startsWith('/add-event') ||
       url.pathname.startsWith('/approve') ||
       url.pathname.startsWith('/approve-requests') ||
+      url.pathname.startsWith('/approve-team') ||
       url.pathname.startsWith('/manage-access') ||
-      url.pathname.startsWith('/profile')
+      url.pathname.startsWith('/profile') ||
+      url.pathname.startsWith('/landing') ||
+      url.pathname.startsWith('/team-entry')
     ) {
       return NextResponse.redirect(new URL('/', req.url));
     }

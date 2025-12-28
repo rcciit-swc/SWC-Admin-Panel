@@ -9,13 +9,15 @@ import {
   Sparkles,
   Shield,
   UserCheck,
+  Users,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Admin Dashboard | RCCIIT SWC',
-  description: 'Manage events, approve requests, and control access for RCCIIT Sports and Welfare Committee',
+  description:
+    'Manage events, approve requests, and control access for RCCIIT Sports and Welfare Committee',
 };
 
 const Page = async () => {
@@ -100,6 +102,12 @@ const Page = async () => {
                       <Button className="w-full sm:w-auto bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:from-amber-500 hover:to-orange-500 border-0 text-sm">
                         <Shield className="mr-2 h-4 w-4" />
                         Manage Access
+                      </Button>
+                    </Link>
+                    <Link href="/approve-team" className="w-full sm:w-auto">
+                      <Button className="w-full sm:w-auto bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:from-cyan-500 hover:to-blue-500 border-0 text-sm">
+                        <Users className="mr-2 h-4 w-4" />
+                        Approve Team
                       </Button>
                     </Link>
                   </>

@@ -20,8 +20,15 @@ export const metadata: Metadata = {
     default: 'RCCIIT SWC | Student Welfare Committee',
     template: '%s | RCCIIT SWC',
   },
-  description: 'Official admin panel for RCCIIT Student Welfare Committee - Manage events, registrations, and access control',
-  keywords: ['RCCIIT', 'SWC', 'Student Welfare Committee', 'Events', 'Admin Panel'],
+  description:
+    'Official admin panel for RCCIIT Student Welfare Committee - Manage events, registrations, and access control',
+  keywords: [
+    'RCCIIT',
+    'SWC',
+    'Student Welfare Committee',
+    'Events',
+    'Admin Panel',
+  ],
   authors: [{ name: 'RCCIIT SWC' }],
   openGraph: {
     title: 'RCCIIT SWC | Student Welfare Committee',

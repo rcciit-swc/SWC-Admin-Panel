@@ -269,9 +269,12 @@ export default function ApproveRequestsPage() {
                       </td>
                       <td className="p-4">
                         <div className="flex items-center justify-end gap-2">
-                          {request.role === 'super_admin' || request.role === 'faculty' ? (
+                          {request.role === 'super_admin' ||
+                          request.role === 'faculty' ? (
                             <Button
-                              onClick={() => handleApproveFacultyOrSuperAdmin(request)}
+                              onClick={() =>
+                                handleApproveFacultyOrSuperAdmin(request)
+                              }
                               size="sm"
                               className="bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-500 hover:to-emerald-500 border-0"
                             >

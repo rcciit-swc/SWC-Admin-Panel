@@ -28,7 +28,7 @@ export default function HomePage() {
         data: { session },
       } = await supabase.auth.getSession();
       if (session?.user) {
-        router.push('/admin');
+        router.push('/landing');
       }
     };
     checkSession();

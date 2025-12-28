@@ -6,7 +6,8 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Manage Access | RCCIIT SWC',
-  description: 'Manage user roles and permissions for RCCIIT Sports and Welfare Committee',
+  description:
+    'Manage user roles and permissions for RCCIIT Sports and Welfare Committee',
 };
 
 export default async function ManageAccessRoute() {
