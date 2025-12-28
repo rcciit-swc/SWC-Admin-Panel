@@ -11,6 +11,7 @@ import {
   UserCheck,
   Users,
   ArrowUpDown,
+  UserPlus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Metadata } from 'next';
@@ -44,20 +45,38 @@ const Page = async () => {
       return <RequestAccessScreen hasPendingRequest={!!pendingRequest} />;
     }
 
+    // Check if user has multiple roles (excluding duplicates)
+    const uniqueRoles = Array.from(new Set(roles.map((r) => r.role)));
+    const hasMultipleRoles = uniqueRoles.length > 1;
+
+    // If user has multiple roles, redirect to role selection
+    // UNLESS they're coming from the role selection page
+    if (hasMultipleRoles) {
+      const { headers } = await import('next/headers');
+      const headersList = await headers();
+      const referer = headersList.get('referer') || '';
+
+      // Only redirect if NOT coming from select-role page
+      if (!referer.includes('/select-role')) {
+        const { redirect } = await import('next/navigation');
+        redirect('/select-role');
+      }
+    }
+
     const isAdmin = roles?.find((role) => role.role === 'super_admin');
     const securityAdmin = roles?.find((role) => role.role === 'security_admin');
     const isFaculty = roles?.find((role) => role.role === 'faculty');
     const isGraphics = roles?.find((role) => role.role === 'graphics');
     const hasAnyRole = roles && roles.length > 0; // Any role (coordinator, convenor, super_admin, faculty, graphics)
 
-    // Redirect faculty users to /approve page only
-    if (isFaculty && !isAdmin) {
+    // Redirect faculty users to /approve page only (if they ONLY have faculty role)
+    if (isFaculty && !isAdmin && !hasMultipleRoles) {
       const { redirect } = await import('next/navigation');
       redirect('/approve');
     }
 
-    // Redirect graphics users to /graphics page only
-    if (isGraphics && !isAdmin) {
+    // Redirect graphics users to /graphics page only (if they ONLY have graphics role)
+    if (isGraphics && !isAdmin && !hasMultipleRoles) {
       const { redirect } = await import('next/navigation');
       redirect('/graphics');
     }

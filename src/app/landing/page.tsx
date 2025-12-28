@@ -32,7 +32,7 @@ const LandingPage = async () => {
           <p className="text-zinc-400 text-lg">Choose an action to continue</p>
         </div>
 
-        <div className="flex flex-row items-center justify-center gap-6 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {/* Enter Team Data Card */}
           <Link href="/team-entry" className="group">
             <div className="relative h-full bg-gradient-to-br from-violet-950/40 to-indigo-950/40 border border-white/10 rounded-2xl p-8 hover:border-violet-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-violet-500/20">
@@ -84,6 +84,32 @@ const LandingPage = async () => {
               </div>
             </div>
           </Link>
+
+          {/* Request Additional Access Card */}
+          <Link href="/request-access" className="group">
+            <div className="relative h-full bg-gradient-to-br from-blue-950/40 to-cyan-950/40 border border-white/10 rounded-2xl p-8 hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-cyan-600/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+              <div className="relative z-10">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <LayoutDashboard className="w-8 h-8 text-white" />
+                </div>
+
+                <h2 className="text-2xl font-bold text-white mb-3">
+                  Request Additional Access
+                </h2>
+
+                <p className="text-zinc-400 mb-6">
+                  Already have a role? Request additional roles for more events
+                  or responsibilities
+                </p>
+
+                <Button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:from-blue-500 hover:to-cyan-500 border-0">
+                  Add More Roles
+                </Button>
+              </div>
+            </div>
+          </Link>
         </div>
       </div>
     </div>
@@ -91,3 +117,4 @@ const LandingPage = async () => {
 };
 
 export default LandingPage;
+``;
