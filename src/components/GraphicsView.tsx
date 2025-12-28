@@ -46,6 +46,7 @@ export default function GraphicsView({ festId: initialFestId, isSuperAdmin }: Gr
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [copiedImage, setCopiedImage] = useState<string | null>(null);
+    const [copiedText, setCopiedText] = useState<string | null>(null);
     const [fests, setFests] = useState<Fest[]>([]);
     const [selectedFestId, setSelectedFestId] = useState<string | undefined>(initialFestId);
     const [loadingFests, setLoadingFests] = useState(isSuperAdmin);
@@ -63,6 +64,21 @@ export default function GraphicsView({ festId: initialFestId, isSuperAdmin }: Gr
             }, 2000);
         } catch (error) {
             toast.error('Failed to copy image URL');
+            console.error('Error copying to clipboard:', error);
+        }
+    };
+
+    // Copy any text to clipboard
+    const handleCopyText = async (text: string, label: string) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            setCopiedText(text);
+            toast.success(`Copied ${label}!`);
+
+            // Reset copied state after 2 seconds
+            setTimeout(() => setCopiedText(null), 2000);
+        } catch (error) {
+            toast.error(`Failed to copy ${label}`);
             console.error('Error copying to clipboard:', error);
         }
     };
@@ -387,12 +403,18 @@ export default function GraphicsView({ festId: initialFestId, isSuperAdmin }: Gr
                                             <td className="p-4">
                                                 <div className="flex flex-wrap gap-2">
                                                     {member.roles.map((role, roleIndex) => (
-                                                        <span
+                                                        <button
                                                             key={roleIndex}
-                                                            className="bg-indigo-600/30 text-indigo-300 px-3 py-1 rounded-full text-xs font-medium"
+                                                            onClick={() => handleCopyText(role, 'role')}
+                                                            className="flex items-center gap-1.5 bg-indigo-600/30 text-indigo-300 px-3 py-1 rounded-full text-xs font-medium hover:bg-indigo-600/50 transition-colors group"
                                                         >
-                                                            {role}
-                                                        </span>
+                                                            <span>{role}</span>
+                                                            {copiedText === role ? (
+                                                                <Check className="w-3 h-3 text-emerald-400" />
+                                                            ) : (
+                                                                <Copy className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                            )}
+                                                        </button>
                                                     ))}
                                                 </div>
                                             </td>
@@ -424,12 +446,18 @@ export default function GraphicsView({ festId: initialFestId, isSuperAdmin }: Gr
                                             </h3>
                                             <div className="flex flex-wrap gap-2">
                                                 {member.roles.map((role, roleIndex) => (
-                                                    <span
+                                                    <button
                                                         key={roleIndex}
-                                                        className="bg-indigo-600/30 text-indigo-300 px-2 py-1 rounded-full text-xs font-medium"
+                                                        onClick={() => handleCopyText(role, 'role')}
+                                                        className="flex items-center gap-1.5 bg-indigo-600/30 text-indigo-300 px-2 py-1 rounded-full text-xs font-medium hover:bg-indigo-600/50 transition-colors group"
                                                     >
-                                                        {role}
-                                                    </span>
+                                                        <span>{role}</span>
+                                                        {copiedText === role ? (
+                                                            <Check className="w-3 h-3 text-emerald-400" />
+                                                        ) : (
+                                                            <Copy className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                        )}
+                                                    </button>
                                                 ))}
                                             </div>
                                         </div>
