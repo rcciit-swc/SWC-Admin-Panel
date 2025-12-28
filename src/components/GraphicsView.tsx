@@ -398,7 +398,17 @@ export default function GraphicsView({ festId: initialFestId, isSuperAdmin }: Gr
                                                 </div>
                                             </td>
                                             <td className="p-4">
-                                                <p className="text-white font-medium">{member.name}</p>
+                                                <button
+                                                    onClick={() => handleCopyText(member.name, 'name')}
+                                                    className="flex items-center gap-2 text-white font-medium hover:text-indigo-400 transition-colors group"
+                                                >
+                                                    <span>{member.name}</span>
+                                                    {copiedText === member.name ? (
+                                                        <Check className="w-4 h-4 text-emerald-400" />
+                                                    ) : (
+                                                        <Copy className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                    )}
+                                                </button>
                                             </td>
                                             <td className="p-4">
                                                 <div className="flex flex-wrap gap-2">
@@ -441,9 +451,17 @@ export default function GraphicsView({ festId: initialFestId, isSuperAdmin }: Gr
                                             />
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <h3 className="text-white font-medium mb-2">
-                                                {member.name}
-                                            </h3>
+                                            <button
+                                                onClick={() => handleCopyText(member.name, 'name')}
+                                                className="flex items-center gap-2 text-white font-medium mb-2 hover:text-indigo-400 transition-colors group w-full text-left"
+                                            >
+                                                <span className="truncate">{member.name}</span>
+                                                {copiedText === member.name ? (
+                                                    <Check className="w-4 h-4 text-emerald-400" />
+                                                ) : (
+                                                    <Copy className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                                                )}
+                                            </button>
                                             <div className="flex flex-wrap gap-2">
                                                 {member.roles.map((role, roleIndex) => (
                                                     <button
