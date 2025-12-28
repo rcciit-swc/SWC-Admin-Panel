@@ -12,6 +12,7 @@ import {
   Users,
   ArrowUpDown,
   UserPlus,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Metadata } from 'next';
@@ -141,6 +142,12 @@ const Page = async () => {
                       <Button className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:from-purple-500 hover:to-pink-500 border-0 text-sm">
                         <ArrowUpDown className="mr-2 h-4 w-4" />
                         Manage Sequences
+                      </Button>
+                    </Link>
+                    <Link href="/graphics" className="w-full sm:w-auto">
+                      <Button className="w-full sm:w-auto bg-gradient-to-r from-pink-600 to-rose-600 text-white shadow-lg shadow-pink-500/25 hover:shadow-pink-500/40 hover:from-pink-500 hover:to-rose-500 border-0 text-sm">
+                        <ImageIcon className="mr-2 h-4 w-4" />
+                        Graphics View
                       </Button>
                     </Link>
                   </>
