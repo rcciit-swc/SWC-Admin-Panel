@@ -41,6 +41,6 @@ export const useRequests = create<RequestsStoreType>((set) => ({
     userId: string,
     role: string,
     eventCategoryId?: string | null
-  ) => approveSuperAdminAction(set, requestId, userId, role, eventCategoryId),
+  ) => approveSuperAdminAction(set, requestId, userId, role, null, eventCategoryId),
   rejectRequest: (requestId: number) => rejectRequestAction(set, requestId),
 }));

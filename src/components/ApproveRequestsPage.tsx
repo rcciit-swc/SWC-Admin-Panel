@@ -141,6 +141,8 @@ export default function ApproveRequestsPage() {
         return 'from-blue-500/20 to-cyan-500/20 border-blue-500/30 text-blue-400';
       case 'faculty':
         return 'from-emerald-500/20 to-green-500/20 border-emerald-500/30 text-emerald-400';
+      case 'graphics':
+        return 'from-pink-500/20 to-rose-500/20 border-pink-500/30 text-pink-400';
       default:
         return 'from-zinc-500/20 to-gray-500/20 border-zinc-500/30 text-zinc-400';
     }
@@ -270,7 +272,8 @@ export default function ApproveRequestsPage() {
                       <td className="p-4">
                         <div className="flex items-center justify-end gap-2">
                           {request.role === 'super_admin' ||
-                          request.role === 'faculty' ? (
+                            request.role === 'faculty' ||
+                            request.role === 'graphics' ? (
                             <Button
                               onClick={() =>
                                 handleApproveFacultyOrSuperAdmin(request)

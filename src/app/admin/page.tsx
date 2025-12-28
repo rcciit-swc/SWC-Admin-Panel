@@ -10,6 +10,7 @@ import {
   Shield,
   UserCheck,
   Users,
+  ArrowUpDown,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Metadata } from 'next';
@@ -46,12 +47,19 @@ const Page = async () => {
     const isAdmin = roles?.find((role) => role.role === 'super_admin');
     const securityAdmin = roles?.find((role) => role.role === 'security_admin');
     const isFaculty = roles?.find((role) => role.role === 'faculty');
-    const hasAnyRole = roles && roles.length > 0; // Any role (coordinator, convenor, super_admin, faculty)
+    const isGraphics = roles?.find((role) => role.role === 'graphics');
+    const hasAnyRole = roles && roles.length > 0; // Any role (coordinator, convenor, super_admin, faculty, graphics)
 
     // Redirect faculty users to /approve page only
     if (isFaculty && !isAdmin) {
       const { redirect } = await import('next/navigation');
       redirect('/approve');
+    }
+
+    // Redirect graphics users to /graphics page only
+    if (isGraphics && !isAdmin) {
+      const { redirect } = await import('next/navigation');
+      redirect('/graphics');
     }
 
     // Collect all event_ids from all roles
@@ -108,6 +116,12 @@ const Page = async () => {
                       <Button className="w-full sm:w-auto bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:from-cyan-500 hover:to-blue-500 border-0 text-sm">
                         <Users className="mr-2 h-4 w-4" />
                         Approve Team
+                      </Button>
+                    </Link>
+                    <Link href="/manage-sequences" className="w-full sm:w-auto">
+                      <Button className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:from-purple-500 hover:to-pink-500 border-0 text-sm">
+                        <ArrowUpDown className="mr-2 h-4 w-4" />
+                        Manage Sequences
                       </Button>
                     </Link>
                   </>

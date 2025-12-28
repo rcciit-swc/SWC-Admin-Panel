@@ -197,7 +197,7 @@ export const approveEventForUser = async (
 };
 
 /**
- * Approve request for super_admin or faculty role
+ * Approve request for super_admin, faculty, or graphics role
  */
 export const approveSuperAdminRequest = async (
   requestId: number,
@@ -216,7 +216,7 @@ export const approveSuperAdminRequest = async (
       return false;
     }
 
-    // Create role entry for super admin or faculty
+    // Create role entry for super admin, faculty, or graphics
     const { error: roleError } = await supabase.from('roles').insert({
       user_id: userId,
       role: role,
