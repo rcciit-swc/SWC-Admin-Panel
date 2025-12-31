@@ -1,17 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { supabase } from '@/lib/supabase/client';
 import {
-  DndContext,
   closestCenter,
+  DndContext,
+  DragEndEvent,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -21,9 +21,10 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, Save, Search, ChevronDown, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { ChevronDown, GripVertical, Loader2, Save, Search } from 'lucide-react';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 interface TeamMember {
   id: string;
@@ -59,17 +60,16 @@ function SortableItem({ member }: { member: TeamMember }) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-4 bg-white/5 border border-white/10 rounded-xl p-4 transition-all ${
-        isDragging
+      className={`flex items-center gap-4 bg-white/5 border border-white/10 rounded-xl p-4 transition-all ${isDragging
           ? 'opacity-50 scale-105 shadow-2xl z-50'
           : 'hover:bg-white/10'
-      }`}
+        }`}
     >
       {/* Drag Handle */}
       <button
         {...attributes}
         {...listeners}
-        className="cursor-grab active:cursor-grabbing text-zinc-400 hover:text-white transition-colors"
+        className="cursor-grab active:cursor-grabbing text-zinc-400 hover:text-white transition-colors touch-none"
       >
         <GripVertical className="w-5 h-5" />
       </button>
@@ -118,7 +118,17 @@ export default function ManageTeamSequence({
   const [changedTeamIds, setChangedTeamIds] = useState<Set<string>>(new Set()); // Track which teams changed
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Require 8px movement before dragging starts
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200, // 200ms delay before drag starts on touch
+        tolerance: 8, // Allow 8px movement during delay
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -445,9 +455,8 @@ export default function ManageTeamSequence({
                       </span>
                     </div>
                     <ChevronDown
-                      className={`w-5 h-5 text-indigo-300 transition-transform ${
-                        isExpanded ? 'rotate-180' : ''
-                      }`}
+                      className={`w-5 h-5 text-indigo-300 transition-transform ${isExpanded ? 'rotate-180' : ''
+                        }`}
                     />
                   </button>
 
