@@ -1,8 +1,13 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { supabase } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -12,32 +17,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { supabase } from '@/lib/supabase/client';
 import {
+  CheckCircle2,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Upload,
+  Clock,
+  Edit2,
   Eye,
   History,
-  ChevronDown,
-  CheckCircle2,
-  Clock,
-  XCircle,
-  Edit2,
   Save,
-  X as XIcon,
+  Search,
+  Trash2,
+  Upload,
   UserPlus,
   Users,
-  Search,
+  XCircle,
+  X as XIcon,
 } from 'lucide-react';
-import { toast } from 'sonner';
 import Image from 'next/image';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
 interface Fest {
   id: string;
@@ -166,6 +168,7 @@ const TeamEntryForm = ({
   userId,
   isSuperAdmin = false,
 }: TeamEntryFormProps) => {
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const [fests, setFests] = useState<Fest[]>([]);
   const [teams, setTeams] = useState<DefinedTeam[]>([]);
@@ -1316,6 +1319,29 @@ const TeamEntryForm = ({
 
   return (
     <div className="space-y-6">
+      {/* Super Admin CTA - Remove Team Member */}
+      {isSuperAdmin && (
+        <div className="bg-gradient-to-br from-red-950/40 to-orange-950/40 border border-red-500/30 rounded-2xl p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-xl font-bold text-white mb-1">
+                Super Admin Tools
+              </h3>
+              <p className="text-zinc-400 text-sm">
+                Manage team members with administrative privileges
+              </p>
+            </div>
+            <Button
+              onClick={() => router.push('/remove-team-member')}
+              className="bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-500/25 hover:shadow-red-500/40"
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Remove Team Member
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Main Form */}
       <div className="bg-gradient-to-br from-violet-950/40 to-indigo-950/40 border border-white/10 rounded-2xl p-8">
         {/* Progress Indicator */}

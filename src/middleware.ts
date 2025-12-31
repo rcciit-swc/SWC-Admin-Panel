@@ -1,5 +1,5 @@
-import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
+import { NextResponse, type NextRequest } from 'next/server';
 
 export async function middleware(req: NextRequest) {
   const url = new URL(req.nextUrl);
@@ -60,6 +60,7 @@ export async function middleware(req: NextRequest) {
       url.pathname.startsWith('/approve-requests') ||
       url.pathname.startsWith('/approve-team') ||
       url.pathname.startsWith('/manage-access') ||
+      url.pathname.startsWith('/remove-team-member') ||
       url.pathname.startsWith('/profile') ||
       url.pathname.startsWith('/landing') ||
       url.pathname.startsWith('/team-entry')
@@ -76,6 +77,22 @@ export async function middleware(req: NextRequest) {
 
   // Handle /manage-access route - super_admin only
   if (url.pathname.startsWith('/manage-access')) {
+    const { data: userRoles } = await supabase
+      .from('roles')
+      .select('role')
+      .eq('user_id', session.user?.id);
+
+    const roles = userRoles?.map((role) => role.role) || [];
+
+    if (roles.includes('super_admin')) {
+      return NextResponse.next();
+    } else {
+      return NextResponse.redirect(new URL('/unauthorized', req.url));
+    }
+  }
+
+  // Handle /remove-team-member route - super_admin only
+  if (url.pathname.startsWith('/remove-team-member')) {
     const { data: userRoles } = await supabase
       .from('roles')
       .select('role')
