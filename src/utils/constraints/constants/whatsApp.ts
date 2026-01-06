@@ -53,7 +53,7 @@ export const whatsAppLinks = [
   },
   {
     event_id: 'e5a51398-d586-4b33-bac3-637f70bd3a81', // CHESS
-    link: 'https://chat.whatsapp.com/HuUFfdUnOQT4g7YL7AnfCd',
+    link: 'https://chat.whatsapp.com/LXuleD77JkUIL3mHCdNRRC',
   },
   {
     event_id: '3bfc938d-71e9-4d7d-a824-c613cf5bebf5', // 100 M
