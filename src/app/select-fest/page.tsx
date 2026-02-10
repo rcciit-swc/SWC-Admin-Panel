@@ -1,10 +1,10 @@
 'use client';
-
 import { useFests } from '@/lib/stores/fests';
+import { checkFestHasEvents } from '@/utils/functions/festUtils';
 import { Calendar, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const FestSelectionCard = ({
   id,
@@ -18,15 +18,29 @@ const FestSelectionCard = ({
   fest_logo: string | null;
 }) => {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleClick = () => {
-    router.push(`/admin/${id}`);
+  const handleClick = async () => {
+    try {
+      setIsLoading(true);
+      const hasEvents = await checkFestHasEvents(id);
+      if (hasEvents) {
+        router.push(`/admin/${id}`);
+      } else {
+        router.push('/coming-soon');
+      }
+    } catch (error) {
+      console.error('Error in fest selection:', error);
+      setIsLoading(false);
+    }
   };
 
   return (
     <div
-      onClick={handleClick}
-      className="group relative h-full bg-gradient-to-br from-violet-950/40 to-indigo-950/40 border border-white/10 rounded-2xl p-8 hover:border-violet-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-violet-500/20 cursor-pointer"
+      onClick={!isLoading ? handleClick : undefined}
+      className={`group relative h-full bg-gradient-to-br from-violet-950/40 to-indigo-950/40 border border-white/10 rounded-2xl p-8 hover:border-violet-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-violet-500/20 cursor-pointer ${
+        isLoading ? 'opacity-70 pointer-events-none' : ''
+      }`}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-violet-600/5 to-indigo-600/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
@@ -43,7 +57,11 @@ const FestSelectionCard = ({
           </div>
         ) : (
           <div className="w-24 h-24 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-            <Calendar className="w-12 h-12 text-white" />
+            {isLoading ? (
+              <Loader2 className="w-12 h-12 text-white animate-spin" />
+            ) : (
+              <Calendar className="w-12 h-12 text-white" />
+            )}
           </div>
         )}
 
@@ -51,8 +69,8 @@ const FestSelectionCard = ({
 
         <p className="text-zinc-400 mb-6">Year: {year}</p>
 
-        <div className="text-violet-400 font-medium group-hover:text-violet-300 transition-colors">
-          Manage Events →
+        <div className="text-violet-400 font-medium group-hover:text-violet-300 transition-colors flex items-center gap-2">
+          {isLoading ? 'Checking...' : 'Manage Events →'}
         </div>
       </div>
     </div>

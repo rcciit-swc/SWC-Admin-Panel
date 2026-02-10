@@ -161,3 +161,26 @@ export const getEventsByFestId = async (
     return null;
   }
 };
+
+/**
+ * Check if a fest has any events
+ */
+export const checkFestHasEvents = async (festId: string): Promise<boolean> => {
+  try {
+    const { data, error } = await supabase
+      .from('events')
+      .select('id, event_categories!inner(fest_id)')
+      .eq('event_categories.fest_id', festId)
+      .limit(1);
+
+    if (error) {
+      console.error('Error checking fest events:', error);
+      return false;
+    }
+
+    return data && data.length > 0;
+  } catch (err) {
+    console.error('Unexpected error checking fest events:', err);
+    return false;
+  }
+};
