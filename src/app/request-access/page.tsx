@@ -1,7 +1,7 @@
 import RequestAccessScreen from '@/components/RequestAccessScreen';
-import { login } from '@/utils/functions/login';
 import { supabaseServer } from '@/utils/functions/supabase-server';
 import { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Request Additional Access | RCCIIT SWC',
@@ -17,8 +17,20 @@ export default async function RequestAccessRoute() {
     data: { user },
   } = await supabase.auth.getUser();
 
+
   if (!user) {
-    login();
+    redirect('/');
+  }
+
+  // Check if profile is complete (at least name is present)
+  const { data: userProfile } = await supabase
+    .from('users')
+    .select('name')
+    .eq('id', user?.id)
+    .single();
+
+  if (!userProfile?.name) {
+    redirect('/profile?next=/request-access');
   }
 
   // Check if user has any roles

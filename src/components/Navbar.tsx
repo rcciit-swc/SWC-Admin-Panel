@@ -14,7 +14,7 @@ import { userDataType } from '@/lib/types/user';
 import { login } from '@/utils/functions/login';
 import { logout } from '@/utils/functions/logout';
 import { motion } from 'framer-motion';
-import { LogOut } from 'lucide-react';
+import { LogOut, UserCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Dispatch, memo, SetStateAction, useEffect, useState } from 'react';
@@ -129,6 +129,15 @@ const SignInButton = memo(
               </p>
               <p className="text-xs text-zinc-500 truncate">{userData.email}</p>
             </div>
+            <DropdownMenuItem
+              className="cursor-pointer px-4 py-2.5 text-zinc-300 transition-colors hover:bg-white/[0.06] focus:bg-white/[0.06] focus:text-white flex items-center gap-2"
+              asChild
+            >
+              <Link href="/profile">
+                <UserCircle className="h-4 w-4" />
+                Edit Profile
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer px-4 py-2.5 text-zinc-300 transition-colors hover:bg-white/[0.06] focus:bg-white/[0.06] focus:text-white flex items-center gap-2"
               onSelect={logout}

@@ -28,13 +28,12 @@ import {
   Eye,
   History,
   Save,
-  Search,
   Trash2,
   Upload,
   UserPlus,
   Users,
   XCircle,
-  X as XIcon,
+  X as XIcon
 } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -474,11 +473,11 @@ const TeamEntryForm = ({
             ...req,
             org_team: req.org_teams
               ? {
-                  ...req.org_teams,
-                  team_name:
-                    req.org_teams.defined_org_teams?.team_name ||
-                    'Unknown Team',
-                }
+                ...req.org_teams,
+                team_name:
+                  req.org_teams.defined_org_teams?.team_name ||
+                  'Unknown Team',
+              }
               : undefined,
           })) || [];
 
@@ -548,11 +547,11 @@ const TeamEntryForm = ({
             canApprove: false, // User cannot approve their own requests
             org_team: req.org_teams
               ? {
-                  ...req.org_teams,
-                  team_name:
-                    req.org_teams.defined_org_teams?.team_name ||
-                    'Unknown Team',
-                }
+                ...req.org_teams,
+                team_name:
+                  req.org_teams.defined_org_teams?.team_name ||
+                  'Unknown Team',
+              }
               : undefined,
           })) || []),
           ...(incomingRequests?.map((req: any) => ({
@@ -563,11 +562,11 @@ const TeamEntryForm = ({
             requesterEmail: req.users?.email || '',
             org_team: req.org_teams
               ? {
-                  ...req.org_teams,
-                  team_name:
-                    req.org_teams.defined_org_teams?.team_name ||
-                    'Unknown Team',
-                }
+                ...req.org_teams,
+                team_name:
+                  req.org_teams.defined_org_teams?.team_name ||
+                  'Unknown Team',
+              }
               : undefined,
           })) || []),
         ];
@@ -626,11 +625,11 @@ const TeamEntryForm = ({
             ...req,
             org_team: req.org_teams
               ? {
-                  ...req.org_teams,
-                  team_name:
-                    req.org_teams.defined_org_teams?.team_name ||
-                    'Unknown Team',
-                }
+                ...req.org_teams,
+                team_name:
+                  req.org_teams.defined_org_teams?.team_name ||
+                  'Unknown Team',
+              }
               : undefined,
           })
         );
@@ -863,10 +862,10 @@ const TeamEntryForm = ({
           canApprove: false,
           org_team: req.org_teams
             ? {
-                ...req.org_teams,
-                team_name:
-                  req.org_teams.defined_org_teams?.team_name || 'Unknown Team',
-              }
+              ...req.org_teams,
+              team_name:
+                req.org_teams.defined_org_teams?.team_name || 'Unknown Team',
+            }
             : undefined,
         })) || []),
         ...(incomingRequests?.map((req: any) => ({
@@ -877,10 +876,10 @@ const TeamEntryForm = ({
           requesterEmail: req.users?.email || '',
           org_team: req.org_teams
             ? {
-                ...req.org_teams,
-                team_name:
-                  req.org_teams.defined_org_teams?.team_name || 'Unknown Team',
-              }
+              ...req.org_teams,
+              team_name:
+                req.org_teams.defined_org_teams?.team_name || 'Unknown Team',
+            }
             : undefined,
         })) || []),
       ];
@@ -1353,21 +1352,19 @@ const TeamEntryForm = ({
                 className={`flex items-center ${s < 4 ? 'flex-1' : ''}`}
               >
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
-                    s <= step
-                      ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white'
-                      : 'bg-white/10 text-zinc-500'
-                  }`}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${s <= step
+                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white'
+                    : 'bg-white/10 text-zinc-500'
+                    }`}
                 >
                   {s}
                 </div>
                 {s < 4 && (
                   <div
-                    className={`flex-1 h-1 mx-2 transition-all ${
-                      s < step
-                        ? 'bg-gradient-to-r from-violet-600 to-indigo-600'
-                        : 'bg-white/10'
-                    }`}
+                    className={`flex-1 h-1 mx-2 transition-all ${s < step
+                      ? 'bg-gradient-to-r from-violet-600 to-indigo-600'
+                      : 'bg-white/10'
+                      }`}
                   />
                 )}
               </div>
@@ -1954,7 +1951,7 @@ const TeamEntryForm = ({
       </div>
 
       {/* Ownership Transfer/Claiming Section */}
-      <div className="bg-gradient-to-br from-indigo-950/40 to-purple-950/40 border border-white/10 rounded-2xl p-6">
+      {/* <div className="bg-gradient-to-br from-indigo-950/40 to-purple-950/40 border border-white/10 rounded-2xl p-6">
         <button
           onClick={() => setShowOwnershipSection(!showOwnershipSection)}
           className="w-full flex items-center justify-between text-white hover:text-indigo-300 transition-colors"
@@ -1979,7 +1976,6 @@ const TeamEntryForm = ({
               </div>
             ) : (
               <>
-                {/* Super Admin: Pending Ownership Requests */}
                 {isSuperAdmin && ownershipRequests.length > 0 && (
                   <div className="mb-6 p-4 bg-amber-600/10 border border-amber-600/30 rounded-xl">
                     <h4 className="text-amber-300 font-semibold mb-4 flex items-center gap-2">
@@ -2046,8 +2042,6 @@ const TeamEntryForm = ({
                     </div>
                   </div>
                 )}
-
-                {/* Search Bar */}
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
                   <Input
@@ -2058,8 +2052,6 @@ const TeamEntryForm = ({
                     className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-zinc-500 focus:border-indigo-500/50"
                   />
                 </div>
-
-                {/* Results count */}
                 {searchQuery && (
                   <div className="text-sm text-zinc-400">
                     Found {filteredMembers.length} member
@@ -2067,7 +2059,6 @@ const TeamEntryForm = ({
                   </div>
                 )}
 
-                {/* Team Members by Category - Sub Accordions */}
                 {Object.entries(groupedMembers).length === 0 ? (
                   <div className="text-center py-8 text-zinc-400">
                     {searchQuery
@@ -2083,7 +2074,6 @@ const TeamEntryForm = ({
                         key={teamName}
                         className="border border-white/10 rounded-xl overflow-hidden bg-white/5"
                       >
-                        {/* Team Header */}
                         <button
                           onClick={() => toggleTeam(teamName)}
                           className="w-full flex items-center justify-between p-4 hover:bg-white/5 transition-colors"
@@ -2102,7 +2092,6 @@ const TeamEntryForm = ({
                           />
                         </button>
 
-                        {/* Team Members Grid */}
                         {isExpanded && (
                           <div className="p-4 pt-0 border-t border-white/10">
                             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 mt-3">
@@ -2115,11 +2104,10 @@ const TeamEntryForm = ({
                                 return (
                                   <div
                                     key={member.id}
-                                    className={`bg-white/5 border rounded-xl p-3 transition-all ${
-                                      isOwnedByUser
+                                    className={`bg-white/5 border rounded-xl p-3 transition-all ${isOwnedByUser
                                         ? 'border-emerald-500/50 bg-emerald-500/5'
                                         : 'border-white/10 hover:bg-white/10'
-                                    }`}
+                                      }`}
                                   >
                                     <div className="flex items-start gap-3">
                                       <div className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0">
@@ -2190,7 +2178,7 @@ const TeamEntryForm = ({
             )}
           </div>
         )}
-      </div>
+      </div> */}
 
       {/* My Ownership Requests Section */}
       {userOwnRequests.length > 0 && (
@@ -2216,11 +2204,10 @@ const TeamEntryForm = ({
               {userOwnRequests.map((request: any) => (
                 <div
                   key={request.id}
-                  className={`bg-white/5 border rounded-xl p-4 transition-all ${
-                    request.isMyRequest
-                      ? 'border-amber-500/30 hover:bg-white/10'
-                      : 'border-emerald-500/30 hover:bg-emerald-500/5'
-                  }`}
+                  className={`bg-white/5 border rounded-xl p-4 transition-all ${request.isMyRequest
+                    ? 'border-amber-500/30 hover:bg-white/10'
+                    : 'border-emerald-500/30 hover:bg-emerald-500/5'
+                    }`}
                 >
                   <div className="flex flex-col sm:flex-row items-start gap-4">
                     {request.org_team?.image && (

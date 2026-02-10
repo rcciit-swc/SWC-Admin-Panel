@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { createServer } from '@/lib/supabase/server';
-import { Banknote, LayoutDashboard, ShieldCheck, Users } from 'lucide-react';
+import { BadgeCheck, Banknote, LayoutDashboard, ShieldCheck, Users } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -125,6 +125,34 @@ const LandingPage = async () => {
               </div>
             </div>
           </Link>
+
+          {/* SWC Clearance Check Card - For Non-Super Admins */}
+          {!isSuperAdmin && (
+            <Link href="/profile" className="group">
+              <div className="relative h-full bg-gradient-to-br from-fuchsia-950/40 to-pink-950/40 border border-white/10 rounded-2xl p-6 hover:border-fuchsia-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-fuchsia-500/20">
+                <div className="absolute inset-0 bg-gradient-to-br from-fuchsia-600/5 to-pink-600/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                <div className="relative z-10">
+                  <div className="w-14 h-14 bg-gradient-to-br from-fuchsia-600 to-pink-600 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                    <BadgeCheck className="w-7 h-7 text-white" />
+                  </div>
+
+                  <h2 className="text-xl font-bold text-white mb-2">
+                    Check SWC Status
+                  </h2>
+
+                  <p className="text-zinc-400 text-sm mb-5 leading-relaxed">
+                    Verify your SWC fund payment status and clearance directly
+                    from your profile
+                  </p>
+
+                  <Button className="w-full bg-gradient-to-r from-fuchsia-600 to-pink-600 text-white shadow-lg shadow-fuchsia-500/25 hover:shadow-fuchsia-500/40 hover:from-fuchsia-500 hover:to-pink-500 border-0">
+                    Check Clearance
+                  </Button>
+                </div>
+              </div>
+            </Link>
+          )}
 
           {/* SWC Funds Tracker Card - Only for Super Admins */}
           {isSuperAdmin && (
