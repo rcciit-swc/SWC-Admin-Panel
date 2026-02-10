@@ -100,6 +100,17 @@ const Page = async ({ params }: PageProps) => {
       redirect('/request-access');
     }
 
+    // Fetch categories directly using the server client
+    const { data: categoriesData, error: categoriesError } = await supabase
+      .from('event_categories')
+      .select('*')
+      .eq('fest_id', festId)
+      .order('name', { ascending: true });
+
+    if (categoriesError) {
+      console.error('Error fetching categories:', categoriesError);
+    }
+
     return (
       <div className="min-h-screen w-full bg-[#050508]">
         {/* Subtle gradient overlay */}
@@ -173,7 +184,11 @@ const Page = async ({ params }: PageProps) => {
         </div>
 
         <main className="relative container max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-          <EventCards isSuperAdmin={isAdmin} eventIDs={eventIds} />
+          <EventCards
+            isSuperAdmin={isAdmin}
+            eventIDs={eventIds}
+            categories={categoriesData || []}
+          />
         </main>
       </div>
     );

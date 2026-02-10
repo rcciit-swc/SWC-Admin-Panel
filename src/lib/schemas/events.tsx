@@ -6,7 +6,7 @@ export const eventSchema = z.object({
     .number()
     .min(0, 'Registration fee must be at least 0'),
   prize_pool: z.coerce.number().min(0, 'Prize pool must be at least 0'),
-  image_url: z.string().url('Please enter a valid image URL'),
+  image_url: z.string().optional().nullable(),
   min_team_size: z.coerce
     .number()
     .min(1, 'Minimum team size must be at least 1'),

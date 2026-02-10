@@ -10,7 +10,6 @@ import { useFests } from '@/lib/stores/fests';
 import { parseWithQuillStyles } from '@/utils/functions/admin/quillParser';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Calendar,
   CheckCircle2,
   Clock,
   Edit3,
@@ -70,22 +69,64 @@ function EventCardSkeleton() {
   );
 }
 
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Filter, Search } from 'lucide-react';
+import { useMemo, useState } from 'react';
+
+// ... (previous imports)
+
 export function EventCards({
   isSuperAdmin = false,
   eventIDs = [],
+  categories = [],
 }: {
   isSuperAdmin: boolean;
   eventIDs?: string[];
+  categories?: any[];
 }) {
   const { updateRegisterStatus } = useEvents();
   const { events, eventsLoading, getEventsByFest } = useFests();
   const { festId: paramFestId } = useParams<{ festId: string }>();
-  console.log(events);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+
   useEffect(() => {
     if (paramFestId) {
       getEventsByFest(paramFestId);
     }
   }, [paramFestId, getEventsByFest]);
+
+  const filteredEvents = useMemo(() => {
+    if (!events) return [];
+
+    let filtered = isSuperAdmin
+      ? events
+      : events.filter((event) => event.id && eventIDs.includes(event.id));
+
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (event) =>
+          event.name.toLowerCase().includes(query) ||
+          event.description.toLowerCase().includes(query)
+      );
+    }
+
+    if (selectedCategory && selectedCategory !== 'all') {
+      filtered = filtered.filter(
+        (event) => event.event_category_id === selectedCategory
+      );
+    }
+
+    return filtered;
+  }, [events, isSuperAdmin, eventIDs, searchQuery, selectedCategory]);
 
   if (eventsLoading) {
     return (
@@ -97,28 +138,54 @@ export function EventCards({
     );
   }
 
-  if (!events?.length) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-violet-500/10 flex items-center justify-center mb-4">
-          <Calendar className="w-8 h-8 text-violet-400" />
-        </div>
-        <h3 className="text-lg font-medium text-white mb-2">No events yet</h3>
-        <p className="text-zinc-500 max-w-sm">
-          Get started by creating your first event to manage registrations and
-          participants.
-        </p>
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="relative w-full md:w-96">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+          <Input
+            placeholder="Search events..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9 bg-[#0a0a0f] border-white/10 text-white placeholder:text-zinc-500 focus:border-violet-500/50"
+          />
+        </div>
+
+        <div className="flex items-center gap-2 w-full md:w-auto">
+          <Filter className="w-4 h-4 text-zinc-400" />
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger className="w-full md:w-[200px] bg-[#0a0a0f] border-white/10 text-white focus:ring-violet-500/50">
+              <SelectValue placeholder="All Categories" />
+            </SelectTrigger>
+            <SelectContent className="bg-[#0a0a0f] border-white/10 text-white">
+              <SelectItem value="all">All Categories</SelectItem>
+              {categories?.map((cat) => (
+                <SelectItem key={cat.id} value={cat.id}>
+                  {cat.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {!filteredEvents?.length && (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-violet-500/10 flex items-center justify-center mb-4">
+            <Search className="w-8 h-8 text-violet-400" />
+          </div>
+          <h3 className="text-lg font-medium text-white mb-2">
+            No events found
+          </h3>
+          <p className="text-zinc-500 max-w-sm">
+            Try adjusting your search or filters to find what you're looking
+            for.
+          </p>
+        </div>
+      )}
+
       <AnimatePresence mode="popLayout">
-        {(isSuperAdmin
-          ? events
-          : events?.filter((event) => event.id && eventIDs.includes(event.id))
-        )?.map((event, index) => (
+        {filteredEvents.map((event, index) => (
           <motion.div
             key={event.id}
             custom={index}
