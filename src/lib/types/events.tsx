@@ -60,6 +60,8 @@ export interface EventData {
   transaction_screenshot: string;
   registeredat: string;
   teammembers: TeamMember[];
+  accountHolderName?: string;
+  gender?: string;
 }
 
 export interface EventsStateType {

@@ -252,7 +252,7 @@ export const getApprovalDashboardData = async (
         .filter((id: any) => id !== null && id !== undefined) || [];
 
     const { data, error } = await supabase
-      .rpc('get_registrations_by_event_ids', {
+      .rpc('get_fest_registrations', {
         p_fest_id: '5bff3a43-43b6-420a-8d42-9a96257cc351',
         p_event_category_id:
           isAdmin?.role === 'super_admin'
