@@ -1,26 +1,28 @@
 'use client';
-import { useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { RulesDialog } from '@/components/manage-events/RulesDialog';
 import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
 import { useEvents } from '@/lib/stores/events';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useFests } from '@/lib/stores/fests';
 import { parseWithQuillStyles } from '@/utils/functions/admin/quillParser';
-import { RulesDialog } from '@/components/manage-events/RulesDialog';
-import Image from 'next/image';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   Calendar,
-  Users,
-  Trophy,
-  Wallet,
-  Clock,
   CheckCircle2,
-  XCircle,
+  Clock,
   Edit3,
+  Trophy,
+  Users,
+  Wallet,
+  XCircle,
 } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useEffect } from 'react';
 
 const cardVariants = {
   hidden: { y: 20, opacity: 0 },
@@ -74,12 +76,15 @@ export function EventCards({
   isSuperAdmin: boolean;
   eventIDs?: string[];
 }) {
-  const { eventsData, eventsLoading, setEventsData, updateRegisterStatus } =
-    useEvents();
-
+  const { updateRegisterStatus } = useEvents();
+  const { events, eventsLoading, getEventsByFest } = useFests();
+  const { festId: paramFestId } = useParams<{ festId: string }>();
+  console.log(events);
   useEffect(() => {
-    setEventsData(true);
-  }, [setEventsData]);
+    if (paramFestId) {
+      getEventsByFest(paramFestId);
+    }
+  }, [paramFestId, getEventsByFest]);
 
   if (eventsLoading) {
     return (
@@ -91,7 +96,7 @@ export function EventCards({
     );
   }
 
-  if (!eventsData?.length) {
+  if (!events?.length) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <div className="w-16 h-16 rounded-2xl bg-violet-500/10 flex items-center justify-center mb-4">
@@ -110,10 +115,10 @@ export function EventCards({
     <div className="space-y-4">
       <AnimatePresence mode="popLayout">
         {(isSuperAdmin
-          ? eventsData
-          : eventsData?.filter(
-              (event) => event.id && eventIDs.includes(event.id)
-            )
+          ? events
+          : events?.filter(
+            (event) => event.id && eventIDs.includes(event.id)
+          )
         )?.map((event, index) => (
           <motion.div
             key={event.id}
@@ -144,11 +149,10 @@ export function EventCards({
                       </div>
                     </div>
                     <Badge
-                      className={`px-3 py-1 text-xs font-medium ${
-                        event.reg_status
-                          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                          : 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20'
-                      }`}
+                      className={`px-3 py-1 text-xs font-medium ${event.reg_status
+                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                        : 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20'
+                        }`}
                     >
                       {event.reg_status ? (
                         <span className="flex items-center gap-1.5">

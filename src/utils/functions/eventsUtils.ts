@@ -1,7 +1,6 @@
 import { EventData, events } from '@/lib/types/events';
-import { supabase } from './supabase-client';
 import { toast } from 'sonner';
-import { supabaseServer } from './supabase-server';
+import { supabase } from './supabase-client';
 import { getRoles } from './userUtils';
 
 export const getEventCategories = async () => {
@@ -278,20 +277,23 @@ export const getApprovalDashboardData = async (
 };
 
 export const getEventByID = async (id: string): Promise<events | null> => {
-  const serverClient = await supabaseServer();
-  const p_event_id = id;
-  const { data, error } = await serverClient
-    .from('events')
-    .select('*')
-    .eq('id', p_event_id);
+  try {
+    const { data, error } = await supabase
+      .from('events')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-  if (error) {
-    console.error('Error fetching event:', error);
+    if (error) {
+      console.error('Error fetching event:', error);
+      return null;
+    }
+
+    return data as events;
+  } catch (err) {
+    console.error('Unexpected error fetching event:', err);
     return null;
   }
-
-  // Return the first result, since the RPC returns a table (array)
-  return data && data.length > 0 ? data[0] : null;
 };
 
 export const getSecurity = async (id: string) => {

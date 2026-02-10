@@ -1,21 +1,17 @@
 import { EventCards } from '@/components/manage-events/EventsCard';
-import { supabaseServer } from '@/utils/functions/supabase-server';
 import RequestAccessScreen from '@/components/RequestAccessScreen';
-import Link from 'next/link';
-import {
-  Plus,
-  ShieldCheck,
-  Calendar,
-  Sparkles,
-  Shield,
-  UserCheck,
-  Users,
-  ArrowUpDown,
-  UserPlus,
-  Image as ImageIcon,
-} from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { supabaseServer } from '@/utils/functions/supabase-server';
+import {
+  ArrowUpDown,
+  Image as ImageIcon,
+  Shield,
+  ShieldCheck,
+  UserCheck,
+  Users
+} from 'lucide-react';
 import { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Admin Dashboard | RCCIIT SWC',
@@ -23,7 +19,14 @@ export const metadata: Metadata = {
     'Manage events, approve requests, and control access for RCCIIT Sports and Welfare Committee',
 };
 
-const Page = async () => {
+interface PageProps {
+  params: {
+    festId: string;
+  };
+}
+
+const Page = async ({ params }: PageProps) => {
+  const { festId } = params;
   const supabase = await supabaseServer();
   const { data: sessionData } = await supabase.auth.getSession();
 

@@ -1,12 +1,13 @@
 import { create } from 'zustand';
-import { FestsActionsType, FestsStateType } from '../types/fests';
 import {
-  populateFests,
   populateCategoriesByFest,
   populateEventsByCategory,
+  populateEventsByFest,
+  populateFests,
   resetCategoriesData,
   resetEventsData,
 } from '../actions/fests';
+import { FestsActionsType, FestsStateType } from '../types/fests';
 
 type FestsStoreType = FestsStateType & FestsActionsType;
 
@@ -26,6 +27,8 @@ export const useFests = create<FestsStoreType>((set) => ({
     populateCategoriesByFest(set, festId),
   getEventsByCategory: (categoryId: string) =>
     populateEventsByCategory(set, categoryId),
+  getEventsByFest: (festId: string) => populateEventsByFest(set, festId),
   resetCategories: () => resetCategoriesData(set),
   resetEvents: () => resetEventsData(set),
 }));
+

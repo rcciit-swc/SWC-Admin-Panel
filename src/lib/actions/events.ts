@@ -8,8 +8,8 @@ import {
   updateEventById,
   updateRegisterStatusDb,
 } from '@/utils/functions';
-import { events } from '../types/events';
 import { toast } from 'sonner';
+import { events } from '../types/events';
 
 export const populateEventDetails = async (set: any, all: boolean) => {
   set({ eventsLoading: true });
@@ -88,7 +88,7 @@ export const populateApprovalDashboard = async (
 
 export const populateEventDetailsByID = async (set: any, id: string) => {
   try {
-    set({ eventsLoading: true });
+    set({ eventDetailsLoading: true });
     const eventData = await getEventByID(id);
     if (!eventData) {
       set({ eventData: {}, eventDetailsLoading: false });

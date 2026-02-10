@@ -1,39 +1,42 @@
 'use client';
-import { useParams, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { Form } from '@/components/ui/form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-import { Loader2, Save, ArrowLeft, Calendar, Settings } from 'lucide-react';
-import { eventSchema } from '@/lib/schemas/events';
-type EventFormInput = z.input<typeof eventSchema>;
-type EventFormOutput = z.output<typeof eventSchema>;
-import { useEvents } from '@/lib/stores/events';
-import { Coordinator, LinkType } from '@/lib/types/events';
-import { toast } from 'sonner';
-import { ScheduleAndDescription } from '@/components/manage-events/ScheduleAndDescription';
-import { RulesAndGuidelines } from '@/components/manage-events/RulesAndGuidelines';
-import { LinksAndCoordinators } from '@/components/manage-events/LinkAndCoordinators';
 import { BasicInformation } from '@/components/manage-events/BasicInformation';
 import { EditEventSkeleton } from '@/components/manage-events/EditEventSkeleton';
+import { LinksAndCoordinators } from '@/components/manage-events/LinkAndCoordinators';
+import { RulesAndGuidelines } from '@/components/manage-events/RulesAndGuidelines';
+import { ScheduleAndDescription } from '@/components/manage-events/ScheduleAndDescription';
 import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
+import { eventSchema } from '@/lib/schemas/events';
+import { useEvents } from '@/lib/stores/events';
+import { Coordinator, LinkType } from '@/lib/types/events';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ArrowLeft, Loader2, Save, Settings } from 'lucide-react';
 import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import * as z from 'zod';
+type EventFormInput = z.input<typeof eventSchema>;
+type EventFormOutput = z.output<typeof eventSchema>;
 
 export default function EditEventPage() {
   const params = useParams();
   const eventId = params.eventId as string;
   const router = useRouter();
 
-  const { eventsData, eventsLoading, updateEventsData, setEventsData } =
+  const { eventData, eventDetailsLoading, updateEventsData, getEventByID } =
     useEvents();
   const [links, setLinks] = useState<LinkType[]>([]);
   const [coordinators, setCoordinators] = useState<Coordinator[]>([]);
-  useEffect(() => {
-    setEventsData(true);
-  }, [setEventsData]);
 
-  const eventToEdit = eventsData?.find((event) => event.id === eventId);
+  useEffect(() => {
+    if (eventId) {
+      getEventByID(eventId);
+    }
+  }, [eventId, getEventByID]);
+
+  const eventToEdit = eventData;
   const form = useForm<EventFormInput>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
@@ -53,57 +56,32 @@ export default function EditEventPage() {
   });
 
   useEffect(() => {
-    if (eventToEdit) {
+    if (eventToEdit && eventToEdit.id && eventToEdit.name) {
       form.reset({
-        name: eventToEdit.name,
-        registration_fees: eventToEdit.registration_fees,
-        prize_pool: eventToEdit.prize_pool,
-        image_url: eventToEdit.image_url,
-        // event_category_id: eventToEdit.event_category_id,
-        min_team_size: Number(eventToEdit.min_team_size),
-        max_team_size: Number(eventToEdit.max_team_size),
-        schedule: eventToEdit.schedule,
-        description: eventToEdit.description,
-        rules: eventToEdit.rules,
+        name: eventToEdit.name || '',
+        registration_fees: eventToEdit.registration_fees ?? 0,
+        prize_pool: eventToEdit.prize_pool ?? 0,
+        image_url: eventToEdit.image_url || '',
+        min_team_size: Number(eventToEdit.min_team_size) || 1,
+        max_team_size: Number(eventToEdit.max_team_size) || 1,
+        schedule: eventToEdit.schedule || '',
+        description: eventToEdit.description || '',
+        rules: eventToEdit.rules || '',
         coordinators: eventToEdit.coordinators || [],
         links: eventToEdit.links || [],
-        reg_status: eventToEdit.reg_status,
+        reg_status: eventToEdit.reg_status ?? false,
       });
       setLinks(eventToEdit.links || []);
       setCoordinators(eventToEdit.coordinators || []);
     }
   }, [eventToEdit, form]);
 
-  if (eventsLoading && !form.formState.isSubmitting) {
+  //Show loading skeleton until we have valid event data
+  if (eventDetailsLoading || !eventToEdit || !eventToEdit.id) {
     return <EditEventSkeleton />;
   }
-  if (!eventToEdit) {
-    return (
-      <div className="min-h-screen bg-[#050508] flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 rounded-2xl bg-rose-500/10 flex items-center justify-center mb-4 mx-auto">
-            <Calendar className="w-8 h-8 text-rose-400" />
-          </div>
-          <h3 className="text-lg font-medium text-white mb-2">
-            Event not found
-          </h3>
-          <p className="text-zinc-500 mb-6">
-            The event you're looking for doesn't exist.
-          </p>
-          <Button
-            asChild
-            variant="outline"
-            className="border-white/10 text-white hover:bg-white/5"
-          >
-            <Link href="/">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Events
-            </Link>
-          </Button>
-        </div>
-      </div>
-    );
-  }
+
+  // At this point, we have complete event data, so render the form
   async function onSubmit(values: EventFormInput) {
     try {
       const parsed: EventFormOutput = eventSchema.parse(values);

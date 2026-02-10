@@ -1,9 +1,9 @@
-import { createServer } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
-import Link from 'next/link';
-import { Users, ShieldCheck, LayoutDashboard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { createServer } from '@/lib/supabase/server';
+import { LayoutDashboard, ShieldCheck, Users } from 'lucide-react';
 import { Metadata } from 'next';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Dashboard | RCCIIT SWC',
@@ -60,7 +60,7 @@ const LandingPage = async () => {
           </Link>
 
           {/* Get Admin Access Card */}
-          <Link href="/admin" className="group">
+          <Link href="/select-fest" className="group">
             <div className="relative h-full bg-gradient-to-br from-emerald-950/40 to-green-950/40 border border-white/10 rounded-2xl p-8 hover:border-emerald-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/20">
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/5 to-green-600/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 

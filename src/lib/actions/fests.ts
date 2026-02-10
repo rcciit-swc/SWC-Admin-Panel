@@ -1,7 +1,8 @@
 import {
-  getFestsBy2026,
   getCategoriesByFestId,
   getEventsByCategoryId,
+  getEventsByFestId,
+  getFestsBy2026,
 } from '@/utils/functions/festUtils';
 
 export const populateFests = async (set: any) => {
@@ -25,6 +26,12 @@ export const populateEventsByCategory = async (
   set({ events: data || [], eventsLoading: false });
 };
 
+export const populateEventsByFest = async (set: any, festId: string) => {
+  set({ eventsLoading: true });
+  const data = await getEventsByFestId(festId);
+  set({ events: data || [], eventsLoading: false });
+};
+
 export const resetCategoriesData = (set: any) => {
   set({ categories: [] });
 };
@@ -32,3 +39,4 @@ export const resetCategoriesData = (set: any) => {
 export const resetEventsData = (set: any) => {
   set({ events: [] });
 };
+
