@@ -1,11 +1,11 @@
 import { create } from 'zustand';
-import { RequestsActionsType, RequestsStateType } from '../types/requests';
 import {
-  populateRequests,
   approveEventAction,
   approveSuperAdminAction,
+  populateRequests,
   rejectRequestAction,
 } from '../actions/requests';
+import { RequestsActionsType, RequestsStateType } from '../types/requests';
 
 type RequestsStoreType = RequestsStateType & RequestsActionsType;
 
@@ -40,6 +40,7 @@ export const useRequests = create<RequestsStoreType>((set) => ({
     requestId: number,
     userId: string,
     role: string,
+    festId?: string | null,
     eventCategoryId?: string | null
   ) =>
     approveSuperAdminAction(
@@ -47,7 +48,7 @@ export const useRequests = create<RequestsStoreType>((set) => ({
       requestId,
       userId,
       role,
-      null,
+      festId,
       eventCategoryId
     ),
   rejectRequest: (requestId: number) => rejectRequestAction(set, requestId),

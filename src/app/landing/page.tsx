@@ -25,7 +25,7 @@ const LandingPage = async () => {
     .eq('user_id', sessionData?.session?.user?.id!);
 
   const adminAccessHref =
-    (rolesCount || 0) > 0 ? '/select-fest' : '/request-access';
+    (rolesCount || 0) > 0 ? '/select-role' : '/request-access';
 
   return (
     <div className="min-h-screen w-full bg-[#050508] flex items-center justify-center">

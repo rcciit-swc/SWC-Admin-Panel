@@ -1,8 +1,8 @@
-import { supabaseServer } from '@/utils/functions/supabase-server';
 import GraphicsView from '@/components/GraphicsView';
+import { login } from '@/utils/functions/login';
+import { supabaseServer } from '@/utils/functions/supabase-server';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { login } from '@/utils/functions/login';
 
 export const metadata: Metadata = {
   title: 'Graphics View | RCCIIT SWC',
@@ -38,7 +38,7 @@ const Page = async () => {
   if (hasGraphicsRole) {
     const graphicsRole = roles?.find((role) => role.role === 'graphics');
 
-    if (!graphicsRole?.event_category_id) {
+    if (!graphicsRole?.fest_id) {
       return (
         <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 flex items-center justify-center p-6">
           <div className="bg-red-950/40 border border-red-500/30 rounded-2xl p-8 text-center max-w-md">
@@ -54,27 +54,7 @@ const Page = async () => {
       );
     }
 
-    // Fetch the fest_id from event_category
-    const { data: categoryData } = await supabase
-      .from('event_categories')
-      .select('fest_id')
-      .eq('id', graphicsRole.event_category_id)
-      .single();
-
-    if (!categoryData?.fest_id) {
-      return (
-        <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 flex items-center justify-center p-6">
-          <div className="bg-red-950/40 border border-red-500/30 rounded-2xl p-8 text-center max-w-md">
-            <h2 className="text-2xl font-bold text-red-400 mb-2">Data Error</h2>
-            <p className="text-zinc-300">
-              Unable to fetch fest information. Please contact an administrator.
-            </p>
-          </div>
-        </div>
-      );
-    }
-
-    festId = categoryData.fest_id;
+    festId = graphicsRole.fest_id;
   }
   // Super admin - don't set festId, let them select in the component
 

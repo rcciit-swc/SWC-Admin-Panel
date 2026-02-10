@@ -61,8 +61,11 @@ const Page = async ({ params }: PageProps) => {
       const headersList = await headers();
       const referer = headersList.get('referer') || '';
 
-      // Only redirect if NOT coming from select-role page
-      if (!referer.includes('/select-role')) {
+      if (
+        !referer.includes('/select-role') &&
+        !referer.includes('/select-fest') &&
+        !referer.includes('/admin')
+      ) {
         const { redirect } = await import('next/navigation');
         redirect('/select-role');
       }

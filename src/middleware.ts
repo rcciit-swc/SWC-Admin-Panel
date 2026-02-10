@@ -70,9 +70,8 @@ export async function middleware(req: NextRequest) {
     return response;
   }
 
-  // Redirect /admin to /landing
   if (url.pathname === '/admin' || url.pathname === '/admin/') {
-    return NextResponse.redirect(new URL('/landing', req.url));
+    return NextResponse.redirect(new URL('/select-role', req.url));
   }
 
   // Allow authenticated users to access /admin subroutes (like /admin/[festId])

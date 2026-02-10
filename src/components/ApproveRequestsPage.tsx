@@ -1,21 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  CheckCircle,
-  XCircle,
-  Eye,
-  Calendar,
-  User,
-  Mail,
-  Shield,
-  Loader2,
-} from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useRequests } from '@/lib/stores/requests';
-import { RoleRequest, EventDetail } from '@/lib/types/requests';
-import { getEventDetailsForRequest } from '@/utils/functions/requestsUtils';
 import {
   Dialog,
   DialogContent,
@@ -23,6 +8,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useRequests } from '@/lib/stores/requests';
+import { EventDetail, RoleRequest } from '@/lib/types/requests';
+import { getEventDetailsForRequest } from '@/utils/functions/requestsUtils';
+import { motion } from 'framer-motion';
+import {
+  Calendar,
+  CheckCircle,
+  Eye,
+  Loader2,
+  Mail,
+  Shield,
+  User,
+  XCircle,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export default function ApproveRequestsPage() {
   const {
@@ -103,6 +103,7 @@ export default function ApproveRequestsPage() {
       request.id,
       request.user_id,
       request.role,
+      request.fest_id || null, // Pass fest_id
       request.event_category_id || null
     );
 
@@ -272,8 +273,8 @@ export default function ApproveRequestsPage() {
                       <td className="p-4">
                         <div className="flex items-center justify-end gap-2">
                           {request.role === 'super_admin' ||
-                          request.role === 'faculty' ||
-                          request.role === 'graphics' ? (
+                            request.role === 'faculty' ||
+                            request.role === 'graphics' ? (
                             <Button
                               onClick={() =>
                                 handleApproveFacultyOrSuperAdmin(request)

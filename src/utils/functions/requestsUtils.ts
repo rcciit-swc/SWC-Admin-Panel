@@ -1,5 +1,5 @@
-import { supabase } from './supabase-client';
 import { toast } from 'sonner';
+import { supabase } from './supabase-client';
 
 export interface RoleRequest {
   id: number;
@@ -148,6 +148,7 @@ export const approveEventForUser = async (
       role: role,
       event_id: eventId,
       event_category_id: eventCategoryId,
+      fest_id: festId,
       granted_by: currentUser.id,
     });
 
@@ -203,7 +204,8 @@ export const approveSuperAdminRequest = async (
   requestId: number,
   userId: string,
   role: string,
-  eventCategoryId?: string | null
+  eventCategoryId?: string | null,
+  festId?: string | null
 ): Promise<boolean> => {
   try {
     // Get the current user (approver)
@@ -222,6 +224,7 @@ export const approveSuperAdminRequest = async (
       role: role,
       event_id: null,
       event_category_id: eventCategoryId || null,
+      fest_id: festId || null,
       granted_by: currentUser.id, // Use approver's ID
     });
 

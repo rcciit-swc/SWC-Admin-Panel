@@ -15,7 +15,7 @@ export interface events {
   reg_status: boolean;
   registration_fees: number;
   prize_pool: number;
-  image_url: string;
+  image_url?: string | null;
   min_team_size: number;
   max_team_size: number;
   schedule: string;

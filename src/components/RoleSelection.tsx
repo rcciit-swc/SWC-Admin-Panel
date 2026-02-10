@@ -1,16 +1,15 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
+  ArrowRight,
+  Crown,
+  Image as ImageIcon,
   ShieldCheck,
   UserCheck,
   Users,
-  Image as ImageIcon,
-  Crown,
-  ArrowRight,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 interface Role {
   role: string;
@@ -34,7 +33,7 @@ export default function RoleSelection({ roles }: RoleSelectionProps) {
           icon: Crown,
           color: 'from-red-500/20 to-orange-500/20 border-red-500/30',
           iconColor: 'text-red-400',
-          route: '/admin',
+          route: '/select-fest',
         };
       case 'faculty':
         return {
@@ -43,7 +42,7 @@ export default function RoleSelection({ roles }: RoleSelectionProps) {
           icon: ShieldCheck,
           color: 'from-emerald-500/20 to-green-500/20 border-emerald-500/30',
           iconColor: 'text-emerald-400',
-          route: '/approve',
+          route: '/select-fest',
         };
       case 'graphics':
         return {
@@ -61,7 +60,7 @@ export default function RoleSelection({ roles }: RoleSelectionProps) {
           icon: UserCheck,
           color: 'from-blue-500/20 to-cyan-500/20 border-blue-500/30',
           iconColor: 'text-blue-400',
-          route: '/admin',
+          route: '/select-fest',
         };
       case 'convenor':
         return {
@@ -70,7 +69,7 @@ export default function RoleSelection({ roles }: RoleSelectionProps) {
           icon: Users,
           color: 'from-violet-500/20 to-purple-500/20 border-violet-500/30',
           iconColor: 'text-violet-400',
-          route: '/admin',
+          route: '/select-fest',
         };
       case 'volunteer':
         return {
@@ -79,7 +78,7 @@ export default function RoleSelection({ roles }: RoleSelectionProps) {
           icon: Users,
           color: 'from-indigo-500/20 to-blue-500/20 border-indigo-500/30',
           iconColor: 'text-indigo-400',
-          route: '/admin',
+          route: '/select-fest',
         };
       default:
         return {
@@ -88,7 +87,7 @@ export default function RoleSelection({ roles }: RoleSelectionProps) {
           icon: ShieldCheck,
           color: 'from-zinc-500/20 to-gray-500/20 border-zinc-500/30',
           iconColor: 'text-zinc-400',
-          route: '/admin',
+          route: '/select-fest',
         };
     }
   };

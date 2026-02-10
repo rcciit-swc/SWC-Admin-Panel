@@ -1,8 +1,8 @@
-import { supabaseServer } from '@/utils/functions/supabase-server';
-import { redirect } from 'next/navigation';
 import RoleSelection from '@/components/RoleSelection';
 import { login } from '@/utils/functions/login';
+import { supabaseServer } from '@/utils/functions/supabase-server';
 import { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Select Role | RCCIIT SWC',
@@ -39,12 +39,11 @@ export default async function SelectRolePage() {
     const role = uniqueRoles[0];
 
     switch (role) {
-      case 'faculty':
-        redirect('/approve');
       case 'graphics':
         redirect('/graphics');
+      case 'faculty':
       default:
-        redirect('/admin');
+        redirect('/select-fest');
     }
   }
 

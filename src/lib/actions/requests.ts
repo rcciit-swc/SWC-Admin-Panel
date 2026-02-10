@@ -1,7 +1,7 @@
 import {
-  getRoleRequests,
   approveEventForUser,
   approveSuperAdminRequest,
+  getRoleRequests,
   rejectRoleRequest,
 } from '@/utils/functions/requestsUtils';
 
@@ -61,7 +61,8 @@ export const approveSuperAdminAction = async (
     requestId,
     userId,
     role,
-    eventCategoryId
+    eventCategoryId,
+    festId
   );
 
   if (success) {
