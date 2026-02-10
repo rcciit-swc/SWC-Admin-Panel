@@ -1,10 +1,10 @@
 import EventsTable from '@/components/approve/EventsTable';
 import TableSkeleton from '@/components/approve/TableSkeleton';
-import { Suspense } from 'react';
-import { ArrowLeft, ShieldCheck } from 'lucide-react';
-import Link from 'next/link';
-import { Metadata } from 'next';
 import { supabaseServer } from '@/utils/functions/supabase-server';
+import { ArrowLeft, ShieldCheck } from 'lucide-react';
+import { Metadata } from 'next';
+import Link from 'next/link';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   title: 'Approve Registrations | RCCIIT SWC',
@@ -12,7 +12,12 @@ export const metadata: Metadata = {
     'Review payment status and manage event registrations for RCCIIT Sports and Welfare Committee',
 };
 
-export default async function Page() {
+interface PageProps {
+  params: Promise<{ festId: string }>;
+}
+
+export default async function Page({ params }: PageProps) {
+  const { festId } = await params;
   const supabase = await supabaseServer();
   const { data: sessionData } = await supabase.auth.getSession();
 
@@ -37,7 +42,7 @@ export default async function Page() {
             <div className="flex items-center gap-4">
               {!isFaculty && (
                 <Link
-                  href="/admin"
+                  href={`/admin/${festId}`}
                   className="flex items-center justify-center w-9 h-9 rounded-lg bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
                 >
                   <ArrowLeft className="h-4 w-4" />
@@ -63,7 +68,7 @@ export default async function Page() {
         <section className="">
           <div className="p-6 md:p-6 px-6">
             <Suspense fallback={<TableSkeleton />}>
-              <EventsTable />
+              <EventsTable festId={festId} />
             </Suspense>
           </div>
         </section>

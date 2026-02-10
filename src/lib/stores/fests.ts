@@ -31,4 +31,3 @@ export const useFests = create<FestsStoreType>((set) => ({
   resetCategories: () => resetCategoriesData(set),
   resetEvents: () => resetEventsData(set),
 }));
-

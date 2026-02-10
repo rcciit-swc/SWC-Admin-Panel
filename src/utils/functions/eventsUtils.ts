@@ -233,7 +233,8 @@ export const updateEventById = async (
 
 export const getApprovalDashboardData = async (
   rangeStart: number,
-  rangeEnd: number
+  rangeEnd: number,
+  festId: string
 ): Promise<EventData[] | null> => {
   try {
     const rolesData = await getRoles();
@@ -253,7 +254,7 @@ export const getApprovalDashboardData = async (
 
     const { data, error } = await supabase
       .rpc('get_fest_registrations', {
-        p_fest_id: '5bff3a43-43b6-420a-8d42-9a96257cc351',
+        p_fest_id: festId,
         p_event_category_id:
           isAdmin?.role === 'super_admin'
             ? null

@@ -1,22 +1,22 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { Search, RefreshCw } from 'lucide-react';
-import { List, type RowComponentProps } from 'react-window';
-import { CSVLink } from 'react-csv';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import Image from 'next/image';
-import { EventData, events } from '@/lib/types/events';
-import TableSkeleton from './TableSkeleton';
+import { Input } from '@/components/ui/input';
 import { useEvents } from '@/lib/stores/events';
+import { events } from '@/lib/types/events';
+import { RefreshCw, Search } from 'lucide-react';
+import Image from 'next/image';
+import { useEffect, useMemo, useState } from 'react';
+import { CSVLink } from 'react-csv';
+import { List, type RowComponentProps } from 'react-window';
 import { toast } from 'sonner';
+import TableSkeleton from './TableSkeleton';
 
 import {
   Tooltip,
@@ -24,15 +24,19 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { TeamMembersDialog } from './TeamMembersDialog';
-import { approveRegistration } from '@/utils/functions/register-services';
-import { Filter } from './EventFilters';
+import { whatsAppLinks } from '@/utils/constraints/constants/whatsApp';
 import { getRoles } from '@/utils/functions';
 import { dateTime } from '@/utils/functions/dateUtils';
-import { whatsAppLinks } from '@/utils/constraints/constants/whatsApp';
+import { approveRegistration } from '@/utils/functions/register-services';
+import { Filter } from './EventFilters';
+import { TeamMembersDialog } from './TeamMembersDialog';
 
-export default function EventsTable() {
-  const festId = 'a4bc08e4-9af9-4212-8d32-cd88d2437f18';
+interface EventsTableProps {
+  festId: string;
+}
+
+export default function EventsTable({ festId }: EventsTableProps) {
+  // const festId = 'a4bc08e4-9af9-4212-8d32-cd88d2437f18';
   const [searchQuery, setSearchQuery] = useState('');
   const [rolesData, setRolesData] = useState([]);
   const [paymentStatusFilter, setPaymentStatusFilter] = useState('');
@@ -67,7 +71,7 @@ export default function EventsTable() {
   );
 
   const refreshData = async () => {
-    getApprovalDashboardData(0, 1000);
+    getApprovalDashboardData(0, 1000, festId);
   };
   const [isAdmin, setIsAdmin] = useState(false);
   const [isFaculty, setIsFaculty] = useState(false);

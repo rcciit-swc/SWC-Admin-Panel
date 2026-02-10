@@ -70,11 +70,12 @@ export const updatePopulateEvents = async (set: any, id: string, data: any) => {
 export const populateApprovalDashboard = async (
   set: any,
   rangeStart: number,
-  rangeEnd: number
+  rangeEnd: number,
+  festId: string
 ) => {
   try {
     set({ approvalDashboardLoading: true });
-    const res = await getApprovalDashboardData(rangeStart, rangeEnd);
+    const res = await getApprovalDashboardData(rangeStart, rangeEnd, festId);
     set({ approvalDashboardData: res, approvalDashboardLoading: false });
     // if (!res) {
     //   set({ approvalDashboardData: [], approvalDashboardLoading: false });

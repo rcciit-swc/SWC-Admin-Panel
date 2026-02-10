@@ -14,6 +14,7 @@ import {
   CheckCircle2,
   Clock,
   Edit3,
+  Image as ImageIcon,
   Trophy,
   Users,
   Wallet,
@@ -116,9 +117,7 @@ export function EventCards({
       <AnimatePresence mode="popLayout">
         {(isSuperAdmin
           ? events
-          : events?.filter(
-            (event) => event.id && eventIDs.includes(event.id)
-          )
+          : events?.filter((event) => event.id && eventIDs.includes(event.id))
         )?.map((event, index) => (
           <motion.div
             key={event.id}
@@ -149,10 +148,11 @@ export function EventCards({
                       </div>
                     </div>
                     <Badge
-                      className={`px-3 py-1 text-xs font-medium ${event.reg_status
-                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                        : 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20'
-                        }`}
+                      className={`px-3 py-1 text-xs font-medium ${
+                        event.reg_status
+                          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                          : 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20'
+                      }`}
                     >
                       {event.reg_status ? (
                         <span className="flex items-center gap-1.5">
@@ -243,15 +243,26 @@ export function EventCards({
                 </div>
 
                 {/* Image */}
-                <div className="lg:w-72 h-48 lg:h-auto relative overflow-hidden">
+                <div className="lg:w-72 h-48 lg:h-auto relative overflow-hidden bg-zinc-900/50 flex items-center justify-center">
                   <div className="absolute inset-0 bg-linear-to-t lg:bg-linear-to-l from-[#0f0f16] via-transparent to-transparent z-10" />
-                  <Image
-                    src={event.image_url}
-                    alt={event.name}
-                    width={400}
-                    height={300}
-                    className="w-full h-full object-cover"
-                  />
+                  {event.image_url ? (
+                    <Image
+                      src={event.image_url}
+                      alt={event.name}
+                      width={400}
+                      height={300}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-zinc-700">
+                      <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-2">
+                        <ImageIcon className="w-6 h-6 text-zinc-600" />
+                      </div>
+                      <span className="text-xs font-medium text-zinc-600">
+                        No image
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             </Card>

@@ -39,4 +39,3 @@ export const resetCategoriesData = (set: any) => {
 export const resetEventsData = (set: any) => {
   set({ events: [] });
 };
-

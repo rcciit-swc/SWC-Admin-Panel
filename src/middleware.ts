@@ -70,7 +70,12 @@ export async function middleware(req: NextRequest) {
     return response;
   }
 
-  // Allow authenticated users to access /admin - the page will handle showing RequestAccessScreen
+  // Redirect /admin to /landing
+  if (url.pathname === '/admin' || url.pathname === '/admin/') {
+    return NextResponse.redirect(new URL('/landing', req.url));
+  }
+
+  // Allow authenticated users to access /admin subroutes (like /admin/[festId])
   if (url.pathname.startsWith('/admin')) {
     return NextResponse.next();
   }

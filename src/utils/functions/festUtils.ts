@@ -161,4 +161,3 @@ export const getEventsByFestId = async (
     return null;
   }
 };
-

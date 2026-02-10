@@ -1,7 +1,6 @@
-import { supabaseServer } from '@/utils/functions/supabase-server';
-import { redirect } from 'next/navigation';
 import RequestAccessScreen from '@/components/RequestAccessScreen';
 import { login } from '@/utils/functions/login';
+import { supabaseServer } from '@/utils/functions/supabase-server';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -27,11 +26,6 @@ export default async function RequestAccessRoute() {
     .from('roles')
     .select('role')
     .eq('user_id', user?.id);
-
-  // If user has no roles, redirect to /admin which will show the request screen
-  if (!roles || roles.length === 0) {
-    redirect('/admin');
-  }
 
   // Check for pending request
   const { data: pendingRequest } = await supabase

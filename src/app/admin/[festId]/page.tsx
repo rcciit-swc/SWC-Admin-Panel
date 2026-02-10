@@ -1,6 +1,7 @@
 import { EventCards } from '@/components/manage-events/EventsCard';
 import RequestAccessScreen from '@/components/RequestAccessScreen';
 import { Button } from '@/components/ui/button';
+import { validateFestAccess } from '@/utils/functions/accessControl';
 import { supabaseServer } from '@/utils/functions/supabase-server';
 import {
   ArrowUpDown,
@@ -8,7 +9,7 @@ import {
   Shield,
   ShieldCheck,
   UserCheck,
-  Users
+  Users,
 } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
@@ -20,13 +21,13 @@ export const metadata: Metadata = {
 };
 
 interface PageProps {
-  params: {
+  params: Promise<{
     festId: string;
-  };
+  }>;
 }
 
 const Page = async ({ params }: PageProps) => {
-  const { festId } = params;
+  const { festId } = await params;
   const supabase = await supabaseServer();
   const { data: sessionData } = await supabase.auth.getSession();
 
@@ -73,6 +74,12 @@ const Page = async ({ params }: PageProps) => {
     const isGraphics = roles?.find((role) => role.role === 'graphics');
     const hasAnyRole = roles && roles.length > 0; // Any role (coordinator, convenor, super_admin, faculty, graphics)
 
+    // Collect all event_ids from all roles
+    const eventIds =
+      roles
+        ?.map((role) => role.event_id)
+        .filter((id): id is string => id !== null && id !== undefined) || [];
+
     // Redirect faculty users to /approve page only (if they ONLY have faculty role)
     if (isFaculty && !isAdmin && !hasMultipleRoles) {
       const { redirect } = await import('next/navigation');
@@ -85,11 +92,13 @@ const Page = async ({ params }: PageProps) => {
       redirect('/graphics');
     }
 
-    // Collect all event_ids from all roles
-    const eventIds =
-      roles
-        ?.map((role) => role.event_id)
-        .filter((id): id is string => id !== null && id !== undefined) || [];
+    // Check if user has access to this fest's events
+    const hasAccess = await validateFestAccess(festId, roles || [], supabase);
+
+    if (!hasAccess) {
+      const { redirect } = await import('next/navigation');
+      redirect('/request-access');
+    }
 
     return (
       <div className="min-h-screen w-full bg-[#050508]">
@@ -106,7 +115,10 @@ const Page = async ({ params }: PageProps) => {
               <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
                 {/* Registration - Available to all roles */}
                 {hasAnyRole && (
-                  <Link href="/approve" className="w-full sm:w-auto">
+                  <Link
+                    href={`/admin/${festId}/approve`}
+                    className="w-full sm:w-auto"
+                  >
                     <Button className="w-full sm:w-auto bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:from-violet-500 hover:to-indigo-500 border-0 text-sm">
                       <UserCheck className="mr-2 h-4 w-4" />
                       Registration

@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { events, EventsActionsType, EventsStateType } from '../types/events';
 import {
   addEvent,
   getSecuritiesData,
@@ -10,6 +9,7 @@ import {
   updatePopulateEvents,
   updateRegisterStatus,
 } from '../actions/events';
+import { events, EventsActionsType, EventsStateType } from '../types/events';
 
 type EventsStoreType = EventsStateType & EventsActionsType;
 const eventState: EventsStateType = {
@@ -34,8 +34,11 @@ export const useEvents = create<EventsStoreType>((set) => ({
     updateRegisterStatus(set, id, status),
   updateEventsData: (id: string, data: any) =>
     updatePopulateEvents(set, id, data),
-  getApprovalDashboardData: (rangeStart: number, rangeEnd: number) =>
-    populateApprovalDashboard(set, rangeStart, rangeEnd),
+  getApprovalDashboardData: (
+    rangeStart: number,
+    rangeEnd: number,
+    festId: string
+  ) => populateApprovalDashboard(set, rangeStart, rangeEnd, festId),
   markEventAsRegistered: (eventId: string) =>
     set((state) => ({
       eventsData: state.eventsData.map((event) =>
