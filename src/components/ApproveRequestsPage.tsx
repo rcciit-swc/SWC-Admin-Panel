@@ -273,8 +273,8 @@ export default function ApproveRequestsPage() {
                       <td className="p-4">
                         <div className="flex items-center justify-end gap-2">
                           {request.role === 'super_admin' ||
-                            request.role === 'faculty' ||
-                            request.role === 'graphics' ? (
+                          request.role === 'faculty' ||
+                          request.role === 'graphics' ? (
                             <Button
                               onClick={() =>
                                 handleApproveFacultyOrSuperAdmin(request)

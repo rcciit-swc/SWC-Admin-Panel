@@ -4,7 +4,7 @@ export const login = async () => {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: location.origin + '/auth/callback?next=/select-role',
+      redirectTo: location.origin + '/auth/callback?next=/landing',
     },
   });
   if (error) {

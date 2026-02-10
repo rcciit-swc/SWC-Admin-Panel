@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { createServer } from '@/lib/supabase/server';
-import { LayoutDashboard, ShieldCheck, Users } from 'lucide-react';
+import { Banknote, LayoutDashboard, ShieldCheck, Users } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -19,13 +19,20 @@ const LandingPage = async () => {
     redirect('/');
   }
 
-  const { count: rolesCount } = await supabase
+  /* Fetch user roles to determine access */
+  const { data: userRoles } = await supabase
     .from('roles')
-    .select('*', { count: 'exact', head: true })
+    .select('role')
     .eq('user_id', sessionData?.session?.user?.id!);
 
-  const adminAccessHref =
-    (rolesCount || 0) > 0 ? '/select-role' : '/request-access';
+  const hasDidRole = (roles: { role: string }[] | null, targetRole: string) => {
+    return roles?.some((r) => r.role === targetRole) || false;
+  };
+
+  const isSuperAdmin = hasDidRole(userRoles, 'super_admin');
+  const hasAnyRole = (userRoles?.length || 0) > 0;
+
+  const adminAccessHref = hasAnyRole ? '/select-role' : '/request-access';
 
   return (
     <div className="min-h-screen w-full bg-[#050508] flex items-center justify-center">
@@ -40,22 +47,22 @@ const LandingPage = async () => {
           <p className="text-zinc-400 text-lg">Choose an action to continue</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {/* Enter Team Data Card */}
           <Link href="/team-entry" className="group">
-            <div className="relative h-full bg-gradient-to-br from-violet-950/40 to-indigo-950/40 border border-white/10 rounded-2xl p-8 hover:border-violet-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-violet-500/20">
+            <div className="relative h-full bg-gradient-to-br from-violet-950/40 to-indigo-950/40 border border-white/10 rounded-2xl p-6 hover:border-violet-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-violet-500/20">
               <div className="absolute inset-0 bg-gradient-to-br from-violet-600/5 to-indigo-600/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
               <div className="relative z-10">
-                <div className="w-16 h-16 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Users className="w-8 h-8 text-white" />
+                <div className="w-14 h-14 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                  <Users className="w-7 h-7 text-white" />
                 </div>
 
-                <h2 className="text-2xl font-bold text-white mb-3">
+                <h2 className="text-xl font-bold text-white mb-2">
                   Enter Team Data
                 </h2>
 
-                <p className="text-zinc-400 mb-6">
+                <p className="text-zinc-400 text-sm mb-5 leading-relaxed">
                   Add new team members with their details, photos, and fest
                   information
                 </p>
@@ -69,19 +76,19 @@ const LandingPage = async () => {
 
           {/* Get Admin Access Card */}
           <Link href={adminAccessHref} className="group">
-            <div className="relative h-full bg-gradient-to-br from-emerald-950/40 to-green-950/40 border border-white/10 rounded-2xl p-8 hover:border-emerald-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/20">
+            <div className="relative h-full bg-gradient-to-br from-emerald-950/40 to-green-950/40 border border-white/10 rounded-2xl p-6 hover:border-emerald-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/20">
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/5 to-green-600/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
               <div className="relative z-10">
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-600 to-green-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <ShieldCheck className="w-8 h-8 text-white" />
+                <div className="w-14 h-14 bg-gradient-to-br from-emerald-600 to-green-600 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                  <ShieldCheck className="w-7 h-7 text-white" />
                 </div>
 
-                <h2 className="text-2xl font-bold text-white mb-3">
+                <h2 className="text-xl font-bold text-white mb-2">
                   Get Admin Access
                 </h2>
 
-                <p className="text-zinc-400 mb-6">
+                <p className="text-zinc-400 text-sm mb-5 leading-relaxed">
                   Request role-based access to manage events, approve
                   registrations, and more
                 </p>
@@ -95,19 +102,19 @@ const LandingPage = async () => {
 
           {/* Request Additional Access Card */}
           <Link href="/request-access" className="group">
-            <div className="relative h-full bg-gradient-to-br from-blue-950/40 to-cyan-950/40 border border-white/10 rounded-2xl p-8 hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20">
+            <div className="relative h-full bg-gradient-to-br from-blue-950/40 to-cyan-950/40 border border-white/10 rounded-2xl p-6 hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-cyan-600/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
               <div className="relative z-10">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <LayoutDashboard className="w-8 h-8 text-white" />
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                  <LayoutDashboard className="w-7 h-7 text-white" />
                 </div>
 
-                <h2 className="text-2xl font-bold text-white mb-3">
+                <h2 className="text-xl font-bold text-white mb-2">
                   Request Additional Access
                 </h2>
 
-                <p className="text-zinc-400 mb-6">
+                <p className="text-zinc-400 text-sm mb-5 leading-relaxed">
                   Already have a role? Request additional roles for more events
                   or responsibilities
                 </p>
@@ -118,6 +125,34 @@ const LandingPage = async () => {
               </div>
             </div>
           </Link>
+
+          {/* SWC Funds Tracker Card - Only for Super Admins */}
+          {isSuperAdmin && (
+            <Link href="/swc-tracker" className="group">
+              <div className="relative h-full bg-gradient-to-br from-amber-950/40 to-orange-950/40 border border-white/10 rounded-2xl p-6 hover:border-amber-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-500/20">
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-600/5 to-orange-600/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                <div className="relative z-10">
+                  <div className="w-14 h-14 bg-gradient-to-br from-amber-600 to-orange-600 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                    <Banknote className="w-7 h-7 text-white" />
+                  </div>
+
+                  <h2 className="text-xl font-bold text-white mb-2">
+                    SWC Funds Tracker
+                  </h2>
+
+                  <p className="text-zinc-400 text-sm mb-5 leading-relaxed">
+                    Track verified student payments and real-time fund status
+                    from the dashboard
+                  </p>
+
+                  <Button className="w-full bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:from-amber-500 hover:to-orange-500 border-0">
+                    View Tracker
+                  </Button>
+                </div>
+              </div>
+            </Link>
+          )}
         </div>
       </div>
     </div>

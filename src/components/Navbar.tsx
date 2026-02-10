@@ -1,22 +1,23 @@
 'use client';
 
-import Link from 'next/link';
-import { userDataType } from '@/lib/types/user';
-import { useState, Dispatch, SetStateAction, useEffect, memo } from 'react';
-import { motion } from 'framer-motion';
-import { useUser } from '@/lib/stores/user';
-import { login } from '@/utils/functions/login';
-import { logout } from '@/utils/functions/logout';
-import { LogOut, ShieldCheck } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useUser } from '@/lib/stores/user';
 import { supabase } from '@/lib/supabase/client';
+import { userDataType } from '@/lib/types/user';
+import { login } from '@/utils/functions/login';
+import { logout } from '@/utils/functions/logout';
+import { motion } from 'framer-motion';
+import { LogOut } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Dispatch, memo, SetStateAction, useEffect, useState } from 'react';
 
 export default function Navbar() {
   const { userData, userLoading } = useUser();
@@ -36,12 +37,17 @@ export default function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 w-full z-50 border-b border-white/[0.06] bg-[#0a0a0f]/80 backdrop-blur-xl">
-      <div className="container max-w-7xl mx-auto px-6 py-4">
+      <div className="container max-w-7xl mx-auto px-6 py-1">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 shrink-0">
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500/20 to-indigo-500/20 border border-violet-500/20">
-              <ShieldCheck className="h-5 w-5 text-violet-400" />
+            <div className="relative md:w-20 md:h-20 w-10 h-10 rounded-xl overflow-hidden">
+              <Image
+                src="https://i.ibb.co/Ngt3LWrC/swc.webp"
+                alt="SWC Logo"
+                fill
+                className="object-cover"
+              />
             </div>
             <div>
               <h1 className="text-xl font-semibold tracking-tight text-white">

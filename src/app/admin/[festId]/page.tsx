@@ -121,7 +121,7 @@ const Page = async ({ params }: PageProps) => {
 
         {/* Action Bar */}
         <div className="relative border-b border-white/[0.06] bg-[#0a0a0f]/50 backdrop-blur-sm">
-          <div className="container max-w-7xl mx-auto px-4 sm:px-6 py-4">
+          <div className="container max-w-7xl mx-auto px-4 sm:px-6 py-4 md:py-14">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <p className="text-sm text-zinc-400">
                 Create, edit, and manage events of RCCIIT
