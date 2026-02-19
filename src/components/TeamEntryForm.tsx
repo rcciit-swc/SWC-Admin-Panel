@@ -226,7 +226,15 @@ const TeamEntryForm = ({
     image_url: '',
   });
 
-  // Check if team requires event selection
+  // Teams that require event category selection
+  const requiresCategorySelection = [
+    'coordinators',
+    'volunteers',
+    'convenors',
+    'category_convenors',
+  ].includes(formData.team_id);
+
+  // Teams that require specific event selection
   const requiresEventSelection = [
     'coordinators',
     'volunteers',
@@ -292,6 +300,7 @@ const TeamEntryForm = ({
         .from('fests')
         .select('id, name')
         .eq('year', 2026)
+        .eq('is_active', true)
         .order('name');
 
       if (error) {
@@ -391,7 +400,12 @@ const TeamEntryForm = ({
 
   // Auto-set role name for regular teams (team name + member type)
   useEffect(() => {
-    if (formData.team_id && !requiresEventSelection && formData.member_type) {
+    if (
+      formData.team_id &&
+      !requiresEventSelection &&
+      formData.team_id !== 'category_convenors' &&
+      formData.member_type
+    ) {
       const selectedTeam = teams.find((t) => t.role === formData.team_id);
       if (selectedTeam) {
         const roleName = `${selectedTeam.team_name} ${formData.member_type}`;
@@ -1034,15 +1048,15 @@ const TeamEntryForm = ({
         toast.error('Please select a fest');
         return;
       }
-      if (!formData.event_category_id) {
-        toast.error('Please select an event category');
+      if (!formData.team_id) {
+        toast.error('Please select a team');
         return;
       }
     }
 
     if (step === 2) {
-      if (!formData.team_id) {
-        toast.error('Please select a team');
+      if (requiresCategorySelection && !formData.event_category_id) {
+        toast.error('Please select an event category');
         return;
       }
 
@@ -1372,7 +1386,7 @@ const TeamEntryForm = ({
           </div>
           <div className="text-center">
             <h2 className="text-2xl font-bold text-white mb-2">
-              {step === 1 && 'Select Fest & Category'}
+              {step === 1 && 'Select Fest & Team'}
               {step === 2 && 'Member Details'}
               {step === 3 && 'Upload Photo'}
               {step === 4 && 'Preview & Submit'}
@@ -1418,6 +1432,47 @@ const TeamEntryForm = ({
 
             {formData.fest_id && (
               <div>
+                <Label htmlFor="team" className="text-white mb-2 block">
+                  Select Team *
+                </Label>
+                <Select
+                  value={formData.team_id}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      team_id: value,
+                      event_category_id: '',
+                      event_id: '',
+                      role_name: '',
+                    }))
+                  }
+                >
+                  <SelectTrigger className="bg-[#0a0a0f] border-white/10 text-white">
+                    <SelectValue placeholder="Choose a team" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#0a0a0f] border-white/10">
+                    {teams.map((team) => (
+                      <SelectItem
+                        key={team.role}
+                        value={team.role}
+                        className="text-white focus:bg-white/10 focus:text-white"
+                      >
+                        {team.team_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Step 2: Member Details */}
+        {step === 2 && (
+          <div className="space-y-6">
+            {/* Event Category Selection - Conditionally rendered */}
+            {requiresCategorySelection && (
+              <div>
                 <Label
                   htmlFor="event_category"
                   className="text-white mb-2 block"
@@ -1431,6 +1486,13 @@ const TeamEntryForm = ({
                       ...prev,
                       event_category_id: value,
                       event_id: '',
+                      // For category convenors, auto-set role name when category changes
+                      role_name:
+                        formData.team_id === 'category_convenors'
+                          ? `${eventCategories.find((c) => c.id === value)
+                            ?.name || ''
+                          } Convenor`
+                          : '',
                     }))
                   }
                 >
@@ -1451,43 +1513,6 @@ const TeamEntryForm = ({
                 </Select>
               </div>
             )}
-          </div>
-        )}
-
-        {/* Step 2: Member Details */}
-        {step === 2 && (
-          <div className="space-y-6">
-            <div>
-              <Label htmlFor="team" className="text-white mb-2 block">
-                Select Team *
-              </Label>
-              <Select
-                value={formData.team_id}
-                onValueChange={(value) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    team_id: value,
-                    event_id: '',
-                    role_name: '',
-                  }))
-                }
-              >
-                <SelectTrigger className="bg-[#0a0a0f] border-white/10 text-white">
-                  <SelectValue placeholder="Choose a team" />
-                </SelectTrigger>
-                <SelectContent className="bg-[#0a0a0f] border-white/10">
-                  {teams.map((team) => (
-                    <SelectItem
-                      key={team.role}
-                      value={team.role}
-                      className="text-white focus:bg-white/10 focus:text-white"
-                    >
-                      {team.team_name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
 
             {requiresEventSelection && formData.event_category_id && (
               <div>
@@ -1518,41 +1543,43 @@ const TeamEntryForm = ({
               </div>
             )}
 
-            {/* Member Type - Only for non-coordinator/volunteer/convenor teams */}
-            {formData.team_id && !requiresEventSelection && (
-              <div>
-                <Label htmlFor="member_type" className="text-white mb-2 block">
-                  Member Type *
-                </Label>
-                <Select
-                  value={formData.member_type}
-                  onValueChange={(value) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      member_type: value as 'Team Member' | 'Lead',
-                    }))
-                  }
-                >
-                  <SelectTrigger className="bg-[#0a0a0f] border-white/10 text-white">
-                    <SelectValue placeholder="Choose member type" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-[#0a0a0f] border-white/10">
-                    <SelectItem
-                      value="Team Member"
-                      className="text-white focus:bg-white/10 focus:text-white"
-                    >
-                      Team Member
-                    </SelectItem>
-                    <SelectItem
-                      value="Lead"
-                      className="text-white focus:bg-white/10 focus:text-white"
-                    >
-                      Lead
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
+            {/* Member Type - Only for non-coordinator/volunteer/convenor/category_convenor teams */}
+            {formData.team_id &&
+              !requiresEventSelection &&
+              formData.team_id !== 'category_convenors' && (
+                <div>
+                  <Label htmlFor="member_type" className="text-white mb-2 block">
+                    Member Type *
+                  </Label>
+                  <Select
+                    value={formData.member_type}
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        member_type: value as 'Team Member' | 'Lead',
+                      }))
+                    }
+                  >
+                    <SelectTrigger className="bg-[#0a0a0f] border-white/10 text-white">
+                      <SelectValue placeholder="Choose member type" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#0a0a0f] border-white/10">
+                      <SelectItem
+                        value="Team Member"
+                        className="text-white focus:bg-white/10 focus:text-white"
+                      >
+                        Team Member
+                      </SelectItem>
+                      <SelectItem
+                        value="Lead"
+                        className="text-white focus:bg-white/10 focus:text-white"
+                      >
+                        Lead
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
             {formData.team_id && (
               <>
@@ -1927,7 +1954,7 @@ const TeamEntryForm = ({
             <Button
               onClick={handleNext}
               disabled={
-                step === 1 && (!formData.fest_id || !formData.event_category_id)
+                step === 1 && (!formData.fest_id || !formData.team_id)
               }
               className="ml-auto bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:from-violet-500 hover:to-indigo-500 border-0 disabled:opacity-50 disabled:cursor-not-allowed"
             >
