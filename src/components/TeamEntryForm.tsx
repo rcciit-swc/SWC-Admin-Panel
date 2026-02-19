@@ -33,7 +33,7 @@ import {
   UserPlus,
   Users,
   XCircle,
-  X as XIcon
+  X as XIcon,
 } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -136,6 +136,10 @@ const processEventsForDisplay = (
     // Check if event contains "TRACK AND SPORTS" (case insensitive)
     if (displayName.toUpperCase().includes('TRACK AND SPORTS')) {
       displayName = 'TRACK AND SPORTS';
+    } else if (displayName.toUpperCase().includes('BGMI')) {
+      displayName = 'BGMI';
+    } else if (displayName.toUpperCase().includes('E-FOOTBALL')) {
+      displayName = 'E-Football';
     } else {
       // Remove (SINGLES), (DOUBLES), (MALE), (FEMALE) from the event name
       displayName = displayName
@@ -487,11 +491,11 @@ const TeamEntryForm = ({
             ...req,
             org_team: req.org_teams
               ? {
-                ...req.org_teams,
-                team_name:
-                  req.org_teams.defined_org_teams?.team_name ||
-                  'Unknown Team',
-              }
+                  ...req.org_teams,
+                  team_name:
+                    req.org_teams.defined_org_teams?.team_name ||
+                    'Unknown Team',
+                }
               : undefined,
           })) || [];
 
@@ -561,11 +565,11 @@ const TeamEntryForm = ({
             canApprove: false, // User cannot approve their own requests
             org_team: req.org_teams
               ? {
-                ...req.org_teams,
-                team_name:
-                  req.org_teams.defined_org_teams?.team_name ||
-                  'Unknown Team',
-              }
+                  ...req.org_teams,
+                  team_name:
+                    req.org_teams.defined_org_teams?.team_name ||
+                    'Unknown Team',
+                }
               : undefined,
           })) || []),
           ...(incomingRequests?.map((req: any) => ({
@@ -576,11 +580,11 @@ const TeamEntryForm = ({
             requesterEmail: req.users?.email || '',
             org_team: req.org_teams
               ? {
-                ...req.org_teams,
-                team_name:
-                  req.org_teams.defined_org_teams?.team_name ||
-                  'Unknown Team',
-              }
+                  ...req.org_teams,
+                  team_name:
+                    req.org_teams.defined_org_teams?.team_name ||
+                    'Unknown Team',
+                }
               : undefined,
           })) || []),
         ];
@@ -639,11 +643,11 @@ const TeamEntryForm = ({
             ...req,
             org_team: req.org_teams
               ? {
-                ...req.org_teams,
-                team_name:
-                  req.org_teams.defined_org_teams?.team_name ||
-                  'Unknown Team',
-              }
+                  ...req.org_teams,
+                  team_name:
+                    req.org_teams.defined_org_teams?.team_name ||
+                    'Unknown Team',
+                }
               : undefined,
           })
         );
@@ -876,10 +880,10 @@ const TeamEntryForm = ({
           canApprove: false,
           org_team: req.org_teams
             ? {
-              ...req.org_teams,
-              team_name:
-                req.org_teams.defined_org_teams?.team_name || 'Unknown Team',
-            }
+                ...req.org_teams,
+                team_name:
+                  req.org_teams.defined_org_teams?.team_name || 'Unknown Team',
+              }
             : undefined,
         })) || []),
         ...(incomingRequests?.map((req: any) => ({
@@ -890,10 +894,10 @@ const TeamEntryForm = ({
           requesterEmail: req.users?.email || '',
           org_team: req.org_teams
             ? {
-              ...req.org_teams,
-              team_name:
-                req.org_teams.defined_org_teams?.team_name || 'Unknown Team',
-            }
+                ...req.org_teams,
+                team_name:
+                  req.org_teams.defined_org_teams?.team_name || 'Unknown Team',
+              }
             : undefined,
         })) || []),
       ];
@@ -1366,19 +1370,21 @@ const TeamEntryForm = ({
                 className={`flex items-center ${s < 4 ? 'flex-1' : ''}`}
               >
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${s <= step
-                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white'
-                    : 'bg-white/10 text-zinc-500'
-                    }`}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
+                    s <= step
+                      ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white'
+                      : 'bg-white/10 text-zinc-500'
+                  }`}
                 >
                   {s}
                 </div>
                 {s < 4 && (
                   <div
-                    className={`flex-1 h-1 mx-2 transition-all ${s < step
-                      ? 'bg-gradient-to-r from-violet-600 to-indigo-600'
-                      : 'bg-white/10'
-                      }`}
+                    className={`flex-1 h-1 mx-2 transition-all ${
+                      s < step
+                        ? 'bg-gradient-to-r from-violet-600 to-indigo-600'
+                        : 'bg-white/10'
+                    }`}
                   />
                 )}
               </div>
@@ -1489,9 +1495,10 @@ const TeamEntryForm = ({
                       // For category convenors, auto-set role name when category changes
                       role_name:
                         formData.team_id === 'category_convenors'
-                          ? `${eventCategories.find((c) => c.id === value)
-                            ?.name || ''
-                          } Convenor`
+                          ? `${
+                              eventCategories.find((c) => c.id === value)
+                                ?.name || ''
+                            } Convenor`
                           : '',
                     }))
                   }
@@ -1548,7 +1555,10 @@ const TeamEntryForm = ({
               !requiresEventSelection &&
               formData.team_id !== 'category_convenors' && (
                 <div>
-                  <Label htmlFor="member_type" className="text-white mb-2 block">
+                  <Label
+                    htmlFor="member_type"
+                    className="text-white mb-2 block"
+                  >
                     Member Type *
                   </Label>
                   <Select
@@ -1953,9 +1963,7 @@ const TeamEntryForm = ({
           {step < 4 ? (
             <Button
               onClick={handleNext}
-              disabled={
-                step === 1 && (!formData.fest_id || !formData.team_id)
-              }
+              disabled={step === 1 && (!formData.fest_id || !formData.team_id)}
               className="ml-auto bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:from-violet-500 hover:to-indigo-500 border-0 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
@@ -2231,10 +2239,11 @@ const TeamEntryForm = ({
               {userOwnRequests.map((request: any) => (
                 <div
                   key={request.id}
-                  className={`bg-white/5 border rounded-xl p-4 transition-all ${request.isMyRequest
-                    ? 'border-amber-500/30 hover:bg-white/10'
-                    : 'border-emerald-500/30 hover:bg-emerald-500/5'
-                    }`}
+                  className={`bg-white/5 border rounded-xl p-4 transition-all ${
+                    request.isMyRequest
+                      ? 'border-amber-500/30 hover:bg-white/10'
+                      : 'border-emerald-500/30 hover:bg-emerald-500/5'
+                  }`}
                 >
                   <div className="flex flex-col sm:flex-row items-start gap-4">
                     {request.org_team?.image && (

@@ -3,19 +3,21 @@ import { useFests } from '@/lib/stores/fests';
 import { checkFestHasEvents } from '@/utils/functions/festUtils';
 import { Calendar, Loader2 } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
 
 const FestSelectionCard = ({
   id,
   name,
   year,
   fest_logo,
+  redirectUrl,
 }: {
   id: string;
   name: string;
   year: number;
   fest_logo: string | null;
+  redirectUrl?: string | null;
 }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -25,7 +27,11 @@ const FestSelectionCard = ({
       setIsLoading(true);
       const hasEvents = await checkFestHasEvents(id);
       if (hasEvents) {
-        router.push(`/admin/${id}`);
+        if (redirectUrl) {
+          router.push(`/admin/${id}/${redirectUrl}`);
+        } else {
+          router.push(`/admin/${id}`);
+        }
       } else {
         router.push('/coming-soon');
       }
@@ -38,9 +44,8 @@ const FestSelectionCard = ({
   return (
     <div
       onClick={!isLoading ? handleClick : undefined}
-      className={`group relative h-full bg-gradient-to-br from-violet-950/40 to-indigo-950/40 border border-white/10 rounded-2xl p-8 hover:border-violet-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-violet-500/20 cursor-pointer ${
-        isLoading ? 'opacity-70 pointer-events-none' : ''
-      }`}
+      className={`group relative h-full bg-gradient-to-br from-violet-950/40 to-indigo-950/40 border border-white/10 rounded-2xl p-8 hover:border-violet-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-violet-500/20 cursor-pointer ${isLoading ? 'opacity-70 pointer-events-none' : ''
+        }`}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-violet-600/5 to-indigo-600/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
@@ -77,8 +82,10 @@ const FestSelectionCard = ({
   );
 };
 
-const SelectFestPage = () => {
+const SelectFestContent = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get('redirect');
   const { fests, festsLoading, getFests } = useFests();
 
   useEffect(() => {
@@ -141,6 +148,7 @@ const SelectFestPage = () => {
               name={fest.name}
               year={fest.year}
               fest_logo={fest.fest_logo}
+              redirectUrl={redirectUrl}
             />
           ))}
         </div>
@@ -149,4 +157,14 @@ const SelectFestPage = () => {
   );
 };
 
-export default SelectFestPage;
+export default function SelectFestPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen w-full bg-[#050508] flex items-center justify-center">
+        <Loader2 className="w-12 h-12 text-violet-400 animate-spin" />
+      </div>
+    }>
+      <SelectFestContent />
+    </Suspense>
+  );
+}

@@ -11,7 +11,6 @@ import { useEvents } from '@/lib/stores/events';
 import { Coordinator, LinkType } from '@/lib/types/events';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, Loader2, Save, Settings } from 'lucide-react';
-import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -114,12 +113,13 @@ export default function EditEventPage() {
             <div className="container max-w-6xl mx-auto px-6 py-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <Link
-                    href="/"
+                  <Button
+                    type="button"
+                    onClick={() => router.back()}
                     className="flex items-center justify-center w-9 h-9 rounded-lg bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
                   >
                     <ArrowLeft className="h-4 w-4" />
-                  </Link>
+                  </Button>
                   <div className="flex items-center gap-3">
                     <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500/20 to-indigo-500/20 border border-violet-500/20">
                       <Settings className="h-5 w-5 text-violet-400" />
