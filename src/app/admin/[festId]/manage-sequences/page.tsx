@@ -1,15 +1,20 @@
-import { supabaseServer } from '@/utils/functions/supabase-server';
 import ManageTeamSequence from '@/components/ManageTeamSequence';
+import { login } from '@/utils/functions/login';
+import { supabaseServer } from '@/utils/functions/supabase-server';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { login } from '@/utils/functions/login';
 
 export const metadata: Metadata = {
   title: 'Manage Team Sequences | RCCIIT SWC',
   description: 'Reorder team members for each team - Super Admin Only',
 };
 
-const Page = async () => {
+interface PageProps {
+  params: Promise<{ festId: string }>;
+}
+
+const Page = async ({ params }: PageProps) => {
+  const { festId } = await params;
   const supabase = await supabaseServer();
   const { data: sessionData } = await supabase.auth.getSession();
 
@@ -32,7 +37,7 @@ const Page = async () => {
     redirect('/unauthorized');
   }
 
-  return <ManageTeamSequence isSuperAdmin={isSuperAdmin} />;
+  return <ManageTeamSequence isSuperAdmin={isSuperAdmin} festId={festId} />;
 };
 
 export default Page;

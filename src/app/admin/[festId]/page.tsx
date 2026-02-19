@@ -167,7 +167,7 @@ const Page = async ({ params }: PageProps) => {
                         Approve Team
                       </Button>
                     </Link>
-                    <Link href="/manage-sequences" className="w-full sm:w-auto">
+                    <Link href={`/admin/${festId}/manage-sequences`} className="w-full sm:w-auto">
                       <Button className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:from-purple-500 hover:to-pink-500 border-0 text-sm">
                         <ArrowUpDown className="mr-2 h-4 w-4" />
                         Manage Sequences

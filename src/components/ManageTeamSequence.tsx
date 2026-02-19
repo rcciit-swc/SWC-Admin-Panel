@@ -38,6 +38,7 @@ interface TeamMember {
 
 interface ManageTeamSequenceProps {
   isSuperAdmin: boolean;
+  festId: string;
 }
 
 // Sortable Item Component
@@ -60,11 +61,10 @@ function SortableItem({ member }: { member: TeamMember }) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-4 bg-white/5 border border-white/10 rounded-xl p-4 transition-all ${
-        isDragging
+      className={`flex items-center gap-4 bg-white/5 border border-white/10 rounded-xl p-4 transition-all ${isDragging
           ? 'opacity-50 scale-105 shadow-2xl z-50'
           : 'hover:bg-white/10'
-      }`}
+        }`}
     >
       {/* Drag Handle */}
       <button
@@ -107,6 +107,7 @@ function SortableItem({ member }: { member: TeamMember }) {
 
 export default function ManageTeamSequence({
   isSuperAdmin,
+  festId,
 }: ManageTeamSequenceProps) {
   const [allMembers, setAllMembers] = useState<TeamMember[]>([]);
   const [originalMembers, setOriginalMembers] = useState<TeamMember[]>([]); // Track original state
@@ -149,6 +150,7 @@ export default function ManageTeamSequence({
                     `
           )
           .eq('approved', true)
+          .eq('fest_id', festId)
           .order('team_id')
           .order('sequence');
 
@@ -176,10 +178,10 @@ export default function ManageTeamSequence({
       }
     };
 
-    if (isSuperAdmin) {
+    if (isSuperAdmin && festId) {
       fetchMembers();
     }
-  }, [isSuperAdmin]);
+  }, [isSuperAdmin, festId]);
 
   // Filter members based on search query
   useEffect(() => {
@@ -456,9 +458,8 @@ export default function ManageTeamSequence({
                       </span>
                     </div>
                     <ChevronDown
-                      className={`w-5 h-5 text-indigo-300 transition-transform ${
-                        isExpanded ? 'rotate-180' : ''
-                      }`}
+                      className={`w-5 h-5 text-indigo-300 transition-transform ${isExpanded ? 'rotate-180' : ''
+                        }`}
                     />
                   </button>
 
