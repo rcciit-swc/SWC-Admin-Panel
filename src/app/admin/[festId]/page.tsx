@@ -109,8 +109,6 @@ const Page = async ({ params }: PageProps) => {
         {/* Subtle gradient overlay */}
         <div className="fixed inset-0 bg-gradient-to-br from-violet-950/20 via-transparent to-indigo-950/10 pointer-events-none" />
 
-
-
         <main className="relative container max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
           <EventCards
             isSuperAdmin={isAdmin}

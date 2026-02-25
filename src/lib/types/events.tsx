@@ -8,6 +8,11 @@ export interface Coordinator {
   phone: string;
 }
 
+export interface Convenor {
+  name: string;
+  phone: string;
+}
+
 export interface events {
   id?: string;
   name: string;
@@ -22,6 +27,10 @@ export interface events {
   description: string;
   rules: string;
   coordinators: {
+    name: string;
+    phone: string;
+  }[];
+  convenors: {
     name: string;
     phone: string;
   }[];

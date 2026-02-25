@@ -1,6 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { createServer } from '@/lib/supabase/server';
-import { BadgeCheck, Banknote, LayoutDashboard, ShieldCheck, Users } from 'lucide-react';
+import {
+  BadgeCheck,
+  Banknote,
+  LayoutDashboard,
+  ShieldCheck,
+  Users,
+} from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';

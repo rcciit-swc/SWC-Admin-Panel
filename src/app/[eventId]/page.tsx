@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { eventSchema } from '@/lib/schemas/events';
 import { useEvents } from '@/lib/stores/events';
-import { Coordinator, LinkType } from '@/lib/types/events';
+import { Convenor, Coordinator, LinkType } from '@/lib/types/events';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, Loader2, Save, Settings } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -28,6 +28,7 @@ export default function EditEventPage() {
     useEvents();
   const [links, setLinks] = useState<LinkType[]>([]);
   const [coordinators, setCoordinators] = useState<Coordinator[]>([]);
+  const [convenors, setConvenors] = useState<Convenor[]>([]);
 
   useEffect(() => {
     if (eventId) {
@@ -49,6 +50,7 @@ export default function EditEventPage() {
       description: '',
       rules: '',
       coordinators: [],
+      convenors: [],
       links: [],
       reg_status: false,
     },
@@ -67,11 +69,13 @@ export default function EditEventPage() {
         description: eventToEdit.description || '',
         rules: eventToEdit.rules || '',
         coordinators: eventToEdit.coordinators || [],
+        convenors: eventToEdit.convenors || [],
         links: eventToEdit.links || [],
         reg_status: eventToEdit.reg_status ?? false,
       });
       setLinks(eventToEdit.links || []);
       setCoordinators(eventToEdit.coordinators || []);
+      setConvenors(eventToEdit.convenors || []);
     }
   }, [eventToEdit, form]);
 
@@ -90,6 +94,7 @@ export default function EditEventPage() {
         max_team_size: parsed.max_team_size,
         links: links,
         coordinators: coordinators,
+        convenors: convenors,
       };
 
       await updateEventsData(eventId, eventData);
@@ -184,6 +189,8 @@ export default function EditEventPage() {
                     setLinks={setLinks}
                     coordinators={coordinators}
                     setCoordinators={setCoordinators}
+                    convenors={convenors}
+                    setConvenors={setConvenors}
                   />
                 </div>
               </section>

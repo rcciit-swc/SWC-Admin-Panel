@@ -24,6 +24,14 @@ export const eventSchema = z.object({
       })
     )
     .optional(),
+  convenors: z
+    .array(
+      z.object({
+        name: z.string(),
+        phone: z.string(),
+      })
+    )
+    .optional(),
   links: z
     .array(
       z.object({

@@ -44,8 +44,9 @@ const FestSelectionCard = ({
   return (
     <div
       onClick={!isLoading ? handleClick : undefined}
-      className={`group relative h-full bg-gradient-to-br from-violet-950/40 to-indigo-950/40 border border-white/10 rounded-2xl p-8 hover:border-violet-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-violet-500/20 cursor-pointer ${isLoading ? 'opacity-70 pointer-events-none' : ''
-        }`}
+      className={`group relative h-full bg-gradient-to-br from-violet-950/40 to-indigo-950/40 border border-white/10 rounded-2xl p-8 hover:border-violet-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-violet-500/20 cursor-pointer ${
+        isLoading ? 'opacity-70 pointer-events-none' : ''
+      }`}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-violet-600/5 to-indigo-600/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
@@ -159,11 +160,13 @@ const SelectFestContent = () => {
 
 export default function SelectFestPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen w-full bg-[#050508] flex items-center justify-center">
-        <Loader2 className="w-12 h-12 text-violet-400 animate-spin" />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen w-full bg-[#050508] flex items-center justify-center">
+          <Loader2 className="w-12 h-12 text-violet-400 animate-spin" />
+        </div>
+      }
+    >
       <SelectFestContent />
     </Suspense>
   );

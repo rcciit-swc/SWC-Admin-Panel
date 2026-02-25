@@ -17,7 +17,6 @@ export default async function RequestAccessRoute() {
     data: { user },
   } = await supabase.auth.getUser();
 
-
   if (!user) {
     redirect('/');
   }

@@ -215,10 +215,11 @@ export function EventCards({
                       </div>
                     </div>
                     <Badge
-                      className={`px-3 py-1 text-xs font-medium ${event.reg_status
+                      className={`px-3 py-1 text-xs font-medium ${
+                        event.reg_status
                           ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                           : 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20'
-                        }`}
+                      }`}
                     >
                       {event.reg_status ? (
                         <span className="flex items-center gap-1.5">
