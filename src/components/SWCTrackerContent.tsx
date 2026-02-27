@@ -1,7 +1,9 @@
 'use client';
 
-import { ArrowLeft, CheckCircle2, Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft, CheckCircle2, Download, Search } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface StudentData {
   timestamp: string;
@@ -84,6 +86,37 @@ export default function SWCTrackerContent({
       .sort(),
   ];
 
+  const downloadCSV = () => {
+    if (students.length === 0) {
+      toast.error('No students data to download');
+      return;
+    }
+
+    const headers = ['roll', 'email', 'name', 'phone'];
+    const csvContent = [
+      headers.join(','),
+      ...students.map((s) => {
+        const escapeCSV = (str: string) => `"${str.replace(/"/g, '""')}"`;
+        return [
+          s.rollNumber || '',
+          s.collegeEmail || s.personalEmail || '',
+          escapeCSV(s.name || ''),
+          s.mobile || '',
+        ].join(',');
+      }),
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'swc_funds_tracker.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="flex flex-col gap-6">
       {/* Filters and Search */}
@@ -148,6 +181,18 @@ export default function SWCTrackerContent({
               </option>
             ))}
           </select>
+        </div>
+
+        {/* Download CSV Button */}
+        <div className="md:col-span-3 flex justify-end">
+          <Button
+            onClick={downloadCSV}
+            variant="outline"
+            className="bg-zinc-800 hover:bg-zinc-700 text-white border-white/10 w-full md:w-auto md:w-full h-full min-h-[42px]"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Download CSV
+          </Button>
         </div>
       </div>
 

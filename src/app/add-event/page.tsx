@@ -1,18 +1,18 @@
 'use client';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Coordinator, LinkType } from '@/lib/types/events';
-import { toast } from 'sonner';
-import { useEvents } from '@/lib/stores/events';
-import Header from '@/components/manage-events/Header';
 import { BasicInformation } from '@/components/manage-events/BasicInformation';
-import { ScheduleAndDescription } from '@/components/manage-events/ScheduleAndDescription';
-import { RulesAndGuidelines } from '@/components/manage-events/RulesAndGuidelines';
+import Header from '@/components/manage-events/Header';
 import { LinksAndCoordinators } from '@/components/manage-events/LinkAndCoordinators';
+import { RulesAndGuidelines } from '@/components/manage-events/RulesAndGuidelines';
+import { ScheduleAndDescription } from '@/components/manage-events/ScheduleAndDescription';
 import { eventSchema } from '@/lib/schemas/events';
+import { useEvents } from '@/lib/stores/events';
+import { Convenor, Coordinator, LinkType } from '@/lib/types/events';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { toast } from 'sonner';
+import * as z from 'zod';
 
 type EventFormInput = z.input<typeof eventSchema>;
 type EventFormOutput = z.output<typeof eventSchema>;
@@ -40,6 +40,7 @@ const Page = () => {
   const [links, setLinks] = useState<LinkType[]>([]);
   const values = useWatch({ control: form.control });
   const [coordinators, setCoordinators] = useState<Coordinator[]>([]);
+  const [convenors, setConvenors] = useState<Convenor[]>([]);
   const { postEvent, setEventsData } = useEvents();
   async function onSubmit(values: EventFormInput) {
     console.log('Form submitted with values:', values);
@@ -57,6 +58,7 @@ const Page = () => {
         max_team_size: parsed.max_team_size,
         links: links,
         coordinators: coordinators,
+        convenors: parsed.convenors || [],
         event_category_id: 'c90f8d69-3520-43ac-85f6-043c6f60bf49',
       };
 
@@ -145,6 +147,8 @@ const Page = () => {
                     setLinks={setLinks}
                     coordinators={coordinators}
                     setCoordinators={setCoordinators}
+                    convenors={convenors}
+                    setConvenors={setConvenors}
                   />
                 </div>
               </section>

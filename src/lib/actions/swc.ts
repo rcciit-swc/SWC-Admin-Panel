@@ -48,6 +48,7 @@ export async function getSWCQueries(
             users:user_id (
                 name,
                 email,
+                phone,
                 college_roll
             )
         `

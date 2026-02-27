@@ -15,6 +15,7 @@ export interface SWCQueryWithUser extends SWCQuery {
   users: {
     name: string;
     email: string;
+    phone?: string;
     college_roll?: string;
   } | null;
 }
