@@ -1,10 +1,7 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { supabase } from '@/lib/supabase/client';
-import { Loader2, Search, Users, Copy, Check, Calendar } from 'lucide-react';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -12,7 +9,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { supabase } from '@/lib/supabase/client';
+import {
+  Calendar,
+  Check,
+  Copy,
+  Download,
+  Loader2,
+  Search,
+  Users,
+} from 'lucide-react';
 import Image from 'next/image';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 interface TeamMember {
@@ -86,6 +94,38 @@ export default function GraphicsView({
       toast.error(`Failed to copy ${label}`);
       console.error('Error copying to clipboard:', error);
     }
+  };
+
+  // Download CSV of all members as per team
+  const handleDownloadCSV = () => {
+    if (groupedMembers.length === 0) {
+      toast.error('No data to download');
+      return;
+    }
+
+    const headers = ['Name', 'Team'];
+    const rows: string[] = [];
+    rows.push(headers.join(','));
+
+    groupedMembers.forEach((member) => {
+      const escapeCSV = (str: string) => `"${str.replace(/"/g, '""')}"`;
+      member.roles.forEach((role) => {
+        rows.push([escapeCSV(member.name), escapeCSV(role)].join(','));
+      });
+    });
+
+    const csvContent = rows.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'team_members_graphics.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    toast.success('Downloaded CSV successfully');
   };
 
   // Format role name based on team_id
@@ -290,15 +330,27 @@ export default function GraphicsView({
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="bg-gradient-to-br from-indigo-950/40 to-purple-950/40 border border-white/10 rounded-2xl p-6 mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <Users className="w-8 h-8 text-indigo-400" />
-            <h1 className="text-3xl font-bold text-white">
-              Team Members - Graphics View
-            </h1>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <Users className="w-8 h-8 text-indigo-400" />
+                <h1 className="text-3xl font-bold text-white">
+                  Team Members - Graphics View
+                </h1>
+              </div>
+              <p className="text-zinc-400">
+                View all team members and their roles for graphics design purposes
+              </p>
+            </div>
+            <Button
+              onClick={handleDownloadCSV}
+              variant="outline"
+              className="bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border-indigo-500/30 whitespace-nowrap"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Download CSV
+            </Button>
           </div>
-          <p className="text-zinc-400">
-            View all team members and their roles for graphics design purposes
-          </p>
         </div>
 
         {/* Search Bar */}
