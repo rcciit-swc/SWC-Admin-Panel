@@ -16,7 +16,7 @@ import { useParams, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function SuperAdminNav() {
-  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [userRoles, setUserRoles] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const params = useParams();
   const pathname = usePathname();
@@ -32,21 +32,25 @@ export default function SuperAdminNav() {
             .select('role')
             .eq('user_id', sessionData.session.user.id);
 
-          if (roles?.find((r: { role: string }) => r.role === 'super_admin')) {
-            setIsSuperAdmin(true);
+          if (roles) {
+            setUserRoles(roles.map((r: { role: string }) => r.role));
           }
         }
       } catch (error) {
-        console.error('Error checking super admin role:', error);
+        console.error('Error checking user roles:', error);
       } finally {
         setLoading(false);
       }
     };
 
     checkRole();
-  }, [pathname]); // Re-check if somehow session changes, but mostly it's a mount effect.
+  }, [pathname]);
 
-  if (loading || !isSuperAdmin) {
+  const isSuperAdmin = userRoles.includes('super_admin');
+  const isCoordinator = userRoles.includes('coordinator');
+  const isConvenor = userRoles.includes('convenor');
+
+  if (loading || (!isSuperAdmin && !isCoordinator && !isConvenor)) {
     return null;
   }
 
@@ -75,49 +79,53 @@ export default function SuperAdminNav() {
               Registration
             </Button>
           </Link>
-          <Link href="/approve-swc" className="w-full sm:w-auto">
-            <Button className="w-full sm:w-auto bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 hover:from-teal-500 hover:to-emerald-500 border-0 text-sm">
-              <FileCheck className="mr-2 h-4 w-4" />
-              Approve Fund Requests
-            </Button>
-          </Link>
-          <Link href="/approve-requests" className="w-full sm:w-auto">
-            <Button className="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:from-emerald-500 hover:to-green-500 border-0 text-sm">
-              <ShieldCheck className="mr-2 h-4 w-4" />
-              Approve Requests
-            </Button>
-          </Link>
-          <Link href="/manage-access" className="w-full sm:w-auto">
-            <Button className="w-full sm:w-auto bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:from-amber-500 hover:to-orange-500 border-0 text-sm">
-              <Shield className="mr-2 h-4 w-4" />
-              Manage Access
-            </Button>
-          </Link>
-          <Link href="/approve-team" className="w-full sm:w-auto">
-            <Button className="w-full sm:w-auto bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:from-cyan-500 hover:to-blue-500 border-0 text-sm">
-              <Users className="mr-2 h-4 w-4" />
-              Approve Team
-            </Button>
-          </Link>
-          <Link
-            href={
-              festId
-                ? `/admin/${festId}/manage-sequences`
-                : '/select-fest?redirect=manage-sequences'
-            }
-            className="w-full sm:w-auto"
-          >
-            <Button className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:from-purple-500 hover:to-pink-500 border-0 text-sm">
-              <ArrowUpDown className="mr-2 h-4 w-4" />
-              Manage Sequences
-            </Button>
-          </Link>
-          <Link href="/graphics" className="w-full sm:w-auto">
-            <Button className="w-full sm:w-auto bg-gradient-to-r from-pink-600 to-rose-600 text-white shadow-lg shadow-pink-500/25 hover:shadow-pink-500/40 hover:from-pink-500 hover:to-rose-500 border-0 text-sm">
-              <ImageIcon className="mr-2 h-4 w-4" />
-              Graphics View
-            </Button>
-          </Link>
+          {isSuperAdmin && (
+            <>
+              <Link href="/approve-swc" className="w-full sm:w-auto">
+                <Button className="w-full sm:w-auto bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 hover:from-teal-500 hover:to-emerald-500 border-0 text-sm">
+                  <FileCheck className="mr-2 h-4 w-4" />
+                  Approve Fund Requests
+                </Button>
+              </Link>
+              <Link href="/approve-requests" className="w-full sm:w-auto">
+                <Button className="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:from-emerald-500 hover:to-green-500 border-0 text-sm">
+                  <ShieldCheck className="mr-2 h-4 w-4" />
+                  Approve Requests
+                </Button>
+              </Link>
+              <Link href="/manage-access" className="w-full sm:w-auto">
+                <Button className="w-full sm:w-auto bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:from-amber-500 hover:to-orange-500 border-0 text-sm">
+                  <Shield className="mr-2 h-4 w-4" />
+                  Manage Access
+                </Button>
+              </Link>
+              <Link href="/approve-team" className="w-full sm:w-auto">
+                <Button className="w-full sm:w-auto bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:from-cyan-500 hover:to-blue-500 border-0 text-sm">
+                  <Users className="mr-2 h-4 w-4" />
+                  Approve Team
+                </Button>
+              </Link>
+              <Link
+                href={
+                  festId
+                    ? `/admin/${festId}/manage-sequences`
+                    : '/select-fest?redirect=manage-sequences'
+                }
+                className="w-full sm:w-auto"
+              >
+                <Button className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:from-purple-500 hover:to-pink-500 border-0 text-sm">
+                  <ArrowUpDown className="mr-2 h-4 w-4" />
+                  Manage Sequences
+                </Button>
+              </Link>
+              <Link href="/graphics" className="w-full sm:w-auto">
+                <Button className="w-full sm:w-auto bg-gradient-to-r from-pink-600 to-rose-600 text-white shadow-lg shadow-pink-500/25 hover:shadow-pink-500/40 hover:from-pink-500 hover:to-rose-500 border-0 text-sm">
+                  <ImageIcon className="mr-2 h-4 w-4" />
+                  Graphics View
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </div>

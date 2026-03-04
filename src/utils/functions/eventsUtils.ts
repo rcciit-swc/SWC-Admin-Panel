@@ -256,9 +256,7 @@ export const getApprovalDashboardData = async (
       .rpc('get_fest_registrations', {
         p_fest_id: festId,
         p_event_category_id:
-          isAdmin?.role === 'super_admin'
-            ? null
-            : 'c90f8d69-3520-43ac-85f6-043c6f60bf49',
+          null,
         p_event_id: isCoordinator ? eventIds : null,
       })
       .range(rangeStart, rangeEnd);

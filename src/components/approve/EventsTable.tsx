@@ -78,7 +78,9 @@ export default function EventsTable({ festId }: EventsTableProps) {
   const canModerate = useMemo(() => {
     return (rolesData || []).some(
       (role: any) =>
-        role?.role === 'super_admin' || role?.role === 'coordinator'
+        role?.role === 'super_admin' ||
+        role?.role === 'coordinator' ||
+        role?.role === 'convenor'
     );
   }, [rolesData]);
   useEffect(() => {
@@ -350,11 +352,10 @@ export default function EventsTable({ festId }: EventsTableProps) {
                     <TooltipTrigger asChild>
                       <button
                         type="button"
-                        className={`h-9 inline-flex items-center justify-center px-4 rounded-full font-bold text-[11px] uppercase tracking-wider transition-all shadow-sm ${
-                          item.paymentstatus === 'Verified'
+                        className={`h-9 inline-flex items-center justify-center px-4 rounded-full font-bold text-[11px] uppercase tracking-wider transition-all shadow-sm ${item.paymentstatus === 'Verified'
                             ? 'bg-[#10B981]/10 text-[#10B981] ring-1 ring-[#10B981]/30 hover:bg-[#10B981]/20'
                             : 'bg-[#EF4444]/10 text-[#EF4444] ring-1 ring-[#EF4444]/30 hover:bg-[#EF4444]/20'
-                        }`}
+                          }`}
                         onClick={(e) => {
                           e.stopPropagation();
                           setIsDialogOpen(true);
@@ -471,11 +472,10 @@ export default function EventsTable({ festId }: EventsTableProps) {
                     <button
                       key={tab}
                       onClick={() => setActiveModalTab(tab)}
-                      className={`px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 relative ${
-                        activeModalTab === tab
+                      className={`px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 relative ${activeModalTab === tab
                           ? 'text-white'
                           : 'text-gray-500 hover:text-gray-400'
-                      }`}
+                        }`}
                     >
                       {activeModalTab === tab && (
                         <div className="absolute inset-0 bg-white/[0.05] rounded-xl ring-1 ring-white/10" />
@@ -508,12 +508,12 @@ export default function EventsTable({ festId }: EventsTableProps) {
                       },
                       ...(item.teamname
                         ? [
-                            {
-                              label: 'Team Name',
-                              value: item.teamname,
-                              icon: '👥',
-                            },
-                          ]
+                          {
+                            label: 'Team Name',
+                            value: item.teamname,
+                            icon: '👥',
+                          },
+                        ]
                         : []),
                       { label: 'College', value: item.college, icon: '🏛️' },
                       {
@@ -627,7 +627,7 @@ export default function EventsTable({ festId }: EventsTableProps) {
 
               {/* Modal Footer */}
               <div className="p-8 border-t border-white/5 bg-white/[0.02]">
-                {isAdmin && !isFaculty && (
+                {canModerate && !isFaculty && (
                   <div className="flex items-center gap-4">
                     <Button
                       className="flex-1 h-14 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl shadow-lg shadow-emerald-900/20 transition-all border-0 ring-1 ring-white/20"
@@ -689,7 +689,7 @@ export default function EventsTable({ festId }: EventsTableProps) {
                     </Button>
                   </div>
                 )}
-                {(!isAdmin || isFaculty) && (
+                {(!canModerate || isFaculty) && (
                   <Button
                     className="w-full h-14 bg-white/5 hover:bg-white/10 text-white border-white/10 rounded-2xl font-bold"
                     onClick={() => setIsDialogOpen(false)}
@@ -863,11 +863,10 @@ export default function EventsTable({ festId }: EventsTableProps) {
               <button
                 key={type}
                 onClick={() => setActiveType(type)}
-                className={`px-8 py-2.5 rounded-xl font-semibold transition-all duration-300 relative group overflow-hidden ${
-                  activeType === type
+                className={`px-8 py-2.5 rounded-xl font-semibold transition-all duration-300 relative group overflow-hidden ${activeType === type
                     ? 'text-white shadow-xl'
                     : 'text-gray-500 hover:text-gray-400'
-                }`}
+                  }`}
               >
                 {activeType === type && (
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl" />
