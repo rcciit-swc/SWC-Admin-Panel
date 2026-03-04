@@ -1,5 +1,5 @@
 import SWCTrackerContent from '@/components/SWCTrackerContent';
-import { fetchSWCFundsData } from '@/utils/functions/googleSheets';
+import { fetchSWCFundsData, StudentData } from '@/utils/functions/googleSheets';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
@@ -30,8 +30,35 @@ export default async function SWCTrackerPage() {
     redirect('/');
   }
 
-  // Fetch ALL data at once
-  const allStudents = await fetchSWCFundsData();
+  // Fetch Sheets data and SWC-2026 Supabase table in parallel
+  const [sheetsStudents, { data: swc2026Rows }] = await Promise.all([
+    fetchSWCFundsData(),
+    supabase.from('SWC-2026').select('roll, email, name, phone'),
+  ]);
+
+  // Build a set of roll numbers already present from Sheets (normalized uppercase)
+  const sheetsRolls = new Set(sheetsStudents.map((s) => s.rollNumber.trim().toUpperCase()));
+
+  // Map Supabase rows to StudentData shape, only adding rows not already in sheets data
+  const supabaseStudents: StudentData[] = (swc2026Rows ?? [])
+    .filter((row) => {
+      const normalizedRoll = (row.roll ?? '').trim().toUpperCase();
+      return normalizedRoll !== '' && !sheetsRolls.has(normalizedRoll);
+    })
+    .map((row) => ({
+      timestamp: '',
+      name: row.name ?? '',
+      department: '',
+      rollNumber: (row.roll ?? '').trim().toUpperCase(),
+      mobile: row.phone ?? '',
+      collegeEmail: row.email ?? '',
+      personalEmail: '',
+      whatsapp: '',
+      emergency: '',
+    }));
+
+  // Merge: Sheets records first, then Supabase extras
+  const allStudents = [...sheetsStudents, ...supabaseStudents];
 
   return (
     <div className="min-h-screen w-full bg-[#050508] text-white overflow-x-hidden relative">

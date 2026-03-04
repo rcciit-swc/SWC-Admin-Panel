@@ -41,7 +41,7 @@ const LandingPage = async () => {
   const adminAccessHref = hasAnyRole ? '/select-role' : '/request-access';
 
   return (
-    <div className="min-h-screen w-full bg-[#050508] flex items-center justify-center">
+    <div className="min-h-screen w-full bg-[#050508] flex mt-10">
       {/* Gradient overlay */}
       <div className="fixed inset-0 bg-gradient-to-br from-violet-950/20 via-transparent to-indigo-950/10 pointer-events-none" />
 
