@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Community Partner Invitation</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #0f0f0f; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px; margin: 0 auto;">
+    <!-- Header -->
+    <tr>
+      <td style="padding: 40px 30px 20px; text-align: center; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); border-radius: 16px 16px 0 0;">
+        <h1 style="margin: 0; color: #ffffff; font-size: 26px; font-weight: 700; letter-spacing: -0.5px;">
+          🤝 Community Partner Invitation
+        </h1>
+        <p style="margin: 8px 0 0; color: #8892b0; font-size: 14px;">
+          RCCIIT Student Welfare Committee
+        </p>
+      </td>
+    </tr>
+
+    <!-- Body -->
+    <tr>
+      <td style="padding: 32px 30px; background-color: #1a1a1a;">
+        <p style="color: #e0e0e0; font-size: 16px; line-height: 1.6; margin: 0 0 20px;">
+          Hello <strong style="color: #ffffff;"><%= data.communityName %></strong>,
+        </p>
+        <p style="color: #b0b0b0; font-size: 15px; line-height: 1.6; margin: 0 0 24px;">
+          You have been invited to join as a <strong style="color: #64ffda;">Community Partner</strong> for <strong style="color: #ffffff;"><%= data.festName %></strong>. We're excited to collaborate with your community!
+        </p>
+
+        <!-- CTA Button -->
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 0 0 28px;">
+          <tr>
+            <td align="center">
+              <a href="<%= data.invitationLink %>" target="_blank" style="display: inline-block; padding: 14px 40px; background: linear-gradient(135deg, #64ffda 0%, #48c9b0 100%); color: #0f0f0f; text-decoration: none; font-size: 16px; font-weight: 700; border-radius: 8px; letter-spacing: 0.3px;">
+                Accept Invitation &rarr;
+              </a>
+            </td>
+          </tr>
+        </table>
+
+        <!-- Info Box -->
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 0 0 24px;">
+          <tr>
+            <td style="padding: 16px 20px; background-color: #252525; border-radius: 8px; border-left: 3px solid #64ffda;">
+              <p style="color: #8892b0; font-size: 13px; margin: 0 0 4px;">This invitation expires on:</p>
+              <p style="color: #ffffff; font-size: 15px; font-weight: 600; margin: 0;"><%= data.expiresAt %></p>
+            </td>
+          </tr>
+        </table>
+
+        <p style="color: #888; font-size: 13px; line-height: 1.6; margin: 0 0 12px;">
+          If the button doesn't work, copy and paste this link in your browser:
+        </p>
+        <p style="color: #64ffda; font-size: 12px; word-break: break-all; margin: 0 0 24px; background: #252525; padding: 12px; border-radius: 6px;">
+          <%= data.invitationLink %>
+        </p>
+
+        <p style="color: #666; font-size: 13px; margin: 0;">
+          If you didn't expect this invitation, you can safely ignore this email.
+        </p>
+      </td>
+    </tr>
+
+    <!-- Footer -->
+    <tr>
+      <td style="padding: 24px 30px; background-color: #141414; border-radius: 0 0 16px 16px; text-align: center;">
+        <p style="color: #555; font-size: 12px; margin: 0;">
+          &copy; 2026 RCCIIT Student Welfare Committee. All rights reserved.
+        </p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

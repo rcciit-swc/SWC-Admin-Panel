@@ -8,6 +8,7 @@ import {
   Image as ImageIcon,
   Shield,
   ShieldCheck,
+  Trophy,
   UserCheck,
   Users,
 } from 'lucide-react';
@@ -57,7 +58,9 @@ export default function SuperAdminNav() {
   if (
     pathname !== '/landing' &&
     !pathname.startsWith('/admin') &&
-    pathname !== '/approve-swc'
+    pathname !== '/approve-swc' &&
+    pathname !== '/community-leaderboard' &&
+    pathname !== '/community-partners'
   ) {
     return null;
   }
@@ -74,7 +77,7 @@ export default function SuperAdminNav() {
             }
             className="w-full sm:w-auto"
           >
-            <Button className="w-full sm:w-auto bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:from-violet-500 hover:to-indigo-500 border-0 text-sm">
+            <Button className="w-full sm:w-auto bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:from-violet-500 hover:to-indigo-500 border-0 text-sm h-9 px-4">
               <UserCheck className="mr-2 h-4 w-4" />
               Registration
             </Button>
@@ -82,25 +85,25 @@ export default function SuperAdminNav() {
           {isSuperAdmin && (
             <>
               <Link href="/approve-swc" className="w-full sm:w-auto">
-                <Button className="w-full sm:w-auto bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 hover:from-teal-500 hover:to-emerald-500 border-0 text-sm">
+                <Button className="w-full sm:w-auto bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 hover:from-teal-500 hover:to-emerald-500 border-0 text-sm h-9 px-4">
                   <FileCheck className="mr-2 h-4 w-4" />
                   Approve Fund Requests
                 </Button>
               </Link>
               <Link href="/approve-requests" className="w-full sm:w-auto">
-                <Button className="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:from-emerald-500 hover:to-green-500 border-0 text-sm">
+                <Button className="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:from-emerald-500 hover:to-green-500 border-0 text-sm h-9 px-4">
                   <ShieldCheck className="mr-2 h-4 w-4" />
                   Approve Requests
                 </Button>
               </Link>
               <Link href="/manage-access" className="w-full sm:w-auto">
-                <Button className="w-full sm:w-auto bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:from-amber-500 hover:to-orange-500 border-0 text-sm">
+                <Button className="w-full sm:w-auto bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:from-amber-500 hover:to-orange-500 border-0 text-sm h-9 px-4">
                   <Shield className="mr-2 h-4 w-4" />
                   Manage Access
                 </Button>
               </Link>
               <Link href="/approve-team" className="w-full sm:w-auto">
-                <Button className="w-full sm:w-auto bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:from-cyan-500 hover:to-blue-500 border-0 text-sm">
+                <Button className="w-full sm:w-auto bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:from-cyan-500 hover:to-blue-500 border-0 text-sm h-9 px-4">
                   <Users className="mr-2 h-4 w-4" />
                   Approve Team
                 </Button>
@@ -113,13 +116,25 @@ export default function SuperAdminNav() {
                 }
                 className="w-full sm:w-auto"
               >
-                <Button className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:from-purple-500 hover:to-pink-500 border-0 text-sm">
+                <Button className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:from-purple-500 hover:to-pink-500 border-0 text-sm h-9 px-4">
                   <ArrowUpDown className="mr-2 h-4 w-4" />
                   Manage Sequences
                 </Button>
               </Link>
+              <Link href="/community-partners" className="w-full sm:w-auto">
+                <Button className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:from-blue-500 hover:to-indigo-500 border-0 text-sm h-9 px-4">
+                  <span className="mr-2">🤝</span>
+                  Community Partners
+                </Button>
+              </Link>
+              <Link href="/community-leaderboard" className="w-full sm:w-auto">
+                <Button className="w-full sm:w-auto bg-gradient-to-r from-yellow-600 to-amber-600 text-white shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 hover:from-yellow-500 hover:to-amber-500 border-0 text-sm h-9 px-4">
+                  <Trophy className="mr-2 h-4 w-4" />
+                  Community Leaderboard
+                </Button>
+              </Link>
               <Link href="/graphics" className="w-full sm:w-auto">
-                <Button className="w-full sm:w-auto bg-gradient-to-r from-pink-600 to-rose-600 text-white shadow-lg shadow-pink-500/25 hover:shadow-pink-500/40 hover:from-pink-500 hover:to-rose-500 border-0 text-sm">
+                <Button className="w-full sm:w-auto bg-gradient-to-r from-pink-600 to-rose-600 text-white shadow-lg shadow-pink-500/25 hover:shadow-pink-500/40 hover:from-pink-500 hover:to-rose-500 border-0 text-sm h-9 px-4">
                   <ImageIcon className="mr-2 h-4 w-4" />
                   Graphics View
                 </Button>

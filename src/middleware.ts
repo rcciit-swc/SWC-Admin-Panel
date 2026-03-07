@@ -10,7 +10,9 @@ export async function middleware(req: NextRequest) {
     url.pathname.startsWith('/auth') ||
     url.pathname.startsWith('/landing') ||
     url.pathname.startsWith('/team-entry') ||
-    url.pathname.startsWith('/select-role')
+    url.pathname.startsWith('/select-role') ||
+    url.pathname.startsWith('/api/community-partners/invite/verify') ||
+    url.pathname.startsWith('/api/community-partners/invite/accept')
   ) {
     return NextResponse.next();
   }
@@ -63,7 +65,8 @@ export async function middleware(req: NextRequest) {
       url.pathname.startsWith('/remove-team-member') ||
       url.pathname.startsWith('/profile') ||
       url.pathname.startsWith('/landing') ||
-      url.pathname.startsWith('/team-entry')
+      url.pathname.startsWith('/team-entry') ||
+      url.pathname.startsWith('/community-partners')
     ) {
       return NextResponse.redirect(new URL('/', req.url));
     }
@@ -160,6 +163,22 @@ export async function middleware(req: NextRequest) {
         roles.includes('convenor') ||
         roles.includes('faculty'))
     ) {
+      return NextResponse.next();
+    } else {
+      return NextResponse.redirect(new URL('/unauthorized', req.url));
+    }
+  }
+
+  // Handle /community-partners route - super_admin only
+  if (url.pathname.startsWith('/community-partners')) {
+    const { data: userRoles } = await supabase
+      .from('roles')
+      .select('role')
+      .eq('user_id', session.user?.id);
+
+    const roles = userRoles?.map((role) => role.role) || [];
+
+    if (roles.includes('super_admin')) {
       return NextResponse.next();
     } else {
       return NextResponse.redirect(new URL('/unauthorized', req.url));
