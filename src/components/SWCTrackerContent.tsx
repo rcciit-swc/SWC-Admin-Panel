@@ -269,7 +269,8 @@ export default function SWCTrackerContent({
           <div className="flex items-center gap-2 text-sm text-violet-400 bg-violet-500/10 border border-violet-500/20 rounded-xl px-4 py-3">
             <Loader2 className="w-4 h-4 animate-spin shrink-0" />
             <span>
-              Fetching latest data from all sheets — this may take a moment&hellip;
+              Fetching latest data from all sheets — this may take a
+              moment&hellip;
             </span>
           </div>
         )}
@@ -358,10 +359,11 @@ export default function SWCTrackerContent({
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage <= 1}
-                className={`p-2 rounded-lg border border-white/10 transition-colors ${currentPage > 1
+                className={`p-2 rounded-lg border border-white/10 transition-colors ${
+                  currentPage > 1
                     ? 'bg-white/5 hover:bg-white/10 text-white cursor-pointer'
                     : 'bg-white/5 text-gray-600 cursor-not-allowed'
-                  }`}
+                }`}
               >
                 <ArrowLeft className="w-4 h-4" />
               </button>
@@ -375,10 +377,11 @@ export default function SWCTrackerContent({
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage >= totalPages}
-                className={`p-2 rounded-lg border border-white/10 transition-colors ${currentPage < totalPages
+                className={`p-2 rounded-lg border border-white/10 transition-colors ${
+                  currentPage < totalPages
                     ? 'bg-white/5 hover:bg-white/10 text-white cursor-pointer'
                     : 'bg-white/5 text-gray-600 cursor-not-allowed'
-                  }`}
+                }`}
               >
                 <ArrowLeft className="w-4 h-4 rotate-180" />
               </button>
@@ -439,7 +442,9 @@ export default function SWCTrackerContent({
                       <span className="text-sm font-mono text-violet-300">
                         {s.rollNumber}
                       </span>
-                      <span className="text-sm text-white">{s.name || '—'}</span>
+                      <span className="text-sm text-white">
+                        {s.name || '—'}
+                      </span>
                       <span className="text-sm text-gray-400 truncate">
                         {s.collegeEmail || s.personalEmail || '—'}
                       </span>
@@ -473,7 +478,10 @@ export default function SWCTrackerContent({
                     Adding…
                   </>
                 ) : (
-                  <>Add {newStudents.length} record{newStudents.length !== 1 ? 's' : ''} to Database</>
+                  <>
+                    Add {newStudents.length} record
+                    {newStudents.length !== 1 ? 's' : ''} to Database
+                  </>
                 )}
               </Button>
             </div>

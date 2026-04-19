@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
 
     // Check current status
     const { data: invitation, error: fetchError } = await supabaseAdmin
-      .from('community_partner_invitations')
+      .from('evangelist_invitations')
       .select('id, status')
       .eq('id', invitation_id)
       .single();
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
 
     // Update status to revoked
     const { error: updateError } = await supabaseAdmin
-      .from('community_partner_invitations')
+      .from('evangelist_invitations')
       .update({ status: 'revoked' })
       .eq('id', invitation_id);
 

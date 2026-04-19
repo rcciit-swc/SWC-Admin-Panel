@@ -191,20 +191,26 @@ export function TeamMembersDialog({
                           </div>
                         )}
 
-                        {member.extras && Object.keys(member.extras).length > 0 && (
-                          <div className="pt-2 border-t border-white/5 space-y-3">
-                            {Object.entries(member.extras).map(([key, value]) => (
-                              <div key={key} className="flex flex-col gap-1">
-                                <p className="text-xs text-zinc-500 capitalize tracking-wider font-bold">
-                                  {key.replace(/_/g, ' ')}
-                                </p>
-                                <p className="font-medium text-white">
-                                  {String(value)}
-                                </p>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                        {member.extras &&
+                          Object.keys(member.extras).length > 0 && (
+                            <div className="pt-2 border-t border-white/5 space-y-3">
+                              {Object.entries(member.extras).map(
+                                ([key, value]) => (
+                                  <div
+                                    key={key}
+                                    className="flex flex-col gap-1"
+                                  >
+                                    <p className="text-xs text-zinc-500 capitalize tracking-wider font-bold">
+                                      {key.replace(/_/g, ' ')}
+                                    </p>
+                                    <p className="font-medium text-white">
+                                      {String(value)}
+                                    </p>
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          )}
                       </div>
                     </div>
                   </motion.div>

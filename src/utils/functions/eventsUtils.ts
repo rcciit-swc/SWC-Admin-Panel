@@ -255,8 +255,7 @@ export const getApprovalDashboardData = async (
     const { data, error } = await supabase
       .rpc('get_fest_registrations', {
         p_fest_id: festId,
-        p_event_category_id:
-          null,
+        p_event_category_id: null,
         p_event_id: isCoordinator ? eventIds : null,
       })
       .range(rangeStart, rangeEnd);

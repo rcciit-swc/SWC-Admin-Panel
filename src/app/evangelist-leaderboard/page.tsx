@@ -1,16 +1,16 @@
-import CommunityPartnersPage from '@/components/CommunityPartnersPage';
+import EvangelistLeaderboardPage from '@/components/EvangelistLeaderboardPage';
 import { login } from '@/utils/functions/login';
 import { supabaseServer } from '@/utils/functions/supabase-server';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
-  title: 'Community Partners | RCCIIT SWC',
+  title: 'Evangelist Leaderboard | RCCIIT SWC',
   description:
-    'Manage community partner invitations for RCCIIT Student Welfare Committee events',
+    'Evangelist referral performance leaderboard for RCCIIT Student Welfare Committee events',
 };
 
-export default async function CommunityPartnersRoute() {
+export default async function EvangelistLeaderboardRoute() {
   const supabase = await supabaseServer();
 
   const {
@@ -21,7 +21,6 @@ export default async function CommunityPartnersRoute() {
     login();
   }
 
-  // Check if user is super admin
   const { data: roles } = await supabase
     .from('roles')
     .select('role')
@@ -33,5 +32,5 @@ export default async function CommunityPartnersRoute() {
     redirect('/');
   }
 
-  return <CommunityPartnersPage userId={user?.id || ''} />;
+  return <EvangelistLeaderboardPage />;
 }

@@ -60,7 +60,9 @@ export default function SuperAdminNav() {
     !pathname.startsWith('/admin') &&
     pathname !== '/approve-swc' &&
     pathname !== '/community-leaderboard' &&
-    pathname !== '/community-partners'
+    pathname !== '/community-partners' &&
+    pathname !== '/evangelists' &&
+    pathname !== '/evangelist-leaderboard'
   ) {
     return null;
   }
@@ -131,6 +133,18 @@ export default function SuperAdminNav() {
                 <Button className="w-full sm:w-auto bg-gradient-to-r from-yellow-600 to-amber-600 text-white shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 hover:from-yellow-500 hover:to-amber-500 border-0 text-sm h-9 px-4">
                   <Trophy className="mr-2 h-4 w-4" />
                   Community Leaderboard
+                </Button>
+              </Link>
+              <Link href="/evangelists" className="w-full sm:w-auto">
+                <Button className="w-full sm:w-auto bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:from-violet-500 hover:to-purple-500 border-0 text-sm h-9 px-4">
+                  <span className="mr-2">✨</span>
+                  Evangelists
+                </Button>
+              </Link>
+              <Link href="/evangelist-leaderboard" className="w-full sm:w-auto">
+                <Button className="w-full sm:w-auto bg-gradient-to-r from-fuchsia-600 to-pink-600 text-white shadow-lg shadow-fuchsia-500/25 hover:shadow-fuchsia-500/40 hover:from-fuchsia-500 hover:to-pink-500 border-0 text-sm h-9 px-4">
+                  <Trophy className="mr-2 h-4 w-4" />
+                  Evangelist Leaderboard
                 </Button>
               </Link>
               <Link href="/graphics" className="w-full sm:w-auto">

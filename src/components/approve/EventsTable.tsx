@@ -347,10 +347,11 @@ export default function EventsTable({ festId }: EventsTableProps) {
                     <TooltipTrigger asChild>
                       <button
                         type="button"
-                        className={`h-9 inline-flex items-center justify-center px-4 rounded-full font-bold text-[11px] uppercase tracking-wider transition-all shadow-sm ${item.paymentstatus === 'Verified'
-                          ? 'bg-[#10B981]/10 text-[#10B981] ring-1 ring-[#10B981]/30 hover:bg-[#10B981]/20'
-                          : 'bg-[#EF4444]/10 text-[#EF4444] ring-1 ring-[#EF4444]/30 hover:bg-[#EF4444]/20'
-                          }`}
+                        className={`h-9 inline-flex items-center justify-center px-4 rounded-full font-bold text-[11px] uppercase tracking-wider transition-all shadow-sm ${
+                          item.paymentstatus === 'Verified'
+                            ? 'bg-[#10B981]/10 text-[#10B981] ring-1 ring-[#10B981]/30 hover:bg-[#10B981]/20'
+                            : 'bg-[#EF4444]/10 text-[#EF4444] ring-1 ring-[#EF4444]/30 hover:bg-[#EF4444]/20'
+                        }`}
                         onClick={(e) => {
                           e.stopPropagation();
                           setIsDialogOpen(true);
@@ -477,10 +478,11 @@ export default function EventsTable({ festId }: EventsTableProps) {
                     <button
                       key={tab.key}
                       onClick={() => setActiveModalTab(tab.key as any)}
-                      className={`px-4 sm:px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 relative ${activeModalTab === tab.key
-                        ? 'text-white'
-                        : 'text-gray-500 hover:text-gray-400'
-                        }`}
+                      className={`px-4 sm:px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 relative ${
+                        activeModalTab === tab.key
+                          ? 'text-white'
+                          : 'text-gray-500 hover:text-gray-400'
+                      }`}
                     >
                       {activeModalTab === tab.key && (
                         <div className="absolute inset-0 bg-white/[0.05] rounded-xl ring-1 ring-white/10" />
@@ -513,12 +515,12 @@ export default function EventsTable({ festId }: EventsTableProps) {
                       },
                       ...(item.teamname
                         ? [
-                          {
-                            label: 'Team Name',
-                            value: item.teamname,
-                            icon: '👥',
-                          },
-                        ]
+                            {
+                              label: 'Team Name',
+                              value: item.teamname,
+                              icon: '👥',
+                            },
+                          ]
                         : []),
                       { label: 'College', value: item.college, icon: '🏛️' },
                       {
@@ -572,39 +574,55 @@ export default function EventsTable({ festId }: EventsTableProps) {
                                 {i + 1}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <h4 className="text-white font-bold truncate">{member.name}</h4>
-                                <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest">Team Member</p>
+                                <h4 className="text-white font-bold truncate">
+                                  {member.name}
+                                </h4>
+                                <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest">
+                                  Team Member
+                                </p>
                               </div>
                             </div>
 
                             <div className="space-y-3 pl-2">
                               <div className="flex items-center gap-3">
                                 <span className="text-sm">📞</span>
-                                <span className="text-sm text-gray-300 font-mono tracking-tighter">{member.phone}</span>
+                                <span className="text-sm text-gray-300 font-mono tracking-tighter">
+                                  {member.phone}
+                                </span>
                               </div>
                               <div className="flex items-center gap-3">
                                 <span className="text-sm">📧</span>
-                                <span className="text-sm text-gray-400 italic truncate">{member.email}</span>
+                                <span className="text-sm text-gray-400 italic truncate">
+                                  {member.email}
+                                </span>
                               </div>
                               <div className="flex items-center gap-3">
                                 <span className="text-sm">🏛️</span>
-                                <span className="text-sm text-gray-400">{member.college}</span>
+                                <span className="text-sm text-gray-400">
+                                  {member.college}
+                                </span>
                               </div>
 
-                              {member.extras && Object.keys(member.extras).length > 0 && (
-                                <div className="mt-4 pt-4 border-t border-white/5 space-y-3">
-                                  {Object.entries(member.extras).map(([key, value]) => (
-                                    <div key={key} className="flex flex-col gap-1">
-                                      <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest">
-                                        {key.replace(/_/g, ' ')}
-                                      </p>
-                                      <p className="text-sm text-white font-medium">
-                                        {String(value)}
-                                      </p>
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
+                              {member.extras &&
+                                Object.keys(member.extras).length > 0 && (
+                                  <div className="mt-4 pt-4 border-t border-white/5 space-y-3">
+                                    {Object.entries(member.extras).map(
+                                      ([key, value]) => (
+                                        <div
+                                          key={key}
+                                          className="flex flex-col gap-1"
+                                        >
+                                          <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest">
+                                            {key.replace(/_/g, ' ')}
+                                          </p>
+                                          <p className="text-sm text-white font-medium">
+                                            {String(value)}
+                                          </p>
+                                        </div>
+                                      )
+                                    )}
+                                  </div>
+                                )}
                             </div>
                           </div>
                         ))}
@@ -612,7 +630,9 @@ export default function EventsTable({ festId }: EventsTableProps) {
                     ) : (
                       <div className="flex flex-col items-center justify-center py-20 text-gray-600">
                         <span className="text-4xl mb-4">👥</span>
-                        <p className="text-sm font-bold uppercase tracking-widest">No team members listed</p>
+                        <p className="text-sm font-bold uppercase tracking-widest">
+                          No team members listed
+                        </p>
                       </div>
                     )}
                   </div>
@@ -632,7 +652,9 @@ export default function EventsTable({ festId }: EventsTableProps) {
                         },
                         {
                           label: 'Amount Paid',
-                          value: item.amount ? `${item.currency} ${item.amount}` : 'N/A',
+                          value: item.amount
+                            ? `${item.currency} ${item.amount}`
+                            : 'N/A',
                           icon: '💰',
                         },
                         {
@@ -642,12 +664,18 @@ export default function EventsTable({ festId }: EventsTableProps) {
                         },
                         {
                           label: 'Payment Created At',
-                          value: item.payment_created_at ? new Date(item.payment_created_at).toLocaleString() : 'N/A',
+                          value: item.payment_created_at
+                            ? new Date(item.payment_created_at).toLocaleString()
+                            : 'N/A',
                           icon: '🕒',
                         },
                         {
                           label: 'Payment Verified At',
-                          value: item.payment_verified_at ? new Date(item.payment_verified_at).toLocaleString() : 'N/A',
+                          value: item.payment_verified_at
+                            ? new Date(
+                                item.payment_verified_at
+                              ).toLocaleString()
+                            : 'N/A',
                           icon: '✅',
                         },
                       ].map((info, i) => (
@@ -879,10 +907,11 @@ export default function EventsTable({ festId }: EventsTableProps) {
               <button
                 key={type}
                 onClick={() => setActiveType(type)}
-                className={`px-8 py-2.5 rounded-xl font-semibold transition-all duration-300 relative group overflow-hidden ${activeType === type
-                  ? 'text-white shadow-xl'
-                  : 'text-gray-500 hover:text-gray-400'
-                  }`}
+                className={`px-8 py-2.5 rounded-xl font-semibold transition-all duration-300 relative group overflow-hidden ${
+                  activeType === type
+                    ? 'text-white shadow-xl'
+                    : 'text-gray-500 hover:text-gray-400'
+                }`}
               >
                 {activeType === type && (
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl" />

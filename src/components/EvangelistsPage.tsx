@@ -26,7 +26,7 @@ interface Fest {
 interface Invitation {
   id: string;
   email: string;
-  community_name: string;
+  name: string;
   fest_id: string | null;
   token: string;
   status: 'pending' | 'accepted' | 'revoked';
@@ -36,13 +36,11 @@ interface Invitation {
   fests: { name: string } | null;
 }
 
-interface CommunityPartnersPageProps {
+interface EvangelistsPageProps {
   userId: string;
 }
 
-export default function CommunityPartnersPage({
-  userId,
-}: CommunityPartnersPageProps) {
+export default function EvangelistsPage({ userId }: EvangelistsPageProps) {
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [fests, setFests] = useState<Fest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,13 +51,13 @@ export default function CommunityPartnersPage({
 
   // Form state
   const [email, setEmail] = useState('');
-  const [communityName, setCommunityName] = useState('');
+  const [name, setName] = useState('');
   const [festId, setFestId] = useState('');
   const [expiryDays, setExpiryDays] = useState(7);
 
   const fetchInvitations = useCallback(async () => {
     try {
-      const res = await fetch('/api/community-partners/invite');
+      const res = await fetch('/api/evangelists/invite');
       const data = await res.json();
       if (data.success) {
         setInvitations(data.invitations || []);
@@ -93,19 +91,19 @@ export default function CommunityPartnersPage({
 
   const handleSendInvitation = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !communityName) {
+    if (!email || !name) {
       toast.error('Please fill in all required fields');
       return;
     }
 
     setSending(true);
     try {
-      const res = await fetch('/api/community-partners/invite', {
+      const res = await fetch('/api/evangelists/invite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email,
-          community_name: communityName,
+          name,
           fest_id: festId || null,
           expires_in_days: expiryDays,
           created_by: userId,
@@ -121,7 +119,7 @@ export default function CommunityPartnersPage({
             : 'Invitation created but email delivery failed'
         );
         setEmail('');
-        setCommunityName('');
+        setName('');
         setFestId('');
         setExpiryDays(7);
         setShowForm(false);
@@ -139,7 +137,7 @@ export default function CommunityPartnersPage({
   const handleResend = async (invitationId: string) => {
     setActionLoadingId(invitationId);
     try {
-      const res = await fetch('/api/community-partners/invite/resend', {
+      const res = await fetch('/api/evangelists/invite/resend', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ invitation_id: invitationId }),
@@ -161,7 +159,7 @@ export default function CommunityPartnersPage({
   const handleRevoke = async (invitationId: string) => {
     setActionLoadingId(invitationId);
     try {
-      const res = await fetch('/api/community-partners/invite/revoke', {
+      const res = await fetch('/api/evangelists/invite/revoke', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ invitation_id: invitationId }),
@@ -183,8 +181,10 @@ export default function CommunityPartnersPage({
 
   const copyInvitationLink = (token: string) => {
     const onboardUrl =
-      process.env.NEXT_PUBLIC_COMMUNITY_ONBOARD_URL || 'http://localhost:3001';
-    const link = `${onboardUrl}/community-partner/onboard?token=${token}`;
+      process.env.NEXT_PUBLIC_EVANGELIST_ONBOARD_URL ||
+      process.env.NEXT_PUBLIC_COMMUNITY_ONBOARD_URL ||
+      'http://localhost:3001';
+    const link = `${onboardUrl}/evangelist/onboard?token=${token}`;
     navigator.clipboard.writeText(link);
     toast.success('Invitation link copied!');
   };
@@ -220,7 +220,7 @@ export default function CommunityPartnersPage({
     }
 
     return (
-      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/15 text-blue-400 border border-blue-500/20">
+      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-violet-500/15 text-violet-400 border border-violet-500/20">
         <Clock className="w-3 h-3" />
         Pending
       </span>
@@ -230,13 +230,13 @@ export default function CommunityPartnersPage({
   const filteredInvitations = invitations.filter(
     (inv) =>
       inv.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      inv.community_name.toLowerCase().includes(searchQuery.toLowerCase())
+      inv.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-violet-400" />
       </div>
     );
   }
@@ -247,15 +247,15 @@ export default function CommunityPartnersPage({
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-            Community Partners
+            Evangelists
           </h1>
           <p className="text-gray-400 mt-1 text-sm">
-            Manage community partner invitations
+            Manage evangelist invitations
           </p>
         </div>
         <Button
           onClick={() => setShowForm(!showForm)}
-          className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold px-5 py-2.5 rounded-lg shadow-lg shadow-blue-500/20 transition-all"
+          className="bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white font-semibold px-5 py-2.5 rounded-lg shadow-lg shadow-purple-500/20 transition-all"
         >
           <Plus className="w-4 h-4 mr-2" />
           New Invitation
@@ -264,9 +264,9 @@ export default function CommunityPartnersPage({
 
       {/* Invitation Form */}
       {showForm && (
-        <div className="mb-8 bg-[#1a1a2e]/80 backdrop-blur-sm border border-white/10 rounded-xl p-6 shadow-xl animate-in slide-in-from-top-2 duration-300">
+        <div className="mb-8 bg-[#1a0a2e]/80 backdrop-blur-sm border border-white/10 rounded-xl p-6 shadow-xl animate-in slide-in-from-top-2 duration-300">
           <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <Mail className="w-5 h-5 text-cyan-400" />
+            <Mail className="w-5 h-5 text-violet-400" />
             Send Invitation
           </h2>
           <form onSubmit={handleSendInvitation} className="space-y-4">
@@ -279,21 +279,21 @@ export default function CommunityPartnersPage({
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="partner@community.org"
-                  className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 transition-all"
+                  placeholder="evangelist@example.com"
+                  className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 transition-all"
                   required
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1.5">
-                  Community Name <span className="text-red-400">*</span>
+                  Name <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="text"
-                  value={communityName}
-                  onChange={(e) => setCommunityName(e.target.value)}
-                  placeholder="Tech Community XYZ"
-                  className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 transition-all"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="John Doe"
+                  className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 transition-all"
                   required
                 />
               </div>
@@ -307,16 +307,16 @@ export default function CommunityPartnersPage({
                 <select
                   value={festId}
                   onChange={(e) => setFestId(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 transition-all appearance-none"
+                  className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 transition-all appearance-none"
                 >
-                  <option value="" className="bg-[#1a1a2e]">
+                  <option value="" className="bg-[#1a0a2e]">
                     Select a fest
                   </option>
                   {fests.map((fest) => (
                     <option
                       key={fest.id}
                       value={fest.id}
-                      className="bg-[#1a1a2e]"
+                      className="bg-[#1a0a2e]"
                     >
                       {fest.name} {fest.year}
                     </option>
@@ -335,7 +335,7 @@ export default function CommunityPartnersPage({
                   }
                   min={1}
                   max={90}
-                  className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 transition-all"
+                  className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 transition-all"
                 />
               </div>
             </div>
@@ -344,7 +344,7 @@ export default function CommunityPartnersPage({
               <Button
                 type="submit"
                 disabled={sending}
-                className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold px-6 py-2.5 rounded-lg shadow-lg shadow-blue-500/20 transition-all disabled:opacity-50"
+                className="bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white font-semibold px-6 py-2.5 rounded-lg shadow-lg shadow-purple-500/20 transition-all disabled:opacity-50"
               >
                 {sending ? (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -375,8 +375,8 @@ export default function CommunityPartnersPage({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by email or community..."
-              className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 w-72 text-sm transition-all"
+              placeholder="Search by email or name..."
+              className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 w-72 text-sm transition-all"
             />
           </div>
         </div>
@@ -386,7 +386,7 @@ export default function CommunityPartnersPage({
           </span>
           <span>
             Pending:{' '}
-            <strong className="text-blue-400">
+            <strong className="text-violet-400">
               {invitations.filter((i) => i.status === 'pending').length}
             </strong>
           </span>
@@ -421,20 +421,20 @@ export default function CommunityPartnersPage({
             return (
               <div
                 key={invitation.id}
-                className="bg-[#1a1a2e]/60 backdrop-blur-sm border border-white/5 rounded-xl p-4 sm:p-5 hover:border-white/10 transition-all group"
+                className="bg-[#1a0a2e]/60 backdrop-blur-sm border border-white/5 rounded-xl p-4 sm:p-5 hover:border-white/10 transition-all group"
               >
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-1.5 flex-wrap">
                       <h3 className="text-white font-semibold text-base truncate">
-                        {invitation.community_name}
+                        {invitation.name}
                       </h3>
                       {getStatusBadge(invitation)}
                     </div>
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-400">
                       <span className="truncate">{invitation.email}</span>
                       {invitation.fests?.name && (
-                        <span className="text-cyan-400/70">
+                        <span className="text-violet-400/70">
                           {invitation.fests.name}
                         </span>
                       )}
@@ -477,7 +477,7 @@ export default function CommunityPartnersPage({
                         <button
                           onClick={() => handleResend(invitation.id)}
                           disabled={actionLoadingId === invitation.id}
-                          className="p-2 rounded-lg text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 transition-all disabled:opacity-50"
+                          className="p-2 rounded-lg text-violet-400 hover:text-violet-300 hover:bg-violet-500/10 transition-all disabled:opacity-50"
                           title="Resend invitation"
                         >
                           {actionLoadingId === invitation.id ? (

@@ -12,19 +12,13 @@ const supabaseAdmin = createClient(
 // POST - Accept an invitation (called by the onboarding app)
 export async function POST(req: NextRequest) {
   try {
-    const {
-      token,
-      referral_code,
-      community_name,
-      community_image,
-      community_email,
-    } = await req.json();
+    const { token, referral_code, name, image, phone } = await req.json();
 
-    if (!token || !referral_code || !community_name) {
+    if (!token || !referral_code || !name) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Token, referral_code, and community_name are required',
+          error: 'Token, referral_code, and name are required',
         },
         { status: 400 }
       );
@@ -32,7 +26,7 @@ export async function POST(req: NextRequest) {
 
     // Validate token
     const { data: invitation, error: fetchError } = await supabaseAdmin
-      .from('community_partner_invitations')
+      .from('evangelist_invitations')
       .select('*')
       .eq('token', token)
       .single();
@@ -66,27 +60,28 @@ export async function POST(req: NextRequest) {
     }
 
     // Check if referral_code already exists
-    const { data: existingPartner } = await supabaseAdmin
-      .from('community_partners')
+    const { data: existingEvangelist } = await supabaseAdmin
+      .from('evangelists')
       .select('referral_code')
       .eq('referral_code', referral_code)
       .single();
 
-    if (existingPartner) {
+    if (existingEvangelist) {
       return NextResponse.json(
         { success: false, error: 'This referral code is already in use' },
         { status: 409 }
       );
     }
 
-    // Insert into community_partners
+    // Insert into evangelists
     const { error: insertError } = await supabaseAdmin
-      .from('community_partners')
+      .from('evangelists')
       .insert({
         referral_code,
-        community_name,
-        community_image: community_image || null,
-        community_email: community_email || invitation.email,
+        name,
+        image: image || null,
+        email: invitation.email,
+        phone: phone || null,
         fest_id: invitation.fest_id,
       });
 
@@ -95,7 +90,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Failed to create community partner: ' + insertError.message,
+          error: 'Failed to create evangelist: ' + insertError.message,
         },
         { status: 500 }
       );
@@ -103,18 +98,18 @@ export async function POST(req: NextRequest) {
 
     // Mark invitation as accepted
     const { error: updateError } = await supabaseAdmin
-      .from('community_partner_invitations')
+      .from('evangelist_invitations')
       .update({ status: 'accepted' })
       .eq('id', invitation.id);
 
     if (updateError) {
       console.error('Update error:', updateError);
-      // Partner was created but status update failed - not critical
+      // Evangelist was created but status update failed - not critical
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Community partner onboarded successfully',
+      message: 'Evangelist onboarded successfully',
       referral_code,
     });
   } catch (error) {

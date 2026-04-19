@@ -339,7 +339,8 @@ export default function GraphicsView({
                 </h1>
               </div>
               <p className="text-zinc-400">
-                View all team members and their roles for graphics design purposes
+                View all team members and their roles for graphics design
+                purposes
               </p>
             </div>
             <Button

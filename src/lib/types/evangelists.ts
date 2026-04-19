@@ -4,11 +4,11 @@ export interface EventBreakdown {
   registration_count: number;
 }
 
-export interface CommunityStats {
+export interface EvangelistStats {
   referral_code: string;
-  community_name: string;
-  community_image: string | null;
-  community_email: string | null;
+  name: string;
+  image: string | null;
+  email: string | null;
   total_signups: number;
   total_registrations: number;
   event_breakdown: EventBreakdown[];

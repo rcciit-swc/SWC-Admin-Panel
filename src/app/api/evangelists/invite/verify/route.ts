@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
     }
 
     const { data: invitation, error } = await supabaseAdmin
-      .from('community_partner_invitations')
+      .from('evangelist_invitations')
       .select('*, fests(name)')
       .eq('token', token)
       .single();
@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
       invitation: {
         id: invitation.id,
         email: invitation.email,
-        community_name: invitation.community_name,
+        name: invitation.name,
         fest_id: invitation.fest_id,
         fest_name: invitation.fests?.name || null,
         expires_at: invitation.expires_at,

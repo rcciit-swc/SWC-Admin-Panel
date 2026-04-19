@@ -33,22 +33,22 @@ export async function POST(req: NextRequest) {
   try {
     const {
       email,
-      community_name,
+      name,
       fest_id,
       expires_in_days = 7,
       created_by,
     } = await req.json();
 
-    if (!email || !community_name) {
+    if (!email || !name) {
       return NextResponse.json(
-        { success: false, error: 'Email and community name are required' },
+        { success: false, error: 'Email and name are required' },
         { status: 400 }
       );
     }
 
     // Check if there's already a pending invitation for this email
     const { data: existingInvite } = await supabaseAdmin
-      .from('community_partner_invitations')
+      .from('evangelist_invitations')
       .select('id, status')
       .eq('email', email)
       .eq('status', 'pending')
@@ -73,10 +73,10 @@ export async function POST(req: NextRequest) {
 
     // Insert invitation
     const { data: invitation, error: insertError } = await supabaseAdmin
-      .from('community_partner_invitations')
+      .from('evangelist_invitations')
       .insert({
         email,
-        community_name,
+        name,
         fest_id: fest_id || null,
         token,
         status: 'pending',
@@ -107,19 +107,21 @@ export async function POST(req: NextRequest) {
 
     // Build invitation link
     const onboardUrl =
-      process.env.NEXT_PUBLIC_COMMUNITY_ONBOARD_URL || 'http://localhost:3001';
-    const invitationLink = `${onboardUrl}/community-partner/onboard?token=${token}`;
+      process.env.NEXT_PUBLIC_EVANGELIST_ONBOARD_URL ||
+      process.env.NEXT_PUBLIC_COMMUNITY_ONBOARD_URL ||
+      'http://localhost:3001';
+    const invitationLink = `${onboardUrl}/evangelist/onboard?token=${token}`;
 
     // Render email template
     const templatePath = path.join(
       process.cwd(),
       'public',
       'mails',
-      'community-partner-invite.ejs'
+      'evangelist-invite.ejs'
     );
     const html = await ejs.renderFile(templatePath, {
       data: {
-        communityName: community_name,
+        name,
         festName,
         invitationLink,
         expiresAt: expiresAt.toLocaleDateString('en-IN', {
@@ -139,7 +141,7 @@ export async function POST(req: NextRequest) {
       await transporter.sendMail({
         from: `"RCCIIT Techtrix 2026" <${process.env.COMMUNITY_SMTP_USER}>`,
         to: email,
-        subject: `Community Partner Invitation - ${festName}`,
+        subject: `Evangelist Invitation - ${festName}`,
         html,
       });
 
@@ -176,7 +178,7 @@ export async function POST(req: NextRequest) {
 export async function GET() {
   try {
     const { data: invitations, error } = await supabaseAdmin
-      .from('community_partner_invitations')
+      .from('evangelist_invitations')
       .select('*, fests(name)')
       .order('created_at', { ascending: false });
 

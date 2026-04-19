@@ -37,7 +37,9 @@ export default async function SWCTrackerPage() {
   ]);
 
   // Build a set of roll numbers already present from Sheets (normalized uppercase)
-  const sheetsRolls = new Set(sheetsStudents.map((s) => s.rollNumber.trim().toUpperCase()));
+  const sheetsRolls = new Set(
+    sheetsStudents.map((s) => s.rollNumber.trim().toUpperCase())
+  );
 
   // Map Supabase rows to StudentData shape, only adding rows not already in sheets data
   const supabaseStudents: StudentData[] = (swc2026Rows ?? [])

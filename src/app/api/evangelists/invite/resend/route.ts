@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
 
     // Fetch the invitation
     const { data: invitation, error: fetchError } = await supabaseAdmin
-      .from('community_partner_invitations')
+      .from('evangelist_invitations')
       .select('*, fests(name)')
       .eq('id', invitation_id)
       .single();
@@ -76,19 +76,21 @@ export async function POST(req: NextRequest) {
 
     const festName = invitation.fests?.name || 'RCCIIT SWC Event';
     const onboardUrl =
-      process.env.NEXT_PUBLIC_COMMUNITY_ONBOARD_URL || 'http://localhost:3001';
-    const invitationLink = `${onboardUrl}/community-partner/onboard?token=${invitation.token}`;
+      process.env.NEXT_PUBLIC_EVANGELIST_ONBOARD_URL ||
+      process.env.NEXT_PUBLIC_COMMUNITY_ONBOARD_URL ||
+      'http://localhost:3001';
+    const invitationLink = `${onboardUrl}/evangelist/onboard?token=${invitation.token}`;
 
     // Render email template
     const templatePath = path.join(
       process.cwd(),
       'public',
       'mails',
-      'community-partner-invite.ejs'
+      'evangelist-invite.ejs'
     );
     const html = await ejs.renderFile(templatePath, {
       data: {
-        communityName: invitation.community_name,
+        name: invitation.name,
         festName,
         invitationLink,
         expiresAt: new Date(invitation.expires_at).toLocaleDateString('en-IN', {
@@ -107,7 +109,7 @@ export async function POST(req: NextRequest) {
     await transporter.sendMail({
       from: `"RCCIIT Techtrix 2026" <${process.env.COMMUNITY_SMTP_USER}>`,
       to: invitation.email,
-      subject: `Community Partner Invitation - ${festName}`,
+      subject: `Evangelist Invitation - ${festName}`,
       html,
     });
 

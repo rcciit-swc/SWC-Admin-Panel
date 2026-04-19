@@ -1,16 +1,16 @@
-import CommunityPartnersPage from '@/components/CommunityPartnersPage';
+import EvangelistsPage from '@/components/EvangelistsPage';
 import { login } from '@/utils/functions/login';
 import { supabaseServer } from '@/utils/functions/supabase-server';
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
-  title: 'Community Partners | RCCIIT SWC',
+  title: 'Evangelists | RCCIIT SWC',
   description:
-    'Manage community partner invitations for RCCIIT Student Welfare Committee events',
+    'Manage evangelist invitations for RCCIIT Student Welfare Committee events',
 };
 
-export default async function CommunityPartnersRoute() {
+export default async function EvangelistsRoute() {
   const supabase = await supabaseServer();
 
   const {
@@ -33,5 +33,5 @@ export default async function CommunityPartnersRoute() {
     redirect('/');
   }
 
-  return <CommunityPartnersPage userId={user?.id || ''} />;
+  return <EvangelistsPage userId={user?.id || ''} />;
 }
