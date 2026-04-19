@@ -53,24 +53,34 @@ export interface TeamMember {
   name: string;
   email: string;
   phone: string;
+  college?: string;
+  extras?: Record<string, any>;
 }
 
 export interface EventData {
   serial_no: number;
-  paymentstatus: 'Verified' | 'Not Verified';
+  paymentstatus: 'Paid' | 'Not Paid';
   eventname: string;
   type: string;
   teamname: string;
   college: string;
+  gender: string;
   teamlead: string;
   teamleadphone: string;
   teamleademail: string;
-  transactionid: string;
+  transactionid: string | null;
   transaction_screenshot: string;
-  registeredat: string;
+  accountholdername: string;
+  razorpay_order_id: string | null;
+  razorpay_payment_id: string | null;
+  amount: number | null;
+  currency: string | null;
+  payment_status: string | null;
+  payment_created_at: string | null;
+  payment_verified_at: string | null;
+  team_id: string;
   teammembers: TeamMember[];
-  accountHolderName?: string;
-  gender?: string;
+  registeredat: string;
 }
 
 export interface EventsStateType {

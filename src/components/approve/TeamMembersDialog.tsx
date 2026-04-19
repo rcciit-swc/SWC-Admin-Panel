@@ -1,10 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { TeamMember } from '@/lib/types/events';
 import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
 import {
   Dialog,
   DialogContent,
@@ -12,19 +8,23 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { TeamMember } from '@/lib/types/events';
+import { supabase } from '@/utils/functions/supabase-client';
+import { motion } from 'framer-motion';
 import {
-  Users,
-  User,
-  Phone,
-  Mail,
   Building,
-  X,
+  Edit,
+  Mail,
+  Phone,
+  User,
   UserCheck,
   UserCircle,
-  Edit,
+  Users,
+  X,
 } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 import { EditTeamMemberDialog } from './EditTeamMemberDialog';
-import { supabase } from '@/utils/functions/supabase-client';
 
 export function TeamMembersDialog({
   members,
@@ -178,6 +178,33 @@ export function TeamMembersDialog({
                             </p>
                           </div>
                         </div>
+
+                        {member.college && (
+                          <div className="flex items-center gap-3">
+                            <Building size={18} className="text-zinc-400" />
+                            <div>
+                              <p className="text-sm text-zinc-500">College</p>
+                              <p className="font-medium text-white">
+                                {member.college}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+
+                        {member.extras && Object.keys(member.extras).length > 0 && (
+                          <div className="pt-2 border-t border-white/5 space-y-3">
+                            {Object.entries(member.extras).map(([key, value]) => (
+                              <div key={key} className="flex flex-col gap-1">
+                                <p className="text-xs text-zinc-500 capitalize tracking-wider font-bold">
+                                  {key.replace(/_/g, ' ')}
+                                </p>
+                                <p className="font-medium text-white">
+                                  {String(value)}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </motion.div>

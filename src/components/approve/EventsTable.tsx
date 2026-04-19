@@ -9,13 +9,10 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useEvents } from '@/lib/stores/events';
-import { events } from '@/lib/types/events';
 import { RefreshCw, Search } from 'lucide-react';
-import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 import { CSVLink } from 'react-csv';
 import { List, type RowComponentProps } from 'react-window';
-import { toast } from 'sonner';
 import TableSkeleton from './TableSkeleton';
 
 import {
@@ -24,10 +21,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { whatsAppLinks } from '@/utils/constraints/constants/whatsApp';
 import { getRoles } from '@/utils/functions';
 import { dateTime } from '@/utils/functions/dateUtils';
-import { approveRegistration } from '@/utils/functions/register-services';
 import { Filter } from './EventFilters';
 import { TeamMembersDialog } from './TeamMembersDialog';
 
@@ -326,7 +321,7 @@ export default function EventsTable({ festId }: EventsTableProps) {
     )?.id;
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [activeModalTab, setActiveModalTab] = useState<
-      'basic' | 'transaction'
+      'basic' | 'payment' | 'team' | 'transaction'
     >('basic');
     if (!item) return <div style={style} />;
     return (
@@ -353,8 +348,8 @@ export default function EventsTable({ festId }: EventsTableProps) {
                       <button
                         type="button"
                         className={`h-9 inline-flex items-center justify-center px-4 rounded-full font-bold text-[11px] uppercase tracking-wider transition-all shadow-sm ${item.paymentstatus === 'Verified'
-                            ? 'bg-[#10B981]/10 text-[#10B981] ring-1 ring-[#10B981]/30 hover:bg-[#10B981]/20'
-                            : 'bg-[#EF4444]/10 text-[#EF4444] ring-1 ring-[#EF4444]/30 hover:bg-[#EF4444]/20'
+                          ? 'bg-[#10B981]/10 text-[#10B981] ring-1 ring-[#10B981]/30 hover:bg-[#10B981]/20'
+                          : 'bg-[#EF4444]/10 text-[#EF4444] ring-1 ring-[#EF4444]/30 hover:bg-[#EF4444]/20'
                           }`}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -463,24 +458,34 @@ export default function EventsTable({ festId }: EventsTableProps) {
                     <span className="text-[10px] uppercase tracking-[0.3em] text-blue-500 font-black px-3 py-1 bg-blue-500/10 rounded-full">
                       {item.paymentstatus}
                     </span>
+                    {item.serial_no && (
+                      <span className="text-[10px] uppercase tracking-[0.3em] text-amber-500 font-black px-3 py-1 bg-amber-500/10 rounded-full">
+                        SL #{item.serial_no}
+                      </span>
+                    )}
                   </div>
                 </DialogHeader>
 
                 {/* Modal Tabs */}
-                <div className="flex gap-1 mt-8 p-1 bg-white/[0.03] rounded-2xl w-fit border border-white/5">
-                  {(['basic', 'transaction'] as const).map((tab) => (
+                <div className="flex flex-wrap gap-1 mt-8 p-1 bg-white/[0.03] rounded-2xl w-fit border border-white/5">
+                  {[
+                    { key: 'basic', label: 'Basic' },
+                    { key: 'team', label: 'Team Details' },
+                    { key: 'payment', label: 'Payment Details' },
+                    { key: 'transaction', label: 'Transaction' },
+                  ].map((tab) => (
                     <button
-                      key={tab}
-                      onClick={() => setActiveModalTab(tab)}
-                      className={`px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 relative ${activeModalTab === tab
-                          ? 'text-white'
-                          : 'text-gray-500 hover:text-gray-400'
+                      key={tab.key}
+                      onClick={() => setActiveModalTab(tab.key as any)}
+                      className={`px-4 sm:px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 relative ${activeModalTab === tab.key
+                        ? 'text-white'
+                        : 'text-gray-500 hover:text-gray-400'
                         }`}
                     >
-                      {activeModalTab === tab && (
+                      {activeModalTab === tab.key && (
                         <div className="absolute inset-0 bg-white/[0.05] rounded-xl ring-1 ring-white/10" />
                       )}
-                      <span className="relative z-10">{tab} Info</span>
+                      <span className="relative z-10">{tab.label}</span>
                     </button>
                   ))}
                 </div>
@@ -552,28 +557,116 @@ export default function EventsTable({ festId }: EventsTableProps) {
                         </p>
                       </div>
                     ))}
-                    {item.teammembers && item.teammembers.length > 0 && (
-                      <div className="md:col-span-2 mt-4">
-                        <h3 className="text-[10px] uppercase font-black tracking-widest text-gray-500 mb-4 ml-1">
-                          Team Members
-                        </h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          {item.teammembers.map((member: any, i: number) => (
-                            <div
-                              key={i}
-                              className="p-3 rounded-xl bg-blue-500/5 border border-blue-500/10 flex items-center justify-between"
-                            >
-                              <span className="text-sm font-semibold text-gray-200">
-                                {member.name}
-                              </span>
-                              <span className="text-sm text-blue-400 font-mono">
-                                {member.phone}
-                              </span>
+                  </div>
+                ) : activeModalTab === 'team' ? (
+                  <div className="space-y-6">
+                    {item.teammembers && item.teammembers.length > 0 ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {item.teammembers.map((member: any, i: number) => (
+                          <div
+                            key={i}
+                            className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all group"
+                          >
+                            <div className="flex items-center gap-4 mb-4">
+                              <div className="w-10 h-10 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-bold">
+                                {i + 1}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h4 className="text-white font-bold truncate">{member.name}</h4>
+                                <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest">Team Member</p>
+                              </div>
                             </div>
-                          ))}
-                        </div>
+
+                            <div className="space-y-3 pl-2">
+                              <div className="flex items-center gap-3">
+                                <span className="text-sm">📞</span>
+                                <span className="text-sm text-gray-300 font-mono tracking-tighter">{member.phone}</span>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                <span className="text-sm">📧</span>
+                                <span className="text-sm text-gray-400 italic truncate">{member.email}</span>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                <span className="text-sm">🏛️</span>
+                                <span className="text-sm text-gray-400">{member.college}</span>
+                              </div>
+
+                              {member.extras && Object.keys(member.extras).length > 0 && (
+                                <div className="mt-4 pt-4 border-t border-white/5 space-y-3">
+                                  {Object.entries(member.extras).map(([key, value]) => (
+                                    <div key={key} className="flex flex-col gap-1">
+                                      <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest">
+                                        {key.replace(/_/g, ' ')}
+                                      </p>
+                                      <p className="text-sm text-white font-medium">
+                                        {String(value)}
+                                      </p>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center py-20 text-gray-600">
+                        <span className="text-4xl mb-4">👥</span>
+                        <p className="text-sm font-bold uppercase tracking-widest">No team members listed</p>
                       </div>
                     )}
+                  </div>
+                ) : activeModalTab === 'payment' ? (
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {[
+                        {
+                          label: 'Razorpay Order ID',
+                          value: item.razorpay_order_id,
+                          icon: '🆔',
+                        },
+                        {
+                          label: 'Razorpay Payment ID',
+                          value: item.razorpay_payment_id,
+                          icon: '💳',
+                        },
+                        {
+                          label: 'Amount Paid',
+                          value: item.amount ? `${item.currency} ${item.amount}` : 'N/A',
+                          icon: '💰',
+                        },
+                        {
+                          label: 'Payment Status',
+                          value: item.payment_status || 'N/A',
+                          icon: '📊',
+                        },
+                        {
+                          label: 'Payment Created At',
+                          value: item.payment_created_at ? new Date(item.payment_created_at).toLocaleString() : 'N/A',
+                          icon: '🕒',
+                        },
+                        {
+                          label: 'Payment Verified At',
+                          value: item.payment_verified_at ? new Date(item.payment_verified_at).toLocaleString() : 'N/A',
+                          icon: '✅',
+                        },
+                      ].map((info, i) => (
+                        <div
+                          key={i}
+                          className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors"
+                        >
+                          <div className="flex items-center gap-3 mb-2 opacity-60">
+                            <span className="text-lg">{info.icon}</span>
+                            <span className="text-[10px] uppercase font-black tracking-widest text-gray-400">
+                              {info.label}
+                            </span>
+                          </div>
+                          <p className="text-white font-mono text-sm pl-8 break-all">
+                            {info.value || 'N/A'}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ) : (
                   <div className="space-y-6">
@@ -595,32 +688,6 @@ export default function EventsTable({ festId }: EventsTableProps) {
                         </p>
                       </div>
                     </div>
-
-                    <div className="relative group rounded-3xl overflow-hidden border border-white/10 bg-black shadow-2xl">
-                      {!item.transaction_screenshot ? (
-                        <div className="flex flex-col items-center justify-center gap-4 py-20 text-gray-600">
-                          <div className="w-16 h-16 rounded-full border-2 border-dashed border-gray-800 flex items-center justify-center text-3xl">
-                            🖼️
-                          </div>
-                          <span className="text-sm font-bold uppercase tracking-widest">
-                            No Screenshot Provided
-                          </span>
-                        </div>
-                      ) : (
-                        <Image
-                          src={
-                            item.transaction_screenshot || '/placeholder.svg'
-                          }
-                          alt="Transaction Screenshot"
-                          layout="responsive"
-                          loading="lazy"
-                          width={800}
-                          height={1200}
-                          objectFit="contain"
-                          className="hover:scale-105 transition-transform duration-700"
-                        />
-                      )}
-                    </div>
                   </div>
                 )}
               </div>
@@ -629,57 +696,6 @@ export default function EventsTable({ festId }: EventsTableProps) {
               <div className="p-8 border-t border-white/5 bg-white/[0.02]">
                 {canModerate && !isFaculty && (
                   <div className="flex items-center gap-4">
-                    <Button
-                      className="flex-1 h-14 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl shadow-lg shadow-emerald-900/20 transition-all border-0 ring-1 ring-white/20"
-                      onClick={async () => {
-                        try {
-                          const eventCoordinators = eventsData?.find(
-                            (event: events) => event.name === item.eventname
-                          )?.coordinators;
-                          await approveRegistration(item.team_id);
-                          const emailData = {
-                            eventName: item.eventname,
-                            year: '2026',
-                            festName: 'Game of Thrones',
-                            teamName: item.teamname,
-                            leaderName: item.teamlead,
-                            leaderPhone: item.teamleadphone,
-                            email: item.teamleademail,
-                            whatsappLink: whatsAppLinks?.find(
-                              (link) => link.event_id === eventId
-                            )?.link,
-                            teamMembers: item.teammembers,
-                            coordinators: eventCoordinators,
-                            contactEmail: 'rcciit.got.official@gmail.com',
-                            logoUrl: 'https://i.postimg.cc/Gtpt62ST/got.jpg',
-                          };
-                          await fetch('/api/sendMail', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                              to: [
-                                item.teamleademail,
-                                ...item.teammembers.map(
-                                  (member: any) => member.email
-                                ),
-                              ],
-                              subject: `🎉 Registration Confirmed: ${item.eventname} - GAME OF THRONES 2026`,
-                              fileName: 'verify-email.ejs',
-                              data: emailData,
-                            }),
-                          });
-                          refreshData();
-                          toast.success('Registration Approved Successfully');
-                          setIsDialogOpen(false);
-                        } catch (error) {
-                          toast.error('Failed to approve registration');
-                        }
-                      }}
-                    >
-                      {item.paymentstatus === 'Verified'
-                        ? 'Approve Again'
-                        : 'Verify & Approve'}
-                    </Button>
                     <Button
                       variant="outline"
                       className="h-14 px-8 border-white/10 bg-white/5 hover:bg-white/10 text-white rounded-2xl font-bold"
@@ -864,8 +880,8 @@ export default function EventsTable({ festId }: EventsTableProps) {
                 key={type}
                 onClick={() => setActiveType(type)}
                 className={`px-8 py-2.5 rounded-xl font-semibold transition-all duration-300 relative group overflow-hidden ${activeType === type
-                    ? 'text-white shadow-xl'
-                    : 'text-gray-500 hover:text-gray-400'
+                  ? 'text-white shadow-xl'
+                  : 'text-gray-500 hover:text-gray-400'
                   }`}
               >
                 {activeType === type && (
