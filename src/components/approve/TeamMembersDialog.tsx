@@ -150,11 +150,27 @@ export function TeamMembersDialog({
                             <User size={22} className="text-violet-300" />
                           </div>
                         </div>
-                        <div>
-                          <p className="text-sm text-zinc-500">Name</p>
+                        <div className="flex-1 min-w-0">
                           <p className="font-medium text-white">
                             {member.name}
                           </p>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {member.is_rcciit_email && (
+                              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/10 text-blue-400 ring-1 ring-blue-500/20 font-bold uppercase">
+                                RCCIIT
+                              </span>
+                            )}
+                            {member.swc_cleared === true && (
+                              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20 font-bold uppercase">
+                                SWC ✓
+                              </span>
+                            )}
+                            {member.swc_cleared === false && (
+                              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-400 ring-1 ring-red-500/20 font-bold uppercase">
+                                SWC ✗
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
 

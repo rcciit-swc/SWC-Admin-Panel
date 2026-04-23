@@ -36,14 +36,15 @@ export default function EventsTable({ festId }: EventsTableProps) {
   const [rolesData, setRolesData] = useState([]);
   const [paymentStatusFilter, setPaymentStatusFilter] = useState('');
   const [eventFilter, setEventFilter] = useState('');
-  const [activeType, setActiveType] = useState('Individual');
+  const [activeType, setActiveType] = useState<
+    'Individual' | 'Team' | 'Awaiting Teams'
+  >('Individual');
   const [swcPaid, setSwcPaid] = useState(0);
   const [swcNotPaid, setSwcNotPaid] = useState(0);
   const [collegeFilter, setCollegeFilter] = useState('');
   const [genderFilter, setGenderFilter] = useState('');
   const [registeredAtFilter, setRegisteredAtFilter] = useState('');
   const {
-    eventsData,
     approvalDashboardLoading,
     approvalDashboardData,
     getApprovalDashboardData,
@@ -98,34 +99,51 @@ export default function EventsTable({ festId }: EventsTableProps) {
     return safeApprovalDashboardData.filter((item) => {
       const searchMatch =
         !searchQuery ||
-        (item.eventname ?? '')
+        (item.event_name ?? '')
           .toLowerCase()
           .includes(searchQuery.toLowerCase()) ||
-        (item.teamleadphone ?? '').includes(searchQuery) ||
-        (item.teamlead ?? '')
+        (item.team_lead_phone ?? '').includes(searchQuery) ||
+        (item.team_lead_name ?? '')
           .toLowerCase()
           .includes(searchQuery.toLowerCase()) ||
-        (item.teamleademail ?? '')
+        (item.team_lead_email ?? '')
           .toLowerCase()
           .includes(searchQuery.toLowerCase()) ||
         (item.college ?? '')
           .toLowerCase()
           .includes(searchQuery.toLowerCase()) ||
-        (item.transactionid ?? '')
+        (item.transaction_id ?? '')
           .toLowerCase()
           .includes(searchQuery.toLowerCase());
 
       const paymentStatusMatch =
-        !paymentStatusFilter || item.paymentstatus === paymentStatusFilter;
-      const eventMatch = !eventFilter || item.eventname === eventFilter;
-      const typeMatch = item.type === activeType;
+        !paymentStatusFilter ||
+        item.registration_status === paymentStatusFilter;
+      const eventMatch = !eventFilter || item.event_name === eventFilter;
+
+      const typeMatch = (() => {
+        if (activeType === 'Individual')
+          return item.registration_type === 'Individual';
+        if (activeType === 'Team')
+          return (
+            item.registration_type === 'Team' && item.team_status === 'closed'
+          );
+        if (activeType === 'Awaiting Teams')
+          return (
+            item.registration_type === 'Team' &&
+            (item.team_status === 'active' || item.team_status === 'pending')
+          );
+        return false;
+      })();
+
       const collegeMatch = !collegeFilter || item.college === collegeFilter;
-      const genderMatch = !genderFilter || item.gender === genderFilter;
+      const genderMatch =
+        !genderFilter || item.team_lead_gender === genderFilter;
 
       const registeredAtMatch = (() => {
         if (!registeredAtFilter) return true;
         const now = new Date();
-        const registeredDate = new Date(item.registeredat);
+        const registeredDate = new Date(item.registered_at);
         const hoursDiff =
           (now.getTime() - registeredDate.getTime()) / (1000 * 60 * 60);
 
@@ -164,7 +182,7 @@ export default function EventsTable({ festId }: EventsTableProps) {
   useEffect(() => {
     const fetchMore = async () => {
       const totalMembers = filteredData?.reduce((sum, team) => {
-        return sum + (team.teammembers?.length || 0);
+        return sum + (team.team_members?.length || 0);
       }, 0);
       return totalMembers;
     };
@@ -173,25 +191,34 @@ export default function EventsTable({ festId }: EventsTableProps) {
   }, [filteredData]);
 
   const totalRevenue = useMemo(() => {
+    const paidStatuses = new Set(['PAID']);
     return filteredData.reduce((acc, item) => {
-      const event = eventsData?.find((e) => e.name === item.eventname);
-      return acc + (event?.registration_fees || 0);
+      if (!paidStatuses.has(item.registration_status)) return acc;
+      return acc + (item.registration_fees || 0);
     }, 0);
-  }, [filteredData, eventsData]);
+  }, [filteredData]);
 
   const uniqueEvents = useMemo(
     () =>
       Array.from(
-        new Set(safeApprovalDashboardData.map((item) => item.eventname))
+        new Set(safeApprovalDashboardData.map((item) => item.event_name))
       ),
     [safeApprovalDashboardData]
   );
 
   const availableTypes = useMemo(() => {
-    const types = new Set(safeApprovalDashboardData.map((item) => item.type));
-    const result = [];
+    const types = new Set(
+      safeApprovalDashboardData.map((item) => item.registration_type)
+    );
+    const hasAwaitingTeams = safeApprovalDashboardData.some(
+      (item) =>
+        item.registration_type === 'Team' &&
+        (item.team_status === 'active' || item.team_status === 'pending')
+    );
+    const result: ('Individual' | 'Team' | 'Awaiting Teams')[] = [];
     if (types.has('Individual')) result.push('Individual');
     if (types.has('Team')) result.push('Team');
+    if (hasAwaitingTeams) result.push('Awaiting Teams');
     return result;
   }, [safeApprovalDashboardData]);
 
@@ -204,21 +231,21 @@ export default function EventsTable({ festId }: EventsTableProps) {
   const columns = useMemo(() => {
     const baseColumns = [
       { header: 'SL No.', width: isMobile ? 50 : 70, key: 'sl' },
-      { header: 'Payment Status', width: isMobile ? 120 : 140, key: 'payment' },
-      { header: 'Event Name', width: isMobile ? 160 : 200, key: 'event' },
+      { header: 'Payment Status', width: isMobile ? 180 : 210, key: 'payment' },
+      { header: 'Event Name', width: isMobile ? 180 : 240, key: 'event' },
     ];
 
-    if (activeType === 'Team') {
+    if (activeType === 'Team' || activeType === 'Awaiting Teams') {
       baseColumns.push({
         header: 'Team Name',
-        width: isMobile ? 150 : 180,
+        width: isMobile ? 180 : 220,
         key: 'team_name',
       });
     }
 
     baseColumns.push({
       header: 'College',
-      width: isMobile ? 150 : 200,
+      width: isMobile ? 200 : 280,
       key: 'college',
     });
     baseColumns.push({
@@ -228,7 +255,7 @@ export default function EventsTable({ festId }: EventsTableProps) {
     });
     baseColumns.push({
       header: activeType === 'Individual' ? 'Name' : 'Team Lead',
-      width: isMobile ? 130 : 150,
+      width: isMobile ? 160 : 220,
       key: 'lead',
     });
     baseColumns.push({
@@ -247,7 +274,7 @@ export default function EventsTable({ festId }: EventsTableProps) {
       key: 'txn',
     });
 
-    if (activeType === 'Team') {
+    if (activeType === 'Team' || activeType === 'Awaiting Teams') {
       baseColumns.push({ header: 'Members', width: 90, key: 'members' });
     }
 
@@ -288,11 +315,11 @@ export default function EventsTable({ festId }: EventsTableProps) {
   useEffect(() => {
     if (filteredData.length > 0) {
       const teamsWithMembersData = filteredData.flatMap((team, index) =>
-        (team.teammembers ?? []).map((member: any) => {
+        (team.team_members ?? []).map((member: any) => {
           const row: Record<string, any> = {
             'SL No.': index + 1,
-            'Event Name': team.eventname,
-            'Team Name': team.teamname || 'N/A',
+            'Event Name': team.event_name,
+            'Team Name': team.team_name || 'N/A',
             Name: member.name,
             Phone: member.phone,
             Email: member.email,
@@ -301,7 +328,7 @@ export default function EventsTable({ festId }: EventsTableProps) {
             Attendance: '',
           };
 
-          if (team.type === 'Individual') {
+          if (team.registration_type === 'Individual') {
             delete row['Team Name'];
           }
 
@@ -314,14 +341,43 @@ export default function EventsTable({ festId }: EventsTableProps) {
     }
   }, [filteredData]);
 
+  const REGISTRATION_STATUS_MAP: Record<string, string> = {
+    PAYMENT_NOT_STARTED: 'Payment Not Started',
+    PAYMENT_PENDING: 'Payment Pending',
+    OFFLINE_PAYMENT_PENDING: 'Offline Pending',
+    PAID: 'Paid',
+    SWC_PAID: 'SWC Paid',
+    FREE: 'Free',
+    TEAM_FORMING: 'Team Forming',
+    AWAITING_MEMBERS: 'Awaiting Members',
+  };
+
+  const getReadableStatus = (status: string) => {
+    return REGISTRATION_STATUS_MAP[status] || status.replace(/_/g, ' ');
+  };
+
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case 'PAID':
+      case 'SWC_PAID':
+      case 'FREE':
+        return 'bg-[#10B981]/10 text-[#10B981] ring-1 ring-[#10B981]/30 hover:bg-[#10B981]/20';
+      case 'OFFLINE_PAYMENT_PENDING':
+      case 'PAYMENT_PENDING':
+        return 'bg-[#F59E0B]/10 text-[#F59E0B] ring-1 ring-[#F59E0B]/30 hover:bg-[#F59E0B]/20';
+      case 'AWAITING_MEMBERS':
+      case 'TEAM_FORMING':
+        return 'bg-[#6366F1]/10 text-[#6366F1] ring-1 ring-[#6366F1]/30 hover:bg-[#6366F1]/20';
+      default:
+        return 'bg-[#EF4444]/10 text-[#EF4444] ring-1 ring-[#EF4444]/30 hover:bg-[#EF4444]/20';
+    }
+  };
+
   const Row = ({ index, style }: RowComponentProps) => {
     const item = filteredData[index];
-    const eventId = eventsData?.find(
-      (event) => event.name === item.eventname
-    )?.id;
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [activeModalTab, setActiveModalTab] = useState<
-      'basic' | 'payment' | 'team' | 'transaction'
+      'basic' | 'team' | 'payment' | 'transaction'
     >('basic');
     if (!item) return <div style={style} />;
     return (
@@ -347,37 +403,33 @@ export default function EventsTable({ festId }: EventsTableProps) {
                     <TooltipTrigger asChild>
                       <button
                         type="button"
-                        className={`h-9 inline-flex items-center justify-center px-4 rounded-full font-bold text-[11px] uppercase tracking-wider transition-all shadow-sm ${
-                          item.paymentstatus === 'Verified'
-                            ? 'bg-[#10B981]/10 text-[#10B981] ring-1 ring-[#10B981]/30 hover:bg-[#10B981]/20'
-                            : 'bg-[#EF4444]/10 text-[#EF4444] ring-1 ring-[#EF4444]/30 hover:bg-[#EF4444]/20'
-                        }`}
+                        className={`h-9 inline-flex items-center justify-center px-4 rounded-full font-bold text-[11px] uppercase tracking-wider transition-all shadow-sm ${getStatusStyle(item.registration_status)}`}
                         onClick={(e) => {
                           e.stopPropagation();
                           setIsDialogOpen(true);
                         }}
                       >
-                        {item.paymentstatus}
+                        {getReadableStatus(item.registration_status)}
                       </button>
                     </TooltipTrigger>
                     <TooltipContent className="bg-zinc-900 border-white/10 text-white">
-                      <p>Click to verify registration</p>
+                      <p>Click to view registration details</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               ) : column.key === 'event' ? (
                 <span
                   className="text-white font-bold truncate group-hover:text-blue-400 transition-colors"
-                  title={item.eventname}
+                  title={item.event_name}
                 >
-                  {item.eventname}
+                  {item.event_name}
                 </span>
               ) : column.key === 'team_name' ? (
                 <span
                   className="text-gray-300 font-medium truncate"
-                  title={item.teamname}
+                  title={item.team_name}
                 >
-                  {item.teamname}
+                  {item.team_name}
                 </span>
               ) : column.key === 'college' ? (
                 <span
@@ -389,54 +441,54 @@ export default function EventsTable({ festId }: EventsTableProps) {
               ) : column.key === 'gender' ? (
                 <div className="flex items-center gap-2">
                   <span
-                    className={`w-1.5 h-1.5 rounded-full ${item.gender?.toLowerCase() === 'male' ? 'bg-blue-400' : 'bg-pink-400'}`}
+                    className={`w-1.5 h-1.5 rounded-full ${item.team_lead_gender?.toLowerCase() === 'male' ? 'bg-blue-400' : 'bg-pink-400'}`}
                   />
                   <span className="text-gray-300 text-xs uppercase font-black tabular-nums">
-                    {item.gender?.slice(0, 1) || '-'}
+                    {item.team_lead_gender?.slice(0, 1) || '-'}
                   </span>
                 </div>
               ) : column.key === 'lead' ? (
                 <span
                   className="text-white font-semibold truncate"
-                  title={item.teamlead}
+                  title={item.team_lead_name}
                 >
-                  {item.teamlead}
+                  {item.team_lead_name}
                 </span>
               ) : column.key === 'phone' ? (
                 <span
                   className="text-gray-300 font-mono tracking-tighter"
-                  title={item.teamleadphone}
+                  title={item.team_lead_phone}
                 >
-                  {item.teamleadphone}
+                  {item.team_lead_phone}
                 </span>
               ) : column.key === 'email' ? (
                 <span
                   className="text-gray-400 truncate italic text-xs hover:text-white transition-colors"
-                  title={item.teamleademail}
+                  title={item.team_lead_email}
                 >
-                  {item.teamleademail}
+                  {item.team_lead_email}
                 </span>
               ) : column.key === 'txn' ? (
                 <span
                   className="font-mono text-[11px] text-gray-500 bg-white/[0.03] px-2 py-1 rounded border border-white/5 truncate"
-                  title={item.transactionid}
+                  title={item.transaction_id ?? undefined}
                 >
-                  {item.transactionid || 'NO_TXN'}
+                  {item.transaction_id || 'NO_TXN'}
                 </span>
               ) : column.key === 'members' ? (
                 <div onClick={(e) => e.stopPropagation()}>
                   <TeamMembersDialog
-                    members={item.teammembers}
+                    members={item.team_members}
                     teamID={item.team_id}
                   />
                 </div>
               ) : (
                 <div className="flex flex-col items-start gap-1">
                   <span className="text-gray-300 text-[11px] font-mono leading-none">
-                    {item.registeredat?.split('T')[0]}
+                    {item.registered_at?.split('T')[0]}
                   </span>
                   <span className="text-gray-600 text-[9px] font-mono leading-none">
-                    {item.registeredat?.split('T')[1]?.slice(0, 5)}
+                    {item.registered_at?.split('T')[1]?.slice(0, 5)}
                   </span>
                 </div>
               )}
@@ -447,7 +499,7 @@ export default function EventsTable({ festId }: EventsTableProps) {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className="sm:max-w-[800px] bg-[#050508]/95 border border-white/10 backdrop-blur-2xl rounded-3xl p-0 overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
             <div className="flex flex-col h-[85vh] max-h-[900px]">
-              {/* Modal Header */}
+              {/* Modal Header + Tabs */}
               <div className="p-8 pb-4">
                 <DialogHeader>
                   <div className="flex items-center justify-between mb-2">
@@ -456,8 +508,10 @@ export default function EventsTable({ festId }: EventsTableProps) {
                     </DialogTitle>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-[10px] uppercase tracking-[0.3em] text-blue-500 font-black px-3 py-1 bg-blue-500/10 rounded-full">
-                      {item.paymentstatus}
+                    <span
+                      className={`text-[10px] uppercase tracking-[0.3em] font-black px-3 py-1 rounded-full ${getStatusStyle(item.registration_status)}`}
+                    >
+                      {getReadableStatus(item.registration_status)}
                     </span>
                     {item.serial_no && (
                       <span className="text-[10px] uppercase tracking-[0.3em] text-amber-500 font-black px-3 py-1 bg-amber-500/10 rounded-full">
@@ -466,19 +520,18 @@ export default function EventsTable({ festId }: EventsTableProps) {
                     )}
                   </div>
                 </DialogHeader>
-
                 {/* Modal Tabs */}
-                <div className="flex flex-wrap gap-1 mt-8 p-1 bg-white/[0.03] rounded-2xl w-fit border border-white/5">
+                <div className="flex flex-wrap gap-1 mt-6 p-1 bg-white/[0.03] rounded-2xl w-fit border border-white/5">
                   {[
                     { key: 'basic', label: 'Basic' },
                     { key: 'team', label: 'Team Details' },
-                    { key: 'payment', label: 'Payment Details' },
+                    { key: 'payment', label: 'Payment' },
                     { key: 'transaction', label: 'Transaction' },
                   ].map((tab) => (
                     <button
                       key={tab.key}
                       onClick={() => setActiveModalTab(tab.key as any)}
-                      className={`px-4 sm:px-6 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 relative ${
+                      className={`px-4 sm:px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 relative ${
                         activeModalTab === tab.key
                           ? 'text-white'
                           : 'text-gray-500 hover:text-gray-400'
@@ -494,55 +547,137 @@ export default function EventsTable({ festId }: EventsTableProps) {
               </div>
 
               {/* Modal Content Scroll Area */}
-              <div className="flex-1 overflow-y-auto p-8 pt-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-                {activeModalTab === 'basic' ? (
+              <div className="flex-1 overflow-y-auto p-8 pt-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                {/* ── BASIC TAB ── */}
+                {activeModalTab === 'basic' && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {[
                       {
                         label: 'Event Name',
-                        value: item.eventname,
+                        value: item.event_name,
                         icon: '🏆',
                       },
                       {
+                        label: 'Event Category',
+                        value: item.event_category,
+                        icon: '📂',
+                      },
+                      {
                         label: 'Registration Type',
-                        value: item.type,
+                        value: item.registration_type,
                         icon: '🔘',
                       },
                       {
-                        label: 'Participant/Lead Name',
-                        value: item.teamlead,
+                        label: 'Participant / Lead Name',
+                        value: item.team_lead_name,
                         icon: '👤',
                       },
-                      ...(item.teamname
+                      ...(item.team_name
                         ? [
                             {
                               label: 'Team Name',
-                              value: item.teamname,
+                              value: item.team_name,
                               icon: '👥',
                             },
                           ]
                         : []),
-                      { label: 'College', value: item.college, icon: '🏛️' },
+                      {
+                        label: 'College (Team)',
+                        value: item.college,
+                        icon: '🏛️',
+                      },
+                      {
+                        label: 'Lead College',
+                        value: item.team_lead_college,
+                        icon: '🎓',
+                      },
+                      ...(item.team_lead_college_roll
+                        ? [
+                            {
+                              label: 'College Roll',
+                              value: item.team_lead_college_roll,
+                              icon: '🪪',
+                            },
+                          ]
+                        : []),
+                      ...(item.team_lead_course
+                        ? [
+                            {
+                              label: 'Course',
+                              value: item.team_lead_course,
+                              icon: '📘',
+                            },
+                          ]
+                        : []),
+                      ...(item.team_lead_stream
+                        ? [
+                            {
+                              label: 'Stream',
+                              value: item.team_lead_stream,
+                              icon: '📚',
+                            },
+                          ]
+                        : []),
                       {
                         label: 'Gender',
-                        value: (item.gender || 'N/A').toUpperCase(),
+                        value: (item.team_lead_gender || 'N/A').toUpperCase(),
                         icon: '🚻',
                       },
                       {
                         label: 'Phone Number',
-                        value: item.teamleadphone,
+                        value: item.team_lead_phone,
                         icon: '📞',
                       },
                       {
                         label: 'Email Address',
-                        value: item.teamleademail,
+                        value: item.team_lead_email,
                         icon: '📧',
                       },
+                      ...(item.team_lead_coin != null
+                        ? [
+                            {
+                              label: 'Coins',
+                              value: String(item.team_lead_coin),
+                              icon: '🪙',
+                            },
+                          ]
+                        : []),
+                      ...(item.team_lead_referral
+                        ? [
+                            {
+                              label: 'User Referral',
+                              value: item.team_lead_referral,
+                              icon: '🔗',
+                            },
+                          ]
+                        : []),
+                      ...(item.team_lead_user_created_at
+                        ? [
+                            {
+                              label: 'Account Created',
+                              value: new Date(
+                                item.team_lead_user_created_at
+                              ).toLocaleString(),
+                              icon: '🗓️',
+                            },
+                          ]
+                        : []),
                       {
                         label: 'Registered On',
-                        value: item.registeredat?.split('T')[0],
+                        value: item.registered_at
+                          ? new Date(item.registered_at).toLocaleString()
+                          : 'N/A',
                         icon: '📅',
                       },
+                      ...(item.referral_code
+                        ? [
+                            {
+                              label: 'Referral Code',
+                              value: item.referral_code,
+                              icon: '🎟️',
+                            },
+                          ]
+                        : []),
                     ].map((info, i) => (
                       <div
                         key={i}
@@ -554,65 +689,154 @@ export default function EventsTable({ festId }: EventsTableProps) {
                             {info.label}
                           </span>
                         </div>
-                        <p className="text-white font-medium pl-8">
+                        <p className="text-white font-medium pl-8 break-all">
                           {info.value}
                         </p>
                       </div>
                     ))}
+                    {/* RCCIIT / SWC Status */}
+                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors">
+                      <div className="flex items-center gap-3 mb-3 opacity-60">
+                        <span className="text-lg">🎓</span>
+                        <span className="text-[10px] uppercase font-black tracking-widest text-gray-400">
+                          RCCIIT / SWC Status
+                        </span>
+                      </div>
+                      <div className="pl-8 flex flex-wrap gap-2">
+                        {item.team_lead_is_rcciit_email ? (
+                          <span className="text-[10px] px-2 py-1 rounded-full bg-blue-500/10 text-blue-400 ring-1 ring-blue-500/30 font-bold uppercase">
+                            RCCIIT Email
+                          </span>
+                        ) : (
+                          <span className="text-[10px] px-2 py-1 rounded-full bg-white/5 text-gray-500 ring-1 ring-white/10 font-bold uppercase">
+                            External
+                          </span>
+                        )}
+                        {item.team_lead_swc_cleared === true && (
+                          <span className="text-[10px] px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30 font-bold uppercase">
+                            SWC Cleared
+                          </span>
+                        )}
+                        {item.team_lead_swc_cleared === false && (
+                          <span className="text-[10px] px-2 py-1 rounded-full bg-red-500/10 text-red-400 ring-1 ring-red-500/30 font-bold uppercase">
+                            SWC Not Cleared
+                          </span>
+                        )}
+                        {item.attendance && (
+                          <span className="text-[10px] px-2 py-1 rounded-full bg-purple-500/10 text-purple-400 ring-1 ring-purple-500/30 font-bold uppercase">
+                            Present
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                ) : activeModalTab === 'team' ? (
+                )}
+
+                {/* ── TEAM TAB ── */}
+                {activeModalTab === 'team' && (
                   <div className="space-y-6">
-                    {item.teammembers && item.teammembers.length > 0 ? (
+                    {/* Team meta */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {[
+                        { label: 'Team Status', value: item.team_status },
+                        {
+                          label: 'Members',
+                          value: `${item.member_count} / ${item.min_team_size}–${item.max_team_size}`,
+                        },
+                        ...(item.invite_code
+                          ? [{ label: 'Invite Code', value: item.invite_code }]
+                          : []),
+                      ].map((info, i) => (
+                        <div
+                          key={i}
+                          className="p-3 rounded-xl bg-white/[0.02] border border-white/5"
+                        >
+                          <p className="text-[9px] uppercase font-black tracking-widest text-gray-500 mb-1">
+                            {info.label}
+                          </p>
+                          <p className="text-sm text-white font-mono">
+                            {info.value}
+                          </p>
+                        </div>
+                      ))}
+                      {item.all_rcciit_members_swc_cleared !== null && (
+                        <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                          <p className="text-[9px] uppercase font-black tracking-widest text-gray-500 mb-1">
+                            All SWC Cleared
+                          </p>
+                          <span
+                            className={`text-[10px] px-2 py-1 rounded-full font-bold uppercase ${item.all_rcciit_members_swc_cleared ? 'bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30' : 'bg-red-500/10 text-red-400 ring-1 ring-red-500/30'}`}
+                          >
+                            {item.all_rcciit_members_swc_cleared ? 'Yes' : 'No'}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Team Members */}
+                    {item.team_members && item.team_members.length > 0 ? (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {item.teammembers.map((member: any, i: number) => (
+                        {item.team_members.map((member: any, i: number) => (
                           <div
                             key={i}
-                            className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all group"
+                            className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all"
                           >
                             <div className="flex items-center gap-4 mb-4">
-                              <div className="w-10 h-10 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-bold">
+                              <div className="w-10 h-10 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-bold shrink-0">
                                 {i + 1}
                               </div>
                               <div className="flex-1 min-w-0">
                                 <h4 className="text-white font-bold truncate">
                                   {member.name}
                                 </h4>
-                                <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest">
-                                  Team Member
-                                </p>
+                                <div className="flex flex-wrap gap-1 mt-1">
+                                  {member.is_rcciit_email && (
+                                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/10 text-blue-400 ring-1 ring-blue-500/20 font-bold uppercase">
+                                      RCCIIT
+                                    </span>
+                                  )}
+                                  {member.swc_cleared === true && (
+                                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20 font-bold uppercase">
+                                      SWC ✓
+                                    </span>
+                                  )}
+                                  {member.swc_cleared === false && (
+                                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-400 ring-1 ring-red-500/20 font-bold uppercase">
+                                      SWC ✗
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                             </div>
-
-                            <div className="space-y-3 pl-2">
-                              <div className="flex items-center gap-3">
-                                <span className="text-sm">📞</span>
+                            <div className="space-y-2.5 pl-2">
+                              <div className="flex items-center gap-2">
+                                <span>📞</span>
                                 <span className="text-sm text-gray-300 font-mono tracking-tighter">
                                   {member.phone}
                                 </span>
                               </div>
-                              <div className="flex items-center gap-3">
-                                <span className="text-sm">📧</span>
+                              <div className="flex items-center gap-2">
+                                <span>📧</span>
                                 <span className="text-sm text-gray-400 italic truncate">
                                   {member.email}
                                 </span>
                               </div>
-                              <div className="flex items-center gap-3">
-                                <span className="text-sm">🏛️</span>
+                              <div className="flex items-center gap-2">
+                                <span>🏛️</span>
                                 <span className="text-sm text-gray-400">
                                   {member.college}
                                 </span>
                               </div>
-
                               {member.extras &&
                                 Object.keys(member.extras).length > 0 && (
-                                  <div className="mt-4 pt-4 border-t border-white/5 space-y-3">
+                                  <div className="mt-3 pt-3 border-t border-white/5 space-y-2">
                                     {Object.entries(member.extras).map(
                                       ([key, value]) => (
                                         <div
                                           key={key}
-                                          className="flex flex-col gap-1"
+                                          className="flex flex-col gap-0.5"
                                         >
-                                          <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest">
+                                          <p className="text-[9px] text-gray-500 uppercase font-black tracking-widest">
                                             {key.replace(/_/g, ' ')}
                                           </p>
                                           <p className="text-sm text-white font-medium">
@@ -628,18 +852,84 @@ export default function EventsTable({ festId }: EventsTableProps) {
                         ))}
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center justify-center py-20 text-gray-600">
+                      <div className="flex flex-col items-center justify-center py-12 text-gray-600">
                         <span className="text-4xl mb-4">👥</span>
                         <p className="text-sm font-bold uppercase tracking-widest">
                           No team members listed
                         </p>
                       </div>
                     )}
+
+                    {/* Team Discovery */}
+                    {item.team_discovery && item.team_discovery.length > 0 && (
+                      <div className="space-y-3">
+                        <p className="text-[9px] uppercase font-black tracking-widest text-gray-500 px-1">
+                          Team Discovery Posts
+                        </p>
+                        {item.team_discovery.map((td: any, i: number) => (
+                          <div
+                            key={i}
+                            className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-wrap items-center gap-3"
+                          >
+                            <span
+                              className={`text-[9px] px-2 py-1 rounded-full font-bold uppercase ring-1 ${td.type === 'looking' ? 'bg-violet-500/10 text-violet-400 ring-violet-500/30' : 'bg-sky-500/10 text-sky-400 ring-sky-500/30'}`}
+                            >
+                              {td.type}
+                            </span>
+                            <span
+                              className={`text-[9px] px-2 py-1 rounded-full font-bold uppercase ring-1 ${td.status === 'active' ? 'bg-emerald-500/10 text-emerald-400 ring-emerald-500/30' : td.status === 'matched' ? 'bg-amber-500/10 text-amber-400 ring-amber-500/30' : 'bg-gray-500/10 text-gray-400 ring-gray-500/30'}`}
+                            >
+                              {td.status}
+                            </span>
+                            {td.slots_available != null && (
+                              <span className="text-[10px] text-gray-400 font-mono">
+                                Slots: {td.slots_available}
+                              </span>
+                            )}
+                            {td.message && (
+                              <p className="w-full text-sm text-gray-300 italic">
+                                "{td.message}"
+                              </p>
+                            )}
+                            <p className="w-full text-[9px] text-gray-600 font-mono">
+                              {new Date(td.created_at).toLocaleString()}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                ) : activeModalTab === 'payment' ? (
+                )}
+
+                {/* ── PAYMENT TAB ── */}
+                {activeModalTab === 'payment' && (
                   <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {[
+                        {
+                          label: 'Payment Mode',
+                          value: item.payment_mode || 'N/A',
+                          icon: '🔄',
+                        },
+                        {
+                          label: 'Reg Mode',
+                          value: item.reg_mode || 'N/A',
+                          icon: '📋',
+                        },
+                        {
+                          label: 'Registration Fees',
+                          value: item.registration_fees
+                            ? `₹${item.registration_fees}`
+                            : 'Free',
+                          icon: '💵',
+                        },
+                        {
+                          label: 'Prize Pool',
+                          value: item.prize_pool
+                            ? `₹${item.prize_pool}`
+                            : 'N/A',
+                          icon: '🏅',
+                        },
                         {
                           label: 'Razorpay Order ID',
                           value: item.razorpay_order_id,
@@ -651,16 +941,26 @@ export default function EventsTable({ festId }: EventsTableProps) {
                           icon: '💳',
                         },
                         {
+                          label: 'Razorpay Signature',
+                          value: item.razorpay_signature,
+                          icon: '🔐',
+                        },
+                        {
                           label: 'Amount Paid',
-                          value: item.amount
-                            ? `${item.currency} ${item.amount}`
+                          value: item.payment_amount
+                            ? `${item.payment_currency ?? 'INR'} ${item.payment_amount / 100}`
                             : 'N/A',
                           icon: '💰',
                         },
                         {
-                          label: 'Payment Status',
-                          value: item.payment_status || 'N/A',
+                          label: 'Razorpay Status',
+                          value: item.razorpay_status || 'N/A',
                           icon: '📊',
+                        },
+                        {
+                          label: 'Payment Row ID',
+                          value: item.payment_row_id,
+                          icon: '🗂️',
                         },
                         {
                           label: 'Payment Created At',
@@ -668,6 +968,13 @@ export default function EventsTable({ festId }: EventsTableProps) {
                             ? new Date(item.payment_created_at).toLocaleString()
                             : 'N/A',
                           icon: '🕒',
+                        },
+                        {
+                          label: 'Payment Updated At',
+                          value: item.payment_updated_at
+                            ? new Date(item.payment_updated_at).toLocaleString()
+                            : 'N/A',
+                          icon: '🔁',
                         },
                         {
                           label: 'Payment Verified At',
@@ -694,9 +1001,48 @@ export default function EventsTable({ festId }: EventsTableProps) {
                           </p>
                         </div>
                       ))}
+                      {/* Webhook Verified */}
+                      {item.webhook_verified != null && (
+                        <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                          <div className="flex items-center gap-3 mb-2 opacity-60">
+                            <span className="text-lg">🔔</span>
+                            <span className="text-[10px] uppercase font-black tracking-widest text-gray-400">
+                              Webhook Verified
+                            </span>
+                          </div>
+                          <div className="pl-8">
+                            <span
+                              className={`text-[10px] px-2 py-1 rounded-full font-bold uppercase ring-1 ${item.webhook_verified ? 'bg-emerald-500/10 text-emerald-400 ring-emerald-500/30' : 'bg-red-500/10 text-red-400 ring-red-500/30'}`}
+                            >
+                              {item.webhook_verified ? 'Yes' : 'No'}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                      {/* SWC Eligible Category */}
+                      {item.is_swc_eligible_category !== undefined && (
+                        <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                          <div className="flex items-center gap-3 mb-2 opacity-60">
+                            <span className="text-lg">🎖️</span>
+                            <span className="text-[10px] uppercase font-black tracking-widest text-gray-400">
+                              SWC Eligible Category
+                            </span>
+                          </div>
+                          <div className="pl-8">
+                            <span
+                              className={`text-[10px] px-2 py-1 rounded-full font-bold uppercase ${item.is_swc_eligible_category ? 'bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/30' : 'bg-white/5 text-gray-500 ring-1 ring-white/10'}`}
+                            >
+                              {item.is_swc_eligible_category ? 'Yes' : 'No'}
+                            </span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
-                ) : (
+                )}
+
+                {/* ── TRANSACTION TAB ── */}
+                {activeModalTab === 'transaction' && (
                   <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
@@ -704,17 +1050,44 @@ export default function EventsTable({ festId }: EventsTableProps) {
                           Account Holder
                         </label>
                         <p className="text-white font-bold">
-                          {item.accountholdername || 'N/A'}
+                          {item.account_holder_name || 'N/A'}
                         </p>
                       </div>
                       <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
                         <label className="text-[10px] uppercase font-black tracking-widest text-gray-500 block mb-2">
                           Transaction ID
                         </label>
-                        <p className="text-white font-mono">
-                          {item.transactionid || 'NO_ID'}
+                        <p className="text-white font-mono break-all">
+                          {item.transaction_id || 'NO_ID'}
                         </p>
                       </div>
+                      <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                        <label className="text-[10px] uppercase font-black tracking-widest text-gray-500 block mb-2">
+                          Transaction Verified At
+                        </label>
+                        <p className="text-white font-mono text-sm">
+                          {item.transaction_verified
+                            ? new Date(
+                                item.transaction_verified
+                              ).toLocaleString()
+                            : 'Not Verified'}
+                        </p>
+                      </div>
+                      {item.transaction_screenshot && (
+                        <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                          <label className="text-[10px] uppercase font-black tracking-widest text-gray-500 block mb-2">
+                            Screenshot
+                          </label>
+                          <a
+                            href={item.transaction_screenshot}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-400 text-sm underline font-mono break-all"
+                          >
+                            View Screenshot
+                          </a>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
@@ -843,10 +1216,19 @@ export default function EventsTable({ festId }: EventsTableProps) {
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
           <div className="space-y-1.5">
             <label className="text-[9px] uppercase tracking-widest text-gray-500 font-black ml-1">
-              Payment
+              Status
             </label>
             <Filter
-              options={['Verified', 'Not Verified']}
+              options={[
+                'PAID',
+                'SWC_PAID',
+                'FREE',
+                'OFFLINE_PAYMENT_PENDING',
+                'PAYMENT_PENDING',
+                'PAYMENT_NOT_STARTED',
+                'AWAITING_MEMBERS',
+                'TEAM_FORMING',
+              ]}
               value={paymentStatusFilter}
               onChange={setPaymentStatusFilter}
               placeholder="All Status"
