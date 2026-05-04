@@ -23,8 +23,11 @@ import {
 } from '@/components/ui/tooltip';
 import { getRoles } from '@/utils/functions';
 import { dateTime } from '@/utils/functions/dateUtils';
+import { getApprovalDashboardData as fetchApprovalData } from '@/utils/functions/eventsUtils';
 import { Filter } from './EventFilters';
 import { TeamMembersDialog } from './TeamMembersDialog';
+
+const PREV_YEAR_FEST_ID = '44bb2093-d229-4385-8f08-3fe7da3521c8';
 
 interface EventsTableProps {
   festId: string;
@@ -50,6 +53,10 @@ export default function EventsTable({ festId }: EventsTableProps) {
     getApprovalDashboardData,
   } = useEvents();
 
+  const [showPrevYear, setShowPrevYear] = useState(false);
+  const [prevYearData, setPrevYearData] = useState<any[] | null>(null);
+  const [prevYearLoading, setPrevYearLoading] = useState(false);
+
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== 'undefined' ? window.innerWidth : 1200
   );
@@ -61,13 +68,47 @@ export default function EventsTable({ festId }: EventsTableProps) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const safeApprovalDashboardData = useMemo(
-    () => (Array.isArray(approvalDashboardData) ? approvalDashboardData : []),
-    [approvalDashboardData]
-  );
+  const safeApprovalDashboardData = useMemo(() => {
+    if (showPrevYear) {
+      return Array.isArray(prevYearData) ? prevYearData : [];
+    }
+    return Array.isArray(approvalDashboardData) ? approvalDashboardData : [];
+  }, [approvalDashboardData, showPrevYear, prevYearData]);
 
   const refreshData = async () => {
     getApprovalDashboardData(0, 1000, festId);
+  };
+
+  const loadPrevYearData = async () => {
+    if (prevYearData !== null) return; // already fetched
+    setPrevYearLoading(true);
+    const PAGE_SIZE = 1000;
+    const allData: any[] = [];
+    let offset = 0;
+    while (true) {
+      const batch = await fetchApprovalData(
+        offset,
+        offset + PAGE_SIZE - 1,
+        PREV_YEAR_FEST_ID,
+        true
+      );
+      if (!batch || batch.length === 0) break;
+      allData.push(...batch);
+      if (batch.length < PAGE_SIZE) break;
+      offset += PAGE_SIZE;
+    }
+    setPrevYearData(allData);
+    setPrevYearLoading(false);
+  };
+
+  const togglePrevYear = async () => {
+    if (!showPrevYear) {
+      await loadPrevYearData();
+      clearAllFilters();
+    } else {
+      clearAllFilters();
+    }
+    setShowPrevYear((prev) => !prev);
   };
   const [isAdmin, setIsAdmin] = useState(false);
   const [isFaculty, setIsFaculty] = useState(false);
@@ -314,28 +355,95 @@ export default function EventsTable({ festId }: EventsTableProps) {
 
   useEffect(() => {
     if (filteredData.length > 0) {
-      const teamsWithMembersData = filteredData.flatMap((team, index) =>
-        (team.team_members ?? []).map((member: any) => {
-          const row: Record<string, any> = {
-            'SL No.': index + 1,
-            'Event Name': team.event_name,
-            'Team Name': team.team_name || 'N/A',
+      const STATUS_MAP: Record<string, string> = {
+        PAYMENT_NOT_STARTED: 'Payment Not Started',
+        PAYMENT_PENDING: 'Payment Pending',
+        OFFLINE_PAYMENT_PENDING: 'Offline Pending',
+        PAID: 'Paid',
+        SWC_PAID: 'SWC Paid',
+        FREE: 'Free',
+        TEAM_FORMING: 'Team Forming',
+        AWAITING_MEMBERS: 'Awaiting Members',
+      };
+
+      const csvRows: Record<string, any>[] = [];
+
+      filteredData.forEach((team, index) => {
+        const isTeam = team.registration_type !== 'Individual';
+        const status =
+          STATUS_MAP[team.registration_status] || team.registration_status;
+
+        const sharedFields: Record<string, any> = {
+          'SL No.': team.serial_no ?? index + 1,
+          'Registration Status': status,
+          'Event Name': team.event_name,
+          'Event Category': team.event_category,
+          'Registration Type': team.registration_type,
+          ...(isTeam ? { 'Team Name': team.team_name || 'N/A' } : {}),
+          'Team College': team.college || '',
+          'Payment Mode': team.payment_mode || '',
+          'Reg Mode': team.reg_mode || '',
+          'Registration Fees': team.registration_fees ?? '',
+          'Transaction ID': team.transaction_id || '',
+          'Razorpay Payment ID': team.razorpay_payment_id || '',
+          'Payment Amount (INR)': team.payment_amount
+            ? team.payment_amount / 100
+            : '',
+          'Razorpay Status': team.razorpay_status || '',
+          'Registered At': team.registered_at
+            ? new Date(team.registered_at).toLocaleString()
+            : '',
+          Attendance: team.attendance ? 'Yes' : 'No',
+          'Referral Code': team.referral_code || '',
+          ...(isTeam ? { 'Member Count': team.member_count ?? '' } : {}),
+        };
+
+        // Team lead row
+        csvRows.push({
+          ...sharedFields,
+          Role: isTeam ? 'Team Lead' : 'Participant',
+          Name: team.team_lead_name,
+          Phone: team.team_lead_phone,
+          Email: team.team_lead_email,
+          Gender: team.team_lead_gender || '',
+          College: team.team_lead_college || '',
+          'College Roll': team.team_lead_college_roll || '',
+          Course: team.team_lead_course || '',
+          Stream: team.team_lead_stream || '',
+          'Is RCCIIT Email': team.team_lead_is_rcciit_email ? 'Yes' : 'No',
+          'SWC Cleared':
+            team.team_lead_swc_cleared === true
+              ? 'Yes'
+              : team.team_lead_swc_cleared === false
+                ? 'No'
+                : '',
+        });
+
+        // Team member rows
+        (team.team_members ?? []).forEach((member: any) => {
+          csvRows.push({
+            ...sharedFields,
+            Role: 'Member',
             Name: member.name,
             Phone: member.phone,
             Email: member.email,
-            College: team.college,
-            'College Roll (For RCCIIT Students)': '',
-            Attendance: '',
-          };
+            Gender: '',
+            College: member.college || '',
+            'College Roll': '',
+            Course: '',
+            Stream: '',
+            'Is RCCIIT Email': member.is_rcciit_email ? 'Yes' : 'No',
+            'SWC Cleared':
+              member.swc_cleared === true
+                ? 'Yes'
+                : member.swc_cleared === false
+                  ? 'No'
+                  : '',
+          });
+        });
+      });
 
-          if (team.registration_type === 'Individual') {
-            delete row['Team Name'];
-          }
-
-          return row;
-        })
-      );
-      setTeamsWithMembers(teamsWithMembersData);
+      setTeamsWithMembers(csvRows);
     } else {
       setTeamsWithMembers([]);
     }
@@ -814,6 +922,24 @@ export default function EventsTable({ festId }: EventsTableProps) {
                                 <span className="text-sm text-gray-300 font-mono tracking-tighter">
                                   {member.phone}
                                 </span>
+                                {member.phone && (
+                                  <a
+                                    href={`https://wa.me/91${member.phone.replace(/\D/g, '')}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="ml-1 flex items-center justify-center w-6 h-6 rounded-full bg-[#25D366]/10 hover:bg-[#25D366]/25 transition-colors"
+                                    title="Open in WhatsApp"
+                                  >
+                                    <svg
+                                      viewBox="0 0 24 24"
+                                      className="w-3.5 h-3.5 fill-[#25D366]"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                                    </svg>
+                                  </a>
+                                )}
                               </div>
                               <div className="flex items-center gap-2">
                                 <span>📧</span>
@@ -1122,7 +1248,8 @@ export default function EventsTable({ festId }: EventsTableProps) {
     );
   };
 
-  if (approvalDashboardLoading) return <TableSkeleton />;
+  if (approvalDashboardLoading || (showPrevYear && prevYearLoading))
+    return <TableSkeleton />;
 
   // const [showNext, setShowNext] = useState(true);
 
@@ -1134,7 +1261,7 @@ export default function EventsTable({ festId }: EventsTableProps) {
   //   }
   // },[showNext])
 
-  const canDownloadCsv = teamsWithMembers.length > 0;
+  const canDownloadCsv = filteredData.length > 0;
 
   return (
     <div className="space-y-6 max-w-[1600px] mx-auto">
@@ -1162,7 +1289,23 @@ export default function EventsTable({ festId }: EventsTableProps) {
           </Button>
         </div>
 
-        <div className="flex justify-end lg:w-auto">
+        <div className="flex items-center gap-3 justify-end lg:w-auto flex-wrap">
+          <Button
+            onClick={togglePrevYear}
+            disabled={prevYearLoading}
+            variant="outline"
+            className={`h-12 md:h-[52px] rounded-xl px-4 md:px-6 font-bold text-xs md:text-sm tracking-wide transition-all border ${
+              showPrevYear
+                ? 'bg-violet-500/20 border-violet-500/40 text-violet-300 hover:bg-violet-500/30'
+                : 'bg-white/[0.03] border-white/10 text-gray-400 hover:bg-white/[0.08] hover:text-white'
+            }`}
+          >
+            {prevYearLoading
+              ? 'Loading...'
+              : showPrevYear
+                ? 'Current Year'
+                : 'Prev Year Regs'}
+          </Button>
           {canDownloadCsv ? (
             <Button
               asChild
@@ -1185,6 +1328,14 @@ export default function EventsTable({ festId }: EventsTableProps) {
           )}
         </div>
       </div>
+
+      {/* Prev Year Banner */}
+      {showPrevYear && (
+        <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-300 text-xs font-bold uppercase tracking-wider">
+          <div className="w-1.5 h-1.5 rounded-full bg-violet-400 shadow-[0_0_6px_rgba(139,92,246,0.8)]" />
+          Viewing Previous Year Registrations
+        </div>
+      )}
 
       {/* Filters Section */}
       <div className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl space-y-4 shadow-sm">

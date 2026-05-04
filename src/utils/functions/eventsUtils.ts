@@ -11,8 +11,8 @@ export const getEventCategories = async () => {
       .eq('fest_id', 'a4bc08e4-9af9-4212-8d32-cd88d2437f18');
     if (error) return error;
     return data;
-  } catch (error: any) {
-    toast.error(error.message);
+  } catch (error: unknown) {
+    toast.error(error instanceof Error ? error.message : 'An error occurred');
   }
 };
 
@@ -143,7 +143,7 @@ export const getEventsData = async (all: boolean = true) => {
 };
 
 export const getEventsForAdmin = async (
-  id: string,
+  _id: string,
   p_fest_id?: string,
   p_user_id?: string
 ) => {
@@ -201,8 +201,11 @@ export const getEventsForAdmin = async (
     }
 
     return data;
-  } catch (error: any) {
-    console.error('Error fetching events:', error.message);
+  } catch (error: unknown) {
+    console.error(
+      'Error fetching events:',
+      error instanceof Error ? error.message : error
+    );
     return null;
   }
 };
@@ -234,29 +237,35 @@ export const updateEventById = async (
 export const getApprovalDashboardData = async (
   rangeStart: number,
   rangeEnd: number,
-  festId: string
+  festId: string,
+  ignoreRoleFilter: boolean = false
 ): Promise<EventData[] | null> => {
   try {
     const rolesData = await getRoles();
-    const isAdmin = rolesData?.find((role: any) => role.role === 'super_admin');
     const isCoordinator = rolesData?.find(
-      (role: any) => role.role === 'coordinator' || role.role === 'convenor'
+      (role: { role: string }) =>
+        role.role === 'coordinator' || role.role === 'convenor'
     );
 
     // Collect all event_ids from all coordinator/convenor roles
     const eventIds =
       rolesData
         ?.filter(
-          (role: any) => role.role === 'coordinator' || role.role === 'convenor'
+          (role: { role: string }) =>
+            role.role === 'coordinator' || role.role === 'convenor'
         )
-        .map((role: any) => role.event_id)
-        .filter((id: any) => id !== null && id !== undefined) || [];
+        .map(
+          (role: { role: string; event_id?: string | null }) => role.event_id
+        )
+        .filter(
+          (id: string | null | undefined) => id !== null && id !== undefined
+        ) || [];
 
     const { data, error } = await supabase
       .rpc('get_fest_registrations_details', {
         p_fest_id: festId,
         p_event_category_id: null,
-        p_event_id: isCoordinator ? eventIds : null,
+        p_event_id: !ignoreRoleFilter && isCoordinator ? eventIds : null,
       })
       .range(rangeStart, rangeEnd);
 
@@ -294,7 +303,7 @@ export const getEventByID = async (id: string): Promise<events | null> => {
   }
 };
 
-export const getSecurity = async (id: string) => {
+export const getSecurity = async (_id: string) => {
   try {
     const { data, error } = await supabase
       .from('requests')
@@ -303,18 +312,26 @@ export const getSecurity = async (id: string) => {
       console.error('Error fetching security:', error);
       return null;
     }
-    return data?.flatMap((item: any) => {
-      return [
-        {
-          id: item.id,
-          created_at: item.created_at,
-          user_id: item.user_id,
-          requester_email: item.requester_email,
-          name: item.users?.name || '',
-        },
-      ];
-    });
-  } catch (error: any) {
+    return data?.flatMap(
+      (item: {
+        id: string;
+        created_at: string;
+        user_id: string;
+        requester_email: string;
+        users?: { name: string } | null;
+      }) => {
+        return [
+          {
+            id: item.id,
+            created_at: item.created_at,
+            user_id: item.user_id,
+            requester_email: item.requester_email,
+            name: item.users?.name || '',
+          },
+        ];
+      }
+    );
+  } catch (error: unknown) {
     console.error('Unexpected error:', error);
     return null;
   }
@@ -322,12 +339,12 @@ export const getSecurity = async (id: string) => {
 
 export const acceptSecurity = async (id: string) => {
   try {
-    const { data, error } = await supabase
-      .from('roles')
-      .select('*')
-      .eq('user_id', id);
+    const { data } = await supabase.from('roles').select('*').eq('user_id', id);
     if (data && data.length > 0) {
-      const securityRole = data.find((role: any) => role.role === 'security');
+      const securityRole = data.find(
+        (role: { role: string; event_id?: string | null }) =>
+          role.role === 'security'
+      );
       if (securityRole && securityRole.event_id !== null) {
         return;
       }
@@ -340,7 +357,7 @@ export const acceptSecurity = async (id: string) => {
     });
 
     await supabase.from('requests').delete().eq('user_id', id);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Unexpected error:', error);
     toast.error('Error accepting security');
     return null;
@@ -350,7 +367,7 @@ export const acceptSecurity = async (id: string) => {
 export const rejectSecurity = async (id: string) => {
   try {
     await supabase.from('requests').delete().eq('user_id', id);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Unexpected error:', error);
     toast.error('Error accepting security');
     return null;
