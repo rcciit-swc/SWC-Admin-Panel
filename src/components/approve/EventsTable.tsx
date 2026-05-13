@@ -11,7 +11,6 @@ import { Input } from '@/components/ui/input';
 import { useEvents } from '@/lib/stores/events';
 import { RefreshCw, Search } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
-import { CSVLink } from 'react-csv';
 import { List, type RowComponentProps } from 'react-window';
 import TableSkeleton from './TableSkeleton';
 
@@ -1402,6 +1401,36 @@ export default function EventsTable({ festId }: EventsTableProps) {
 
   const canDownloadCsv = filteredData.length > 0;
 
+  const handleDownloadCsv = () => {
+    if (teamsWithMembers.length === 0) return;
+    const headerSet = new Set<string>();
+    teamsWithMembers.forEach((row) => {
+      Object.keys(row).forEach((k) => headerSet.add(k));
+    });
+    const headers = Array.from(headerSet);
+    const escape = (v: any) => {
+      const s = v === null || v === undefined ? '' : String(v);
+      return `"${s.replace(/"/g, '""')}"`;
+    };
+    const csv = [
+      headers.map(escape).join(','),
+      ...teamsWithMembers.map((row) =>
+        headers.map((h) => escape(row[h])).join(',')
+      ),
+    ].join('\n');
+    const blob = new Blob(['﻿', csv], {
+      type: 'text/csv;charset=utf-8;',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `registrations-${dateTime()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-6 max-w-[1600px] mx-auto">
       {/* Search and Main Actions */}
@@ -1447,15 +1476,10 @@ export default function EventsTable({ festId }: EventsTableProps) {
           </Button>
           {canDownloadCsv ? (
             <Button
-              asChild
+              onClick={handleDownloadCsv}
               className="h-12 md:h-[52px] rounded-xl px-4 md:px-8 tracking-wider bg-gradient-to-r from-yellow-600 to-amber-500 text-white font-bold shadow-lg shadow-yellow-900/20 hover:scale-[1.02] active:scale-[0.98] transition-all border-0 ring-1 ring-white/20 text-xs md:text-sm"
             >
-              <CSVLink
-                data={teamsWithMembers}
-                filename={`registrations-${dateTime()}.csv`}
-              >
-                Download CSV
-              </CSVLink>
+              Download CSV
             </Button>
           ) : (
             <Button
