@@ -69,21 +69,30 @@ export const updatePopulateEvents = async (set: any, id: string, data: any) => {
 
 export const populateApprovalDashboard = async (
   set: any,
-  rangeStart: number,
-  rangeEnd: number,
+  _rangeStart: number,
+  _rangeEnd: number,
   festId: string
 ) => {
   try {
     set({ approvalDashboardLoading: true });
-    const res = await getApprovalDashboardData(rangeStart, rangeEnd, festId);
-    set({ approvalDashboardData: res, approvalDashboardLoading: false });
-    // if (!res) {
-    //   set({ approvalDashboardData: [], approvalDashboardLoading: false });
-    // } else {
-    //   set({ approvalDashboardData: finalRes, approvalDashboardLoading: false });
-    // }
+    const PAGE_SIZE = 1000;
+    const allData: any[] = [];
+    let offset = 0;
+    while (true) {
+      const batch = await getApprovalDashboardData(
+        offset,
+        offset + PAGE_SIZE - 1,
+        festId
+      );
+      if (!batch || batch.length === 0) break;
+      allData.push(...batch);
+      if (batch.length < PAGE_SIZE) break;
+      offset += PAGE_SIZE;
+    }
+    set({ approvalDashboardData: allData, approvalDashboardLoading: false });
   } catch (error: any) {
     console.log(error.message);
+    set({ approvalDashboardLoading: false });
   }
 };
 
