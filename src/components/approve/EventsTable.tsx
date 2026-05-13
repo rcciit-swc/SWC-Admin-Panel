@@ -29,6 +29,23 @@ import { TeamMembersDialog } from './TeamMembersDialog';
 
 const PREV_YEAR_FEST_ID = '44bb2093-d229-4385-8f08-3fe7da3521c8';
 
+// Registration status groups used by the Team / Awaiting Teams tabs.
+// These reflect actual registration completion, not team membership
+// lifecycle (team_status). SWC_PAID teams stay team_status='active'
+// (no max members yet) even though registration is complete.
+const COMPLETED_REGISTRATION_STATUSES = new Set([
+  'SWC_PAID',
+  'PAID',
+  'FREE',
+]);
+const INCOMPLETE_REGISTRATION_STATUSES = new Set([
+  'TEAM_FORMING',
+  'AWAITING_MEMBERS',
+  'PAYMENT_PENDING',
+  'OFFLINE_PAYMENT_PENDING',
+  'PAYMENT_NOT_STARTED',
+]);
+
 interface EventsTableProps {
   festId: string;
 }
@@ -167,12 +184,13 @@ export default function EventsTable({ festId }: EventsTableProps) {
           return item.registration_type === 'Individual';
         if (activeType === 'Team')
           return (
-            item.registration_type === 'Team' && item.team_status === 'closed'
+            item.registration_type === 'Team' &&
+            COMPLETED_REGISTRATION_STATUSES.has(item.registration_status)
           );
         if (activeType === 'Awaiting Teams')
           return (
             item.registration_type === 'Team' &&
-            (item.team_status === 'active' || item.team_status === 'pending')
+            INCOMPLETE_REGISTRATION_STATUSES.has(item.registration_status)
           );
         return false;
       })();
@@ -254,7 +272,7 @@ export default function EventsTable({ festId }: EventsTableProps) {
     const hasAwaitingTeams = safeApprovalDashboardData.some(
       (item) =>
         item.registration_type === 'Team' &&
-        (item.team_status === 'active' || item.team_status === 'pending')
+        INCOMPLETE_REGISTRATION_STATUSES.has(item.registration_status)
     );
     const result: ('Individual' | 'Team' | 'Awaiting Teams')[] = [];
     if (types.has('Individual')) result.push('Individual');
