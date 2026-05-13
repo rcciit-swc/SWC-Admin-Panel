@@ -72,3 +72,10 @@ export const whatsAppLinks = [
     link: 'https://chat.whatsapp.com/KXL5qdtI3zDFx92GxbB03G',
   },
 ];
+
+
+// export const whatsAppLinksForTechtrix2026 = [
+//     // Battle of Wits
+//   'b9543b25-177d-4046-9635-93b015ea30eb' : 'https://chat.whatsapp.com/CVeFaVfxb9yFdMhLYhQb6L',
+
+// ]

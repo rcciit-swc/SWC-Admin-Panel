@@ -24,7 +24,6 @@ import {
 import { getRoles } from '@/utils/functions';
 import { dateTime } from '@/utils/functions/dateUtils';
 import { getApprovalDashboardData as fetchApprovalData } from '@/utils/functions/eventsUtils';
-import { whatsAppLinks } from '@/utils/constraints/constants/whatsApp';
 import { Filter } from './EventFilters';
 import { TeamMembersDialog } from './TeamMembersDialog';
 
@@ -532,25 +531,20 @@ export default function EventsTable({ festId }: EventsTableProps) {
     const lines: string[] = [];
     const isTeam = item.registration_type !== 'Individual';
 
-    const eventName = (item.event_name ?? '').trim();
-    const teamName = (item.team_name ?? '').trim();
-    const leadName = (item.team_lead_name ?? '').trim();
-    const festName = (item.fest_name ?? '').trim();
-
-    lines.push(`*Participation Reminder - ${eventName}*`);
+    lines.push(`*Participation Reminder - ${item.event_name}*`);
     lines.push('');
 
     if (isTeam) {
-      lines.push(`Hi *${teamName}* team,`);
+      lines.push(`Hi *${item.team_name}* team,`);
       lines.push('');
       lines.push(
-        `This is a reminder for your team's participation in *${eventName}*${festName ? ` at *${festName}*` : ''}.`
+        `This is a reminder for your team's participation in *${item.event_name}${item.fest_name ? ` at *${item.fest_name}*` : ''}.`
       );
     } else {
-      lines.push(`Hi *${leadName}*,`);
+      lines.push(`Hi *${item.team_lead_name}*,`);
       lines.push('');
       lines.push(
-        `This is a reminder for your participation in *${eventName}*${festName ? ` at *${festName}*` : ''}.`
+        `This is a reminder for your participation in *${item.event_name}*${item.fest_name ? ` at *${item.fest_name}*` : ''}.`
       );
     }
 
@@ -568,25 +562,9 @@ export default function EventsTable({ festId }: EventsTableProps) {
       });
     }
 
-    const groupLinkFromEventLinks = (item.event_links ?? []).find(
-      (l: any) =>
-        (l.url ?? '').includes('chat.whatsapp.com') ||
-        (l.title ?? '').toLowerCase().includes('whatsapp')
-    )?.url;
-    const groupLinkFromConst = whatsAppLinks.find(
-      (w) => w.event_id === (item as any).event_id
-    )?.link;
-    const waGroupLink = groupLinkFromEventLinks || groupLinkFromConst;
-
-    if (waGroupLink) {
+    if (item.fest_name) {
       lines.push('');
-      lines.push('*Join the WhatsApp group:*');
-      lines.push(waGroupLink);
-    }
-
-    if (festName) {
-      lines.push('');
-      lines.push(`_Team ${festName}_`);
+      lines.push(`_Team ${item.fest_name}_`);
     }
 
     return lines.join('\n');
